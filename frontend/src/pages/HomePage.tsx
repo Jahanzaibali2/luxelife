@@ -4,8 +4,7 @@ import { Footer } from '../components/layout/Footer'
 import { Header } from '../components/layout/Header'
 import { LazyImage } from '../components/LazyImage'
 
-const HERO_IMAGE =
-  'https://lh3.googleusercontent.com/aida-public/AB6AXuDgx4Mri5N_R93WxcqCXgfLH5ayORSijguos1wVJD0FwmvRzqW2kNyV-CtV3M4c_HL8HLflEE0LHfXeUXPQwTFvT2DheoSXMuUI8QvKPgjnN5GcBUnFQISSv7eRgQM4wxSABI2R7ULMwqtfA3NVYIIepFx1d5WygxrBnVbuR9U2loqCw0b-oHsE4PycvLonpsnn_2mxK8cl6E798RA1vuswbuV0aOw1-E7iDav-Hd19BqcBZbCyWFZ5lw'
+const HERO_IMAGE = '/images/hero.jpg'
 
 export default function HomePage() {
   return (
@@ -31,11 +30,19 @@ export default function HomePage() {
                 </Link>
               </div>
             </div>
-            <div className="w-full md:w-1/2 mt-12 md:mt-0 relative aspect-square image-zoom-hover overflow-hidden rounded minimal-border">
-              <LazyImage eager className="object-cover w-full h-full absolute inset-0" alt="Lifestyle hero" src={HERO_IMAGE} />
+            <div className="w-full md:w-1/2 mt-12 md:mt-0 relative aspect-square image-zoom-hover overflow-hidden rounded minimal-border isolate">
+              <LazyImage
+                eager
+                className="object-cover w-full h-full absolute inset-0"
+                alt="Lifestyle hero"
+                src={HERO_IMAGE}
+                width={1600}
+                height={1412}
+                sizes="(max-width: 768px) 100vw, 640px"
+              />
             </div>
           </div>
-          <div className="absolute top-0 right-0 w-1/3 h-full bg-soft-blush opacity-20 blur-3xl transform translate-x-1/2 -translate-y-1/4 rounded-full pointer-events-none" />
+          <div className="absolute top-0 right-0 w-1/3 h-full bg-soft-blush opacity-20 blur-3xl transform translate-x-1/2 -translate-y-1/4 rounded-full pointer-events-none -z-10" />
         </section>
 
         <div className="section-divider max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop" />

@@ -23,11 +23,13 @@ function NavLink({
   label,
   active,
   className = '',
+  onClick,
 }: {
   href: string
   label: string
   active?: boolean
   className?: string
+  onClick?: () => void
 }) {
   const base =
     'font-label-caps text-label-caps transition-colors duration-300'
@@ -35,6 +37,7 @@ function NavLink({
     return (
       <Link
         to={href}
+        onClick={onClick}
         className={`${base} text-primary dark:text-on-primary-fixed border-b border-primary dark:border-on-primary-fixed pb-1 ${className}`}
       >
         {label}
@@ -44,6 +47,7 @@ function NavLink({
   return (
     <Link
       to={href}
+      onClick={onClick}
       className={`${base} text-secondary dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed ${className}`}
     >
       {label}
@@ -123,6 +127,19 @@ function HeaderActions({
   )
 }
 
+const HEADER_ACTIONS_BY_VARIANT: Record<
+  HeaderVariant,
+  { iconStyle?: 'primary' | 'opacity' | 'secondary'; hidePersonOnMobile?: boolean; hideFavoriteOnMobile?: boolean; cartActive?: boolean }
+> = {
+  home: { hidePersonOnMobile: true },
+  shop: { iconStyle: 'secondary' },
+  product: {},
+  cart: { cartActive: true },
+  about: { hidePersonOnMobile: true, hideFavoriteOnMobile: true },
+  faq: { iconStyle: 'opacity' },
+  contact: {},
+}
+
 export function Header({ variant, activeNav }: HeaderProps) {
   const [mobileOpen, setMobileOpen] = useState(false)
   const location = useLocation()
@@ -131,188 +148,45 @@ export function Header({ variant, activeNav }: HeaderProps) {
     if (activeNav) return activeNav === key
     if (key === 'home') return location.pathname === '/'
     if (key === 'shop') return location.pathname.startsWith('/shop') || location.pathname.startsWith('/products')
+    if (key === 'about' || key === 'faq' || key === 'contact') return location.pathname.startsWith(`/${key}`)
     return false
   }
 
-  if (variant === 'contact') {
-    return (
-      <nav className="flex justify-between items-center px-margin-mobile md:px-margin-desktop py-4 w-full sticky top-0 z-50 bg-surface/95 backdrop-blur-sm border-b border-outline/15 transition-all duration-200 ease-in-out">
-        <div className="hidden md:flex space-x-6 font-label-caps text-label-caps tracking-[0.1em]">
-          {NAV_ITEMS.map((item) => (
-            <Link
-              key={item.key}
-              to={item.href}
-              className="text-secondary hover:text-primary transition-colors duration-300"
-            >
-              {item.label}
-            </Link>
-          ))}
-        </div>
+  return (
+    <header className="bg-surface dark:bg-surface-container-highest border-b border-outline-variant/15 w-full sticky top-0 z-50">
+      <div className="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 max-w-container-max mx-auto">
         <button
           type="button"
-          className="md:hidden text-primary"
+          aria-label="menu"
+          className="md:hidden text-primary dark:text-on-primary-fixed"
           onClick={() => setMobileOpen(!mobileOpen)}
         >
           <span className="material-symbols-outlined">menu</span>
         </button>
         <Logo
           to="/"
-          className="absolute left-1/2 -translate-x-1/2"
-          textClassName="font-headline-md text-headline-md font-semibold text-primary"
-        />
-        <div className="flex space-x-4 text-primary">
-          <button type="button" className="hover:text-surface-tint transition-colors">
-            <span className="material-symbols-outlined">search</span>
-          </button>
-          <button type="button" className="hover:text-surface-tint transition-colors hidden md:block">
-            <span className="material-symbols-outlined">person</span>
-          </button>
-          <button type="button" className="hover:text-surface-tint transition-colors hidden md:block">
-            <span className="material-symbols-outlined">favorite</span>
-          </button>
-          <Link to="/cart" className="hover:text-surface-tint transition-colors">
-            <span className="material-symbols-outlined">shopping_bag</span>
-          </Link>
-        </div>
-        {mobileOpen && (
-          <div className="absolute top-full left-0 right-0 bg-surface border-b border-outline/15 p-4 md:hidden flex flex-col gap-3">
-            {NAV_ITEMS.map((item) => (
-              <Link key={item.key} to={item.href} className="font-label-caps text-label-caps text-secondary" onClick={() => setMobileOpen(false)}>
-                {item.label}
-              </Link>
-            ))}
-          </div>
-        )}
-      </nav>
-    )
-  }
-
-  if (variant === 'faq') {
-    return (
-      <nav className="bg-surface dark:bg-surface-dim flex justify-between items-center px-margin-mobile md:px-margin-desktop py-4 w-full sticky top-0 z-50 bg-surface/95 backdrop-blur-sm border-b border-outline/15 transition-all duration-200 ease-in-out">
-        <button type="button" className="md:hidden text-primary flex items-center justify-center p-2" onClick={() => setMobileOpen(!mobileOpen)}>
-          <span className="material-symbols-outlined">menu</span>
-        </button>
-        <Logo
-          to="/"
-          textClassName="font-headline-md text-headline-md font-semibold text-primary dark:text-primary-fixed"
-        />
-        <div className="hidden md:flex items-center space-x-8 font-label-caps text-label-caps tracking-[0.1em]">
-          {NAV_ITEMS.map((item) => (
-            <Link key={item.key} to={item.href} className="text-secondary dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed transition-colors duration-300">
-              {item.label}
-            </Link>
-          ))}
-        </div>
-        <HeaderActions iconStyle="opacity" />
-      </nav>
-    )
-  }
-
-  if (variant === 'about') {
-    return (
-      <header className="bg-surface dark:bg-surface-container-highest w-full z-50 sticky top-0 full-width border-b border-outline-variant/15">
-        <div className="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 max-w-container-max mx-auto">
-          <button type="button" className="md:hidden text-primary dark:text-on-primary-fixed" onClick={() => setMobileOpen(!mobileOpen)}>
-            <span className="material-symbols-outlined">menu</span>
-          </button>
-          <Logo
-            to="/"
-            textClassName="font-display-lg text-headline-md font-semibold tracking-tighter text-primary dark:text-on-primary-fixed"
-          />
-          <nav className="hidden md:flex gap-8">
-            {NAV_ITEMS.map((item) => (
-              <NavLink key={item.key} href={item.href} label={item.label} active={resolveActive(item.key)} />
-            ))}
-          </nav>
-          <HeaderActions hidePersonOnMobile hideFavoriteOnMobile />
-        </div>
-      </header>
-    )
-  }
-
-  if (variant === 'cart') {
-    return (
-      <nav className="bg-surface dark:bg-surface-dim docked full-width top-0 border-b border-outline/15 flat no shadows flex justify-between items-center px-margin-mobile md:px-margin-desktop py-4 w-full sticky top-0 z-50 bg-surface/95 backdrop-blur-sm transition-all duration-200 ease-in-out">
-        <div className="flex items-center gap-8">
-          <Logo
-            to="/"
-            textClassName="font-headline-md text-headline-md font-semibold text-primary dark:text-primary-fixed"
-          />
-          <div className="hidden md:flex items-center gap-6 font-label-caps text-label-caps tracking-[0.1em]">
-            {NAV_ITEMS.map((item) => (
-              <Link key={item.key} to={item.href} className="text-secondary dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed transition-colors duration-300">
-                {item.label}
-              </Link>
-            ))}
-          </div>
-        </div>
-        <HeaderActions cartActive />
-      </nav>
-    )
-  }
-
-  if (variant === 'product') {
-    return (
-      <nav className="bg-surface dark:bg-surface-container-highest border-b border-outline-variant/15 w-full top-0 sticky z-50">
-        <div className="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 max-w-container-max mx-auto">
-          <div className="flex items-center gap-6">
-        <Logo
-          to="/"
           textClassName="font-display-lg text-headline-md font-semibold tracking-tighter text-primary dark:text-on-primary-fixed"
         />
-            <div className="hidden md:flex items-center gap-8 font-label-caps text-label-caps">
-              {NAV_ITEMS.map((item) => (
-                <NavLink key={item.key} href={item.href} label={item.label} active={item.key === 'shop' || resolveActive(item.key)} className={item.key === 'shop' ? 'opacity-80 transition-opacity' : ''} />
-              ))}
-            </div>
-          </div>
-          <HeaderActions />
-        </div>
-      </nav>
-    )
-  }
-
-  if (variant === 'shop') {
-    return (
-      <header className="bg-surface dark:bg-surface-container-highest border-b border-outline-variant/15 w-full top-0 sticky z-50">
-        <div className="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 max-w-container-max mx-auto">
-          <Logo
-            to="/"
-            textClassName="font-display-lg text-headline-md font-semibold tracking-tighter text-primary dark:text-on-primary-fixed"
-          />
-          <nav className="hidden md:flex gap-8">
-            {NAV_ITEMS.map((item) => (
-              <NavLink
-                key={item.key}
-                href={item.href}
-                label={item.label}
-                active={item.key === 'shop'}
-                className={item.key === 'shop' ? 'opacity-80 transition-opacity' : ''}
-              />
-            ))}
-          </nav>
-          <HeaderActions iconStyle="secondary" />
-        </div>
-      </header>
-    )
-  }
-
-  // home variant
-  return (
-    <header className="bg-surface dark:bg-surface-container-highest border-b border-outline-variant/15 w-full sticky top-0 z-50">
-      <div className="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 max-w-container-max mx-auto">
-        <Logo
-          to="/"
-          textClassName="font-display-lg text-headline-md font-semibold tracking-tighter text-primary dark:text-on-primary-fixed"
-        />
-        <nav className="hidden md:flex items-center gap-6 font-label-caps text-label-caps text-secondary dark:text-secondary-fixed-dim">
+        <nav className="hidden md:flex gap-6 lg:gap-8">
           {NAV_ITEMS.map((item) => (
             <NavLink key={item.key} href={item.href} label={item.label} active={resolveActive(item.key)} />
           ))}
         </nav>
-        <HeaderActions hidePersonOnMobile />
+        <HeaderActions {...HEADER_ACTIONS_BY_VARIANT[variant]} />
       </div>
+      {mobileOpen && (
+        <div className="md:hidden border-t border-outline-variant/15 bg-surface dark:bg-surface-container-highest px-margin-mobile py-4 flex flex-col gap-4">
+          {NAV_ITEMS.map((item) => (
+            <NavLink
+              key={item.key}
+              href={item.href}
+              label={item.label}
+              active={resolveActive(item.key)}
+              onClick={() => setMobileOpen(false)}
+            />
+          ))}
+        </div>
+      )}
     </header>
   )
 }
