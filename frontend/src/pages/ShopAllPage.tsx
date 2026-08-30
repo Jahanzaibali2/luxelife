@@ -2,11 +2,14 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { Footer } from '../components/layout/Footer'
 import { Header } from '../components/layout/Header'
+import { LazyImage } from '../components/LazyImage'
 import { api } from '../lib/api'
 import { PRODUCTS as FALLBACK_PRODUCTS } from '../data/products'
 import type { Product, ProductCategory } from '../types/api'
 
 type SortOption = 'featured' | 'newest' | 'best' | 'price-high' | 'price-low'
+
+const PAGE_SIZE = 9
 
 const CATEGORY_FILTERS: { label: string; value: ProductCategory | 'all-fashion' }[] = [
   { label: 'All Fashion', value: 'fashion' },
@@ -77,6 +80,16 @@ export default function ShopAllPage() {
     return list
   }, [allProducts, selectedCategories, minPrice, maxPrice, inStockOnly, preorderOnly, sort])
 
+  useEffect(() => {
+    setPage(1)
+  }, [selectedCategories, minPrice, maxPrice, inStockOnly, preorderOnly, sort])
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
+  const currentPage = Math.min(page, totalPages)
+  const pageItems = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
+  const showingFrom = filtered.length === 0 ? 0 : (currentPage - 1) * PAGE_SIZE + 1
+  const showingTo = Math.min(currentPage * PAGE_SIZE, filtered.length)
+
   const toggleWishlist = (slug: string) => {
     setWishlist((prev) => {
       const next = new Set(prev)
@@ -144,7 +157,9 @@ export default function ShopAllPage() {
           </aside>
           <div className="w-full lg:w-3/4">
             <div className="flex justify-between items-center mb-8 pb-4 border-b border-charcoal-grey/10">
-              <span className="text-secondary text-sm">Showing 1-{filtered.length} of 48 products</span>
+              <span className="text-secondary text-sm">
+                {loading ? 'Loading…' : `Showing ${showingFrom}-${showingTo} of ${filtered.length} products`}
+              </span>
               <div className="flex items-center gap-2">
                 <span className="text-sm text-secondary">Sort by:</span>
                 <select className="border-none bg-transparent text-charcoal-grey font-medium text-sm focus:ring-0 cursor-pointer pl-0 pr-8 py-0" value={sort} onChange={(e) => setSort(e.target.value as SortOption)}>
@@ -157,29 +172,35 @@ export default function ShopAllPage() {
               </div>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-gutter">
-              {loading ? (
-                <p className="text-secondary col-span-full">Loading products...</p>
-              ) : (
-                filtered.map((product) => (
-                  <ProductCard key={product.slug} product={product} wishlisted={wishlist.has(product.slug)} onWishlist={() => toggleWishlist(product.slug)} />
-                ))
-              )}
+              {loading
+                ? Array.from({ length: 6 }, (_, i) => (
+                    <div key={i} className="bg-white border border-charcoal-grey/10 rounded overflow-hidden">
+                      <div className="aspect-[4/5] bg-charcoal-grey/5 animate-pulse" />
+                      <div className="p-6 space-y-3">
+                        <div className="h-4 w-2/3 bg-charcoal-grey/10 animate-pulse rounded" />
+                        <div className="h-3 w-1/3 bg-charcoal-grey/10 animate-pulse rounded" />
+                      </div>
+                    </div>
+                  ))
+                : pageItems.map((product) => (
+                    <ProductCard key={product.slug} product={product} wishlisted={wishlist.has(product.slug)} onWishlist={() => toggleWishlist(product.slug)} />
+                  ))}
             </div>
+            {totalPages > 1 && (
             <div className="mt-16 flex justify-center items-center gap-2 border-t border-charcoal-grey/10 pt-8">
-              <button type="button" className="w-10 h-10 flex items-center justify-center border border-charcoal-grey/20 text-charcoal-grey hover:border-deep-cocoa transition-colors" disabled>
+              <button type="button" className="w-10 h-10 flex items-center justify-center border border-charcoal-grey/20 text-charcoal-grey hover:border-deep-cocoa transition-colors disabled:opacity-40" disabled={currentPage === 1} onClick={() => setPage((p) => Math.max(1, p - 1))}>
                 <span className="material-symbols-outlined text-sm">chevron_left</span>
               </button>
-              {[1, 2, 3].map((p) => (
-                <button key={p} type="button" onClick={() => setPage(p)} className={`w-10 h-10 flex items-center justify-center font-label-caps text-xs ${page === p ? 'bg-deep-cocoa text-white' : 'border border-charcoal-grey/20 text-charcoal-grey hover:border-deep-cocoa transition-colors'}`}>
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                <button key={p} type="button" onClick={() => setPage(p)} className={`w-10 h-10 flex items-center justify-center font-label-caps text-xs ${currentPage === p ? 'bg-deep-cocoa text-white' : 'border border-charcoal-grey/20 text-charcoal-grey hover:border-deep-cocoa transition-colors'}`}>
                   {p}
                 </button>
               ))}
-              <span className="text-charcoal-grey px-2">...</span>
-              <button type="button" onClick={() => setPage(8)} className="w-10 h-10 flex items-center justify-center border border-charcoal-grey/20 text-charcoal-grey hover:border-deep-cocoa transition-colors font-label-caps text-xs">8</button>
-              <button type="button" className="w-10 h-10 flex items-center justify-center border border-charcoal-grey/20 text-charcoal-grey hover:border-deep-cocoa transition-colors">
+              <button type="button" className="w-10 h-10 flex items-center justify-center border border-charcoal-grey/20 text-charcoal-grey hover:border-deep-cocoa transition-colors disabled:opacity-40" disabled={currentPage === totalPages} onClick={() => setPage((p) => Math.min(totalPages, p + 1))}>
                 <span className="material-symbols-outlined text-sm">chevron_right</span>
               </button>
             </div>
+            )}
           </div>
         </div>
       </main>
@@ -201,7 +222,7 @@ function ProductCard({ product, wishlisted, onWishlist }: { product: Product; wi
         <span className="material-symbols-outlined text-sm" style={wishlisted ? { fontVariationSettings: "'FILL' 1" } : undefined}>favorite</span>
       </button>
       <Link to={`/products/${product.slug}`} className="aspect-[4/5] overflow-hidden bg-surface-container-lowest block">
-        <img className="product-image w-full h-full object-cover" alt={product.name} src={product.image} />
+        <LazyImage className="product-image w-full h-full object-cover" alt={product.name} src={product.image} />
       </Link>
       <div className="p-6 flex flex-col flex-grow">
         <Link to={`/products/${product.slug}`}>

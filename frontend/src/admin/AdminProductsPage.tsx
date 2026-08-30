@@ -50,7 +50,7 @@ export default function AdminProductsPage() {
                 <tr key={p.id} className="border-b border-outline/10 hover:bg-surface-container-low">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-4">
-                      <img src={p.image} alt="" className="w-12 h-12 object-cover rounded" />
+                      <img src={p.image} alt="" className="w-12 h-12 object-cover rounded" loading="lazy" decoding="async" />
                       <div>
                         <p className="font-medium text-primary">{p.name}</p>
                         <p className="text-sm text-secondary">{p.subtitle}</p>

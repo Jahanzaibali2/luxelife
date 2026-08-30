@@ -1,6 +1,8 @@
 import type { AdminStats, Order, OrderStatus, Product } from '../types/api'
 
-const API_BASE = '/api'
+const API_BASE = import.meta.env.VITE_API_URL
+  ? `${import.meta.env.VITE_API_URL.replace(/\/$/, '')}/api`
+  : '/api'
 
 function getAdminToken(): string | null {
   return localStorage.getItem('luxelife-admin-token')

@@ -1,7 +1,6 @@
-import { readDb, writeDb } from './db.js'
+import 'dotenv/config'
+import { createProduct, countProducts } from './repository.js'
 import type { Product } from './types.js'
-
-const now = new Date().toISOString()
 
 const SEED_PRODUCTS: Omit<Product, 'id' | 'createdAt' | 'updatedAt'>[] = [
   {
@@ -92,24 +91,23 @@ const SEED_PRODUCTS: Omit<Product, 'id' | 'createdAt' | 'updatedAt'>[] = [
   },
 ]
 
-export function seedDatabase() {
-  const db = readDb()
-  if (db.products.length > 0) {
+export async function seedDatabase() {
+  const count = await countProducts()
+  if (count > 0) {
     console.log('Database already seeded.')
     return
   }
 
-  db.products = SEED_PRODUCTS.map((p) => ({
-    ...p,
-    id: p.slug,
-    createdAt: now,
-    updatedAt: now,
-  }))
+  for (const p of SEED_PRODUCTS) {
+    await createProduct({ ...p, id: p.slug })
+  }
 
-  writeDb(db)
-  console.log(`Seeded ${db.products.length} products.`)
+  console.log(`Seeded ${SEED_PRODUCTS.length} products.`)
 }
 
 if (import.meta.url === `file://${process.argv[1]?.replace(/\\/g, '/')}`) {
-  seedDatabase()
+  seedDatabase().catch((err) => {
+    console.error(err)
+    process.exit(1)
+  })
 }

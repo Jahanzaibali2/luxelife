@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
 import { Footer } from '../components/layout/Footer'
 import { Header } from '../components/layout/Header'
+import { LazyImage } from '../components/LazyImage'
 import { api } from '../lib/api'
 import { RELATED_PRODUCTS } from '../data/products'
 import type { Product } from '../types/api'
@@ -77,12 +78,12 @@ export default function ProductDetailPage() {
             <div className="flex md:flex-col gap-4 overflow-x-auto md:overflow-visible w-full md:w-24 shrink-0">
               {gallery.map((img, i) => (
                 <button key={img} type="button" onClick={() => setSelectedImage(i)} className={`w-20 h-24 md:w-24 md:h-28 bg-white border shrink-0 overflow-hidden focus:outline-none ${i === selectedImage ? 'border-primary/20' : 'border-outline-variant/30 opacity-60 hover:opacity-100 transition-opacity'}`}>
-                  <img className="w-full h-full object-cover" alt="" src={img} />
+                  <img className="w-full h-full object-cover" alt="" src={img} loading="lazy" decoding="async" />
                 </button>
               ))}
             </div>
             <div className="w-full h-[500px] md:h-[700px] bg-white overflow-hidden relative cursor-zoom-in group border border-outline-variant/15">
-              <img className="w-full h-full object-cover gallery-main-image" alt={product.name} src={gallery[selectedImage] ?? product.image} />
+              <LazyImage eager className="w-full h-full object-cover gallery-main-image" alt={product.name} src={gallery[selectedImage] ?? product.image} />
               {product.badge && (
                 <div className="absolute top-4 right-4 bg-surface-bright/90 px-3 py-1 font-label-caps text-label-caps text-primary-container">
                   {product.badge === 'Limited' ? 'Limited Edition' : product.badge}
@@ -170,7 +171,7 @@ export default function ProductDetailPage() {
             {RELATED_PRODUCTS.map((item) => (
               <div key={item.name} className="group bg-white p-4 border border-outline-variant/15 hover:border-primary/30 transition-all cursor-pointer">
                 <div className="w-full h-80 bg-surface-container-low mb-4 overflow-hidden relative">
-                  <img className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt={item.name} src={item.image} />
+                  <LazyImage className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt={item.name} src={item.image} />
                 </div>
                 <div className="font-label-caps text-label-caps text-secondary mb-1">{item.category}</div>
                 <div className="font-body-lg text-body-lg font-medium text-primary mb-2">{item.name}</div>

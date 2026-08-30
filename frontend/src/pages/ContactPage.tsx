@@ -101,7 +101,7 @@ export default function ContactPage() {
                 </div>
               </div>
               <div className="h-64 w-full rounded overflow-hidden relative">
-                <img className="w-full h-full object-cover grayscale opacity-90 mix-blend-multiply hover:grayscale-0 transition-all duration-700" alt="Editorial workspace" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCSL_9MqcjWTymZlXlB-WsASzuPRKVI_7DZ9UcPvhgrHMuuvoxMmUSIP7qZLTX6AbnDD_nyqLExFzCQPSK3RUYorXL3-uaCf3w3geelJAXKSw4NQ6s6Hv7_CuZvfXX2LZzTDmF1X9iDGTgSNs6ecz52XHh6JJ-Y9GGV9byHbGyoH8CTDXP2kwQOaXndVlJO85VxU7iUEs5CJyjLrOW-Fzgudk-HCTz2wec9_NaCf_Gzfun-_kYUGRlaFw" />
+                <img className="w-full h-full object-cover grayscale opacity-90 mix-blend-multiply hover:grayscale-0 transition-all duration-700" alt="Editorial workspace" loading="lazy" decoding="async" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCSL_9MqcjWTymZlXlB-WsASzuPRKVI_7DZ9UcPvhgrHMuuvoxMmUSIP7qZLTX6AbnDD_nyqLExFzCQPSK3RUYorXL3-uaCf3w3geelJAXKSw4NQ6s6Hv7_CuZvfXX2LZzTDmF1X9iDGTgSNs6ecz52XHh6JJ-Y9GGV9byHbGyoH8CTDXP2kwQOaXndVlJO85VxU7iUEs5CJyjLrOW-Fzgudk-HCTz2wec9_NaCf_Gzfun-_kYUGRlaFw" />
                 <div className="absolute inset-0 bg-primary/10" />
               </div>
             </div>

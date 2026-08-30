@@ -70,7 +70,7 @@ export default function AdminOrderDetailPage() {
         </div>
         {order.items.map((item, i) => (
           <div key={i} className="flex gap-4 px-6 py-4 border-b border-outline/10 items-center">
-            <img src={item.image} alt="" className="w-16 h-16 object-cover rounded" />
+            <img src={item.image} alt="" className="w-16 h-16 object-cover rounded" loading="lazy" decoding="async" />
             <div className="flex-1">
               <p className="text-primary font-medium">{item.name}</p>
               <p className="text-sm text-secondary">{item.variant}</p>

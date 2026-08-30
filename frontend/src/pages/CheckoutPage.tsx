@@ -182,7 +182,7 @@ export default function CheckoutPage() {
                     <div className="flex flex-col gap-6 mb-6">
                       <div className="flex gap-4 items-start">
                         <div className="w-20 h-24 bg-surface-container flex-shrink-0 rounded overflow-hidden">
-                          <img className="w-full h-full object-cover" alt="" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBUem9PMgiJt7xkNYiHqJEtjuM8KbsT2VkbNkKsUJ-AOJbg1FABqAudVTOldqUpc6j3oqyEymrNYMhoGoPYYYxgawhzaoF_cTZsl-NHhhqAHnRxSsonWXf-PKvy6KQg0q8MFOI_HorZ1cdGiBKy9o8Qp8K7omNRxfLlGgA3QUPZ00lm92PLIHfNTwgkH58EvMbKZRvjR_2Hdslh0KpZlYP4cLWu3so_g-5DNhcTeVvleuKQusQOh4ibRA" />
+                          <img className="w-full h-full object-cover" alt="" loading="lazy" decoding="async" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBUem9PMgiJt7xkNYiHqJEtjuM8KbsT2VkbNkKsUJ-AOJbg1FABqAudVTOldqUpc6j3oqyEymrNYMhoGoPYYYxgawhzaoF_cTZsl-NHhhqAHnRxSsonWXf-PKvy6KQg0q8MFOI_HorZ1cdGiBKy9o8Qp8K7omNRxfLlGgA3QUPZ00lm92PLIHfNTwgkH58EvMbKZRvjR_2Hdslh0KpZlYP4cLWu3so_g-5DNhcTeVvleuKQusQOh4ibRA" />
                         </div>
                         <div className="flex flex-col flex-grow">
                           <div className="flex justify-between items-start mb-1">
@@ -195,7 +195,7 @@ export default function CheckoutPage() {
                       </div>
                       <div className="flex gap-4 items-start">
                         <div className="w-20 h-24 bg-surface-container flex-shrink-0 rounded overflow-hidden">
-                          <img className="w-full h-full object-cover" alt="" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCY0aBnxMD8PqqvUBZWCf_-qzC2Wk9NscHzMjb394C7SmixkjB1YTSfSOXqT-zZCZqd-biTzgzHIFbOzpC1yU0WC8F8y3jBaefPCXx1VIqm8TpUM6_TNHo53MBfspVpnHRrDoY2OWbd6xe5TjoZJUbf2kVaCVRpaV5drfbJxY7UGOA9rdC7rLUG8QbNWQxRt7yBEvuSS2Mu7LFv54PQcVjKrgRGcbuBUOHmd-o9JhRdFeQpOR6Knug9dw" />
+                          <img className="w-full h-full object-cover" alt="" loading="lazy" decoding="async" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCY0aBnxMD8PqqvUBZWCf_-qzC2Wk9NscHzMjb394C7SmixkjB1YTSfSOXqT-zZCZqd-biTzgzHIFbOzpC1yU0WC8F8y3jBaefPCXx1VIqm8TpUM6_TNHo53MBfspVpnHRrDoY2OWbd6xe5TjoZJUbf2kVaCVRpaV5drfbJxY7UGOA9rdC7rLUG8QbNWQxRt7yBEvuSS2Mu7LFv54PQcVjKrgRGcbuBUOHmd-o9JhRdFeQpOR6Knug9dw" />
                         </div>
                         <div className="flex flex-col flex-grow">
                           <div className="flex justify-between items-start mb-1">

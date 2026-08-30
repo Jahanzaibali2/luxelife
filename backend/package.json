@@ -9,7 +9,9 @@
     "seed": "tsx src/seed.ts"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.112.4",
     "cors": "^2.8.5",
+    "dotenv": "^17.4.2",
     "express": "^5.1.0",
     "uuid": "^11.1.0"
   },

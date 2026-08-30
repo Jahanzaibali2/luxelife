@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { AnnouncementBar } from '../components/layout/AnnouncementBar'
 import { Footer } from '../components/layout/Footer'
 import { Header } from '../components/layout/Header'
+import { LazyImage } from '../components/LazyImage'
 
 const HERO_IMAGE =
   'https://lh3.googleusercontent.com/aida-public/AB6AXuDgx4Mri5N_R93WxcqCXgfLH5ayORSijguos1wVJD0FwmvRzqW2kNyV-CtV3M4c_HL8HLflEE0LHfXeUXPQwTFvT2DheoSXMuUI8QvKPgjnN5GcBUnFQISSv7eRgQM4wxSABI2R7ULMwqtfA3NVYIIepFx1d5WygxrBnVbuR9U2loqCw0b-oHsE4PycvLonpsnn_2mxK8cl6E798RA1vuswbuV0aOw1-E7iDav-Hd19BqcBZbCyWFZ5lw'
@@ -31,7 +32,7 @@ export default function HomePage() {
               </div>
             </div>
             <div className="w-full md:w-1/2 mt-12 md:mt-0 relative aspect-square image-zoom-hover overflow-hidden rounded minimal-border">
-              <img className="object-cover w-full h-full absolute inset-0" alt="Lifestyle hero" src={HERO_IMAGE} />
+              <LazyImage eager className="object-cover w-full h-full absolute inset-0" alt="Lifestyle hero" src={HERO_IMAGE} />
             </div>
           </div>
           <div className="absolute top-0 right-0 w-1/3 h-full bg-soft-blush opacity-20 blur-3xl transform translate-x-1/2 -translate-y-1/4 rounded-full pointer-events-none" />
@@ -44,9 +45,10 @@ export default function HomePage() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-gutter auto-rows-[250px]">
             <Link to="/shop?category=fashion" className="md:col-span-2 md:row-span-2 relative group overflow-hidden minimal-border rounded image-zoom-hover block">
-              <div
-                className="bg-cover bg-center w-full h-full absolute inset-0 group-hover:scale-105 transition-transform duration-700"
-                style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuDuLcu-YoGMpPa-kPAlcK3vcKFCJZTKVfg1EqvcR2B_6Lo_hUiXftBZIjCR7iYvZimqtx_JqSu98y9JtN2ajHUPVz1rmG0M2LMtyJK_Bz2p3OzOijL77qOMfwOp0D8QAZBgLA-CRQcqpapqCj4ZlJsMwjV3-iaAOz9uL54z_eRxV7tjf8-1ZNTIonBcVo_VV33G6IzvG_cSDJnfc5pjt6hCcO0_cLWWEyhwk0AdLAcaeFADBmYlV6QdHQ')" }}
+              <LazyImage
+                className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                alt="Fashion accessories"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDuLcu-YoGMpPa-kPAlcK3vcKFCJZTKVfg1EqvcR2B_6Lo_hUiXftBZIjCR7iYvZimqtx_JqSu98y9JtN2ajHUPVz1rmG0M2LMtyJK_Bz2p3OzOijL77qOMfwOp0D8QAZBgLA-CRQcqpapqCj4ZlJsMwjV3-iaAOz9uL54z_eRxV7tjf8-1ZNTIonBcVo_VV33G6IzvG_cSDJnfc5pjt6hCcO0_cLWWEyhwk0AdLAcaeFADBmYlV6QdHQ"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-primary/80 to-transparent" />
               <div className="absolute bottom-6 left-6 text-on-primary">
@@ -64,13 +66,14 @@ export default function HomePage() {
                 </span>
               </div>
               <div className="absolute right-0 top-0 w-1/2 h-full">
-                <img className="object-cover w-full h-full" alt="Home decor" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDbl1As4q9r7ZAhle_SbZyNgOa-ylZ9KQVuOHKltEShprjpY63G3MGb4gm8xecfp-jM9iC7Wy_FhDI_TShvGVM-lmOO1iX33VXGPG8-oSy47UA7wmHSq-ekzITiGzV7dfHE1aV2ZIUNV5Jsy043ATPQzYEchaFw-uuXk8O8rohRg3FsH2waacEIogeNhwJoeZhKu9Y6aDPg6vsv5TAx1pT1a9EiESwK5NHzXrBg_Xz0DuRbJBFM3UtGHA" />
+                <LazyImage className="object-cover w-full h-full" alt="Home decor" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDbl1As4q9r7ZAhle_SbZyNgOa-ylZ9KQVuOHKltEShprjpY63G3MGb4gm8xecfp-jM9iC7Wy_FhDI_TShvGVM-lmOO1iX33VXGPG8-oSy47UA7wmHSq-ekzITiGzV7dfHE1aV2ZIUNV5Jsy043ATPQzYEchaFw-uuXk8O8rohRg3FsH2waacEIogeNhwJoeZhKu9Y6aDPg6vsv5TAx1pT1a9EiESwK5NHzXrBg_Xz0DuRbJBFM3UtGHA" />
               </div>
             </Link>
             <Link to="/shop?category=gadgets" className="relative group overflow-hidden minimal-border rounded image-zoom-hover block">
-              <div
-                className="bg-cover bg-center w-full h-full absolute inset-0"
-                style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuDkQNHzabu2onH-OgL5lYjXoSlQF330ufKOB982WG3pmxWoytH1U1PLtr47yG3-AIr-UP657DCZPvc5cTPG9y4NkdOvwe4KmaLwf-nDFiemHOvetksZsrXXhFp9gAevEMPolISmApFymo4p5z4sQb4ZKR3K_c5vHxk9mAD-QkkI38rEQdN53lQlTub5g2xB3k0PoU7iOsgIjC2EOvidFuVhbW40GJX_iWzSEPAxaDlt7fEaJpmo2v3NiQ')" }}
+              <LazyImage
+                className="absolute inset-0 w-full h-full object-cover"
+                alt="Gadgets"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDkQNHzabu2onH-OgL5lYjXoSlQF330ufKOB982WG3pmxWoytH1U1PLtr47yG3-AIr-UP657DCZPvc5cTPG9y4NkdOvwe4KmaLwf-nDFiemHOvetksZsrXXhFp9gAevEMPolISmApFymo4p5z4sQb4ZKR3K_c5vHxk9mAD-QkkI38rEQdN53lQlTub5g2xB3k0PoU7iOsgIjC2EOvidFuVhbW40GJX_iWzSEPAxaDlt7fEaJpmo2v3NiQ"
               />
               <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors" />
               <div className="absolute bottom-4 left-4 text-on-primary">
@@ -78,9 +81,10 @@ export default function HomePage() {
               </div>
             </Link>
             <Link to="/shop?category=gifts" className="relative group overflow-hidden minimal-border rounded image-zoom-hover block bg-surface-container">
-              <div
-                className="bg-cover bg-center w-full h-full absolute inset-0"
-                style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuBUJe3tMcp9Wtpd6uVACkOs9mM1ZDq-zhfbMod4RCHzY-KTsfkHBlyRZVKxDpqAQuc2ZpbLcbW0yTpzINF4_rHap4hv5lDcHuLlaAll1C-4mJY8khjnHLxxhQJ0jrwMPeEO8etqzvUb0NwgHzGhJcE64mgfW3XpEQRqrRmv5rEikic_saeL62n5CuKIFiNuSh0wDxowKpaF3Fp-jJ27dVuLQM3vhQGN8rZuYu_7nH7oCXzVa8Ofu79c1Q')" }}
+              <LazyImage
+                className="absolute inset-0 w-full h-full object-cover"
+                alt="Gifts"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBUJe3tMcp9Wtpd6uVACkOs9mM1ZDq-zhfbMod4RCHzY-KTsfkHBlyRZVKxDpqAQuc2ZpbLcbW0yTpzINF4_rHap4hv5lDcHuLlaAll1C-4mJY8khjnHLxxhQJ0jrwMPeEO8etqzvUb0NwgHzGhJcE64mgfW3XpEQRqrRmv5rEikic_saeL62n5CuKIFiNuSh0wDxowKpaF3Fp-jJ27dVuLQM3vhQGN8rZuYu_7nH7oCXzVa8Ofu79c1Q"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-primary/60 to-transparent" />
               <div className="absolute bottom-4 left-4 text-on-primary">

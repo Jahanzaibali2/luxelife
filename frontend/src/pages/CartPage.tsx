@@ -19,7 +19,7 @@ export default function CartPage() {
             {items.map((item) => (
               <div key={item.id} className="flex flex-col sm:flex-row gap-6 bg-surface-container-lowest p-6 rounded-lg border border-outline/15 group hover:bg-[#E8D1C5] transition-colors duration-500">
                 <div className="w-full sm:w-40 h-48 sm:h-40 shrink-0 bg-surface-container rounded overflow-hidden">
-                  <img alt={item.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src={item.image} />
+                  <img alt={item.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src={item.image} loading="lazy" decoding="async" />
                 </div>
                 <div className="flex-grow flex flex-col justify-between">
                   <div className="flex justify-between items-start mb-4">

@@ -115,7 +115,7 @@ export default function AdminProductFormPage() {
           <input className="admin-input" value={form.image} onChange={(e) => update('image', e.target.value)} placeholder="https://..." required />
         </Field>
         {form.image && (
-          <img src={form.image} alt="Preview" className="w-32 h-32 object-cover rounded border border-outline/15" />
+          <img src={form.image} alt="Preview" className="w-32 h-32 object-cover rounded border border-outline/15" loading="lazy" decoding="async" />
         )}
         <div className="grid grid-cols-2 gap-4">
           <Field label="Category">
