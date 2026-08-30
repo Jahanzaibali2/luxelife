@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { adminApi } from '../lib/api'
 import type { Product, ProductCategory } from '../types/api'
@@ -17,13 +17,22 @@ const emptyForm = {
   inStock: true,
 }
 
+function slugFromName(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '')
+}
+
 export default function AdminProductFormPage() {
   const { id } = useParams<{ id: string }>()
   const isEdit = Boolean(id)
   const navigate = useNavigate()
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const [form, setForm] = useState(emptyForm)
   const [loading, setLoading] = useState(isEdit)
   const [saving, setSaving] = useState(false)
+  const [uploading, setUploading] = useState(false)
   const [error, setError] = useState('')
 
   useEffect(() => {
@@ -47,9 +56,35 @@ export default function AdminProductFormPage() {
     setForm((f) => ({ ...f, [field]: value }))
   }
 
+  const productSlug = id ?? (form.name ? slugFromName(form.name) : '')
+
+  const handleImageUpload = async (file: File) => {
+    setError('')
+    setUploading(true)
+    try {
+      const { url } = await adminApi.uploadImage(
+        file,
+        productSlug || undefined,
+        form.name || undefined,
+      )
+      update('image', url)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Image upload failed')
+    } finally {
+      setUploading(false)
+      if (fileInputRef.current) fileInputRef.current.value = ''
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
+
+    if (!form.image) {
+      setError('Please upload a product image')
+      return
+    }
+
     setSaving(true)
     try {
       const payload: Partial<Product> = {
@@ -111,12 +146,30 @@ export default function AdminProductFormPage() {
             </select>
           </Field>
         </div>
-        <Field label="Image URL" required>
-          <input className="admin-input" value={form.image} onChange={(e) => update('image', e.target.value)} placeholder="https://..." required />
+
+        <Field label="Product Image" required>
+          <div className="space-y-3">
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp,image/gif"
+              className="admin-input file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:bg-primary file:text-on-primary file:font-label-caps file:text-label-caps file:cursor-pointer"
+              onChange={(e) => {
+                const file = e.target.files?.[0]
+                if (file) void handleImageUpload(file)
+              }}
+              disabled={uploading}
+            />
+            <p className="text-secondary text-xs">
+              Stored in Supabase Storage ({productSlug || 'slug from name'}/main). Max 5 MB.
+            </p>
+            {uploading && <p className="text-secondary text-sm">Uploading image...</p>}
+          </div>
         </Field>
         {form.image && (
-          <img src={form.image} alt="Preview" className="w-32 h-32 object-cover rounded border border-outline/15" loading="lazy" decoding="async" />
+          <img src={form.image} alt="Preview" className="w-40 h-40 object-cover rounded border border-outline/15" loading="lazy" decoding="async" />
         )}
+
         <div className="grid grid-cols-2 gap-4">
           <Field label="Category">
             <select className="admin-input" value={form.category} onChange={(e) => update('category', e.target.value)}>
@@ -138,7 +191,7 @@ export default function AdminProductFormPage() {
           <span className="text-primary">In Stock</span>
         </label>
         {error && <p className="text-error text-sm">{error}</p>}
-        <button type="submit" disabled={saving} className="bg-primary text-on-primary font-label-caps text-label-caps px-8 py-3 rounded hover:opacity-90 disabled:opacity-50">
+        <button type="submit" disabled={saving || uploading} className="bg-primary text-on-primary font-label-caps text-label-caps px-8 py-3 rounded hover:opacity-90 disabled:opacity-50">
           {saving ? 'Saving...' : isEdit ? 'Update Product' : 'Create Product'}
         </button>
       </form>

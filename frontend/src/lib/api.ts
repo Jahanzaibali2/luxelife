@@ -1,86 +1,128 @@
+import { getSupabase } from './supabase'
 import type { AdminStats, Order, OrderStatus, Product } from '../types/api'
 
-const API_BASE = import.meta.env.VITE_API_URL
-  ? `${import.meta.env.VITE_API_URL.replace(/\/$/, '')}/api`
-  : '/api'
-
-function getAdminToken(): string | null {
-  return localStorage.getItem('luxelife-admin-token')
+type ProductRow = {
+  id: string
+  slug: string
+  name: string
+  subtitle: string
+  description: string
+  price: number
+  currency: '$' | 'AED'
+  image: string
+  gallery: string[] | null
+  category: Product['category']
+  badge: Product['badge'] | null
+  in_stock: boolean
+  preorder: boolean
+  created_at: string
+  updated_at: string
 }
 
-async function request<T>(
-  path: string,
-  options: RequestInit = {},
-  auth = false,
-): Promise<T> {
-  const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
-    ...(options.headers as Record<string, string>),
+function mapProduct(row: ProductRow): Product {
+  return {
+    id: row.id,
+    slug: row.slug,
+    name: row.name,
+    subtitle: row.subtitle,
+    description: row.description,
+    price: Number(row.price),
+    currency: row.currency,
+    image: row.image,
+    gallery: row.gallery ?? [],
+    category: row.category,
+    badge: row.badge ?? undefined,
+    inStock: row.in_stock,
+    preorder: row.preorder,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
   }
-
-  if (auth) {
-    const token = getAdminToken()
-    if (token) headers.Authorization = `Bearer ${token}`
-  }
-
-  const res = await fetch(`${API_BASE}${path}`, { ...options, headers })
-
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({ error: res.statusText }))
-    throw new Error(err.error ?? 'Request failed')
-  }
-
-  if (res.status === 204) return undefined as T
-  return res.json() as Promise<T>
 }
 
-// Public
+const ADMIN_LATER =
+  'Admin still uses the Express backend. Manage products in the Supabase Table Editor for now.'
+
+function adminUnavailable(): Promise<never> {
+  return Promise.reject(new Error(ADMIN_LATER))
+}
+
 export const api = {
-  getProducts: () => request<Product[]>('/products'),
-  getProduct: (slug: string) => request<Product>(`/products/${slug}`),
-  createOrder: (data: {
+  async getProducts(): Promise<Product[]> {
+    const { data, error } = await getSupabase()
+      .from('products')
+      .select('*')
+      .order('created_at', { ascending: false })
+
+    if (error) throw error
+    return (data ?? []).map(mapProduct)
+  },
+
+  async getProduct(slug: string): Promise<Product> {
+    const { data, error } = await getSupabase()
+      .from('products')
+      .select('*')
+      .eq('slug', slug)
+      .maybeSingle()
+
+    if (error) throw error
+    if (!data) throw new Error('Product not found')
+    return mapProduct(data)
+  },
+
+  async createOrder(input: {
     customer: Order['customer']
     items: Order['items']
     subtotal: number
     currency: '$' | 'AED'
     paymentMethod: string
-  }) =>
-    request<Order>('/orders', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    }),
+  }): Promise<Order> {
+    const now = new Date().toISOString()
+    const orderNumber = `LL-${Date.now().toString().slice(-8)}`
+    const order: Order = {
+      id: crypto.randomUUID(),
+      orderNumber,
+      status: 'pending',
+      customer: input.customer,
+      items: input.items,
+      subtotal: input.subtotal,
+      currency: input.currency,
+      paymentMethod: input.paymentMethod,
+      createdAt: now,
+      updatedAt: now,
+    }
+
+    const { error } = await getSupabase().from('orders').insert({
+      id: order.id,
+      order_number: order.orderNumber,
+      status: order.status,
+      customer: order.customer,
+      items: order.items,
+      subtotal: order.subtotal,
+      currency: order.currency,
+      payment_method: order.paymentMethod,
+      created_at: now,
+      updated_at: now,
+    })
+
+    if (error) throw error
+    return order
+  },
 }
 
-// Admin
 export const adminApi = {
-  login: (username: string, password: string) =>
-    request<{ token: string }>('/admin/login', {
-      method: 'POST',
-      body: JSON.stringify({ username, password }),
-    }),
-
-  getStats: () => request<AdminStats>('/admin/stats', {}, true),
-
-  getProducts: () => request<Product[]>('/admin/products', {}, true),
-  getProduct: (id: string) => request<Product>(`/admin/products/${id}`, {}, true),
-  createProduct: (data: Partial<Product>) =>
-    request<Product>('/admin/products', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    }, true),
-  updateProduct: (id: string, data: Partial<Product>) =>
-    request<Product>(`/admin/products/${id}`, {
-      method: 'PUT',
-      body: JSON.stringify(data),
-    }, true),
-  deleteProduct: (id: string) =>
-    request<void>(`/admin/products/${id}`, { method: 'DELETE' }, true),
-
-  getOrders: () => request<Order[]>('/admin/orders', {}, true),
-  getOrder: (id: string) => request<Order>(`/admin/orders/${id}`, {}, true),
-  updateOrderStatus: (id: string, status: OrderStatus) =>
-    request<Order>(`/admin/orders/${id}`, {
-      method: 'PATCH',
-      body: JSON.stringify({ status }),
-    }, true),
+  login: (_username: string, _password: string) => adminUnavailable(),
+  getStats: (): Promise<AdminStats> => adminUnavailable(),
+  getProducts: (): Promise<Product[]> => adminUnavailable(),
+  getProduct: (_id: string): Promise<Product> => adminUnavailable(),
+  createProduct: (_data: Partial<Product>): Promise<Product> => adminUnavailable(),
+  updateProduct: (_id: string, _data: Partial<Product>): Promise<Product> => adminUnavailable(),
+  deleteProduct: (_id: string): Promise<void> => adminUnavailable(),
+  uploadImage: (
+    _file: File,
+    _slug?: string,
+    _name?: string,
+  ): Promise<{ url: string; slug: string }> => adminUnavailable(),
+  getOrders: (): Promise<Order[]> => adminUnavailable(),
+  getOrder: (_id: string): Promise<Order> => adminUnavailable(),
+  updateOrderStatus: (_id: string, _status: OrderStatus): Promise<Order> => adminUnavailable(),
 }

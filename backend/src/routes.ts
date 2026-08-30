@@ -1,11 +1,25 @@
 import { Router } from 'express'
+import multer from 'multer'
 import { loginHandler, requireAuth } from './auth.js'
 import * as repo from './repository.js'
+import { uploadProductImage } from './storage.js'
 import type { Order, OrderStatus, Product } from './types.js'
 import { slugify } from './utils.js'
 
 export const publicRouter = Router()
 export const adminRouter = Router()
+
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (_req, file, cb) => {
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true)
+    } else {
+      cb(new Error('Only image files are allowed'))
+    }
+  },
+})
 
 function handleError(res: import('express').Response, err: unknown) {
   console.error(err)
@@ -71,6 +85,26 @@ adminRouter.post('/login', loginHandler)
 // --- Admin routes (protected) ---
 
 adminRouter.use(requireAuth)
+
+adminRouter.post('/upload', upload.single('file'), async (req, res) => {
+  try {
+    const file = req.file
+    if (!file) {
+      res.status(400).json({ error: 'Image file is required' })
+      return
+    }
+
+    const slug =
+      (req.body.slug as string | undefined)?.trim() ||
+      slugify((req.body.name as string | undefined) ?? '') ||
+      `upload-${Date.now()}`
+
+    const url = await uploadProductImage(slug, file.buffer, file.mimetype)
+    res.json({ url, slug })
+  } catch (err) {
+    handleError(res, err)
+  }
+})
 
 adminRouter.get('/stats', async (_req, res) => {
   try {

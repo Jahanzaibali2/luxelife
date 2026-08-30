@@ -31,6 +31,14 @@ npm run dev
 
 The API starts on `http://localhost:3001`. On first run it seeds 7 products if the table is empty.
 
+Upload product images to Supabase Storage (after configuring `.env`):
+
+```bash
+npm run migrate-images
+```
+
+Images are stored in the public `product-images` bucket. Admin uploads go through `POST /api/admin/upload`.
+
 To seed manually:
 
 ```bash

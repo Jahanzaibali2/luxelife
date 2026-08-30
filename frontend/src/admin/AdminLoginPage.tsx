@@ -19,8 +19,8 @@ export default function AdminLoginPage() {
     try {
       await login(username, password)
       navigate('/admin')
-    } catch {
-      setError('Invalid ID or password.')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Invalid ID or password.')
     } finally {
       setLoading(false)
     }
