@@ -47,14 +47,14 @@ export default function AdminDashboardPage() {
       <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
         <Link
           to="/admin/products/new"
-          className="inline-flex items-center justify-center gap-2 bg-primary text-on-primary font-label-caps text-label-caps px-5 sm:px-6 py-3 rounded hover:opacity-90 transition-opacity w-full sm:w-auto"
+          className="inline-flex items-center justify-center gap-2 bg-primary text-on-primary font-label-caps text-label-caps px-5 sm:px-6 py-3 rounded hover:opacity-90 transition-opacity btn-lift w-full sm:w-auto"
         >
           <span className="material-symbols-outlined text-[18px]">add</span>
           Add Product
         </Link>
         <Link
           to="/admin/orders"
-          className="inline-flex items-center justify-center gap-2 minimal-border text-primary font-label-caps text-label-caps px-5 sm:px-6 py-3 rounded hover:bg-surface-variant transition-colors w-full sm:w-auto"
+          className="inline-flex items-center justify-center gap-2 minimal-border text-primary font-label-caps text-label-caps px-5 sm:px-6 py-3 rounded hover:bg-surface-variant transition-colors btn-lift-secondary w-full sm:w-auto"
         >
           View All Orders
         </Link>

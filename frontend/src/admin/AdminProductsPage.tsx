@@ -29,7 +29,7 @@ export default function AdminProductsPage() {
         <h2 className="font-headline-md text-headline-md text-primary">Products</h2>
         <Link
           to="/admin/products/new"
-          className="inline-flex items-center justify-center gap-2 bg-primary text-on-primary font-label-caps text-label-caps px-5 py-3 rounded hover:opacity-90 w-full sm:w-auto"
+          className="inline-flex items-center justify-center gap-2 bg-primary text-on-primary font-label-caps text-label-caps px-5 py-3 rounded hover:opacity-90 btn-lift w-full sm:w-auto"
         >
           <span className="material-symbols-outlined text-[18px]">add</span>
           Add Product
