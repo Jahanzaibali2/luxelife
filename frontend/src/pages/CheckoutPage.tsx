@@ -1,10 +1,11 @@
 import { useState } from 'react'
+import { Link, Navigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CheckoutHeader } from '../components/layout/Header'
 import { Footer } from '../components/layout/Footer'
-import { useCart } from '../context/CartContext'
+import { formatPrice, useCart } from '../context/CartContext'
 import { api } from '../lib/api'
 
 const checkoutSchema = z.object({
@@ -21,18 +22,15 @@ const checkoutSchema = z.object({
 
 type CheckoutForm = z.infer<typeof checkoutSchema>
 
-const PAYMENT_LABELS: Record<string, string> = {
-  card: 'Credit / Debit Card',
-  apple: 'Apple Pay',
-  cod: 'Cash on Delivery',
-}
+const COD = 'Cash on Delivery'
 
 export default function CheckoutPage() {
   const { items, subtotal, clearCart } = useCart()
-  const [payment, setPayment] = useState('card')
+  const currency = items[0]?.currency ?? '$'
   const [submitted, setSubmitted] = useState(false)
   const [orderNumber, setOrderNumber] = useState('')
   const [submitError, setSubmitError] = useState('')
+  const [submitting, setSubmitting] = useState(false)
   const {
     register,
     handleSubmit,
@@ -40,9 +38,10 @@ export default function CheckoutPage() {
   } = useForm<CheckoutForm>({ resolver: zodResolver(checkoutSchema) })
 
   const onSubmit = async (data: CheckoutForm) => {
+    if (!items.length) return
     setSubmitError('')
+    setSubmitting(true)
     try {
-      const currency = items[0]?.currency ?? '$'
       const order = await api.createOrder({
         customer: {
           email: data.email,
@@ -66,14 +65,20 @@ export default function CheckoutPage() {
         })),
         subtotal,
         currency,
-        paymentMethod: PAYMENT_LABELS[payment] ?? payment,
+        paymentMethod: COD,
       })
       setOrderNumber(order.orderNumber)
       clearCart()
       setSubmitted(true)
-    } catch {
-      setSubmitError('Failed to place order. Please try again.')
+    } catch (err) {
+      setSubmitError(err instanceof Error ? err.message : 'Failed to place order. Please try again.')
+    } finally {
+      setSubmitting(false)
     }
+  }
+
+  if (!submitted && items.length === 0) {
+    return <Navigate to="/cart" replace />
   }
 
   return (
@@ -89,7 +94,10 @@ export default function CheckoutPage() {
           <div className="bg-surface-container-low p-8 rounded-lg border border-outline/15 text-center max-w-lg mx-auto">
             <span className="material-symbols-outlined text-4xl text-primary mb-4">check_circle</span>
             <h2 className="font-headline-md text-headline-md text-primary mb-2">Order Placed</h2>
-            <p className="font-body-md text-secondary">Thank you for your order{orderNumber ? ` (${orderNumber})` : ''}. A confirmation email will be sent shortly.</p>
+            <p className="font-body-md text-secondary mb-6">
+              Thank you. Your cash-on-delivery order{orderNumber ? ` ${orderNumber}` : ''} is confirmed. Pay the courier when it arrives.
+            </p>
+            <Link to="/shop" className="font-label-caps text-label-caps text-primary underline">Continue shopping</Link>
           </div>
         ) : (
           <form onSubmit={handleSubmit(onSubmit)}>
@@ -180,37 +188,26 @@ export default function CheckoutPage() {
                   <div>
                     <h3 className="font-headline-md text-headline-md text-primary mb-6">Order Summary</h3>
                     <div className="flex flex-col gap-6 mb-6">
-                      <div className="flex gap-4 items-start">
-                        <div className="w-20 h-24 bg-surface-container flex-shrink-0 rounded overflow-hidden">
-                          <img className="w-full h-full object-cover" alt="" loading="lazy" decoding="async" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBUem9PMgiJt7xkNYiHqJEtjuM8KbsT2VkbNkKsUJ-AOJbg1FABqAudVTOldqUpc6j3oqyEymrNYMhoGoPYYYxgawhzaoF_cTZsl-NHhhqAHnRxSsonWXf-PKvy6KQg0q8MFOI_HorZ1cdGiBKy9o8Qp8K7omNRxfLlGgA3QUPZ00lm92PLIHfNTwgkH58EvMbKZRvjR_2Hdslh0KpZlYP4cLWu3so_g-5DNhcTeVvleuKQusQOh4ibRA" />
-                        </div>
-                        <div className="flex flex-col flex-grow">
-                          <div className="flex justify-between items-start mb-1">
-                            <span className="font-body-md text-body-md font-medium text-primary line-clamp-2 pr-4">Heritage Leather Weekend Duffel</span>
-                            <span className="font-body-md text-body-md font-medium text-primary whitespace-nowrap">AED 2,450</span>
+                      {items.map((item) => (
+                        <div key={item.id} className="flex gap-4 items-start">
+                          <div className="w-20 h-24 bg-surface-container flex-shrink-0 rounded overflow-hidden">
+                            <img className="w-full h-full object-cover" alt={item.name} loading="lazy" decoding="async" src={item.image} />
                           </div>
-                          <span className="font-label-sm text-label-sm text-secondary mb-2">Caramel / One Size</span>
-                          <span className="font-label-sm text-label-sm text-secondary">Qty: 1</span>
-                        </div>
-                      </div>
-                      <div className="flex gap-4 items-start">
-                        <div className="w-20 h-24 bg-surface-container flex-shrink-0 rounded overflow-hidden">
-                          <img className="w-full h-full object-cover" alt="" loading="lazy" decoding="async" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCY0aBnxMD8PqqvUBZWCf_-qzC2Wk9NscHzMjb394C7SmixkjB1YTSfSOXqT-zZCZqd-biTzgzHIFbOzpC1yU0WC8F8y3jBaefPCXx1VIqm8TpUM6_TNHo53MBfspVpnHRrDoY2OWbd6xe5TjoZJUbf2kVaCVRpaV5drfbJxY7UGOA9rdC7rLUG8QbNWQxRt7yBEvuSS2Mu7LFv54PQcVjKrgRGcbuBUOHmd-o9JhRdFeQpOR6Knug9dw" />
-                        </div>
-                        <div className="flex flex-col flex-grow">
-                          <div className="flex justify-between items-start mb-1">
-                            <span className="font-body-md text-body-md font-medium text-primary line-clamp-2 pr-4">Noir Ceramic Espresso Set</span>
-                            <span className="font-body-md text-body-md font-medium text-primary whitespace-nowrap">AED 320</span>
+                          <div className="flex flex-col flex-grow">
+                            <div className="flex justify-between items-start mb-1">
+                              <span className="font-body-md text-body-md font-medium text-primary line-clamp-2 pr-4">{item.name}</span>
+                              <span className="font-body-md text-body-md font-medium text-primary whitespace-nowrap">{formatPrice(item.price * item.quantity, item.currency)}</span>
+                            </div>
+                            <span className="font-label-sm text-label-sm text-secondary mb-2">{item.variant}</span>
+                            <span className="font-label-sm text-label-sm text-secondary">Qty: {item.quantity}</span>
                           </div>
-                          <span className="font-label-sm text-label-sm text-secondary mb-2">Matte Black / Set of 2</span>
-                          <span className="font-label-sm text-label-sm text-secondary">Qty: 1</span>
                         </div>
-                      </div>
+                      ))}
                     </div>
                     <div className="border-t border-outline/15 pt-6 pb-6 flex flex-col gap-3">
                       <div className="flex justify-between items-center">
                         <span className="font-body-md text-body-md text-secondary">Subtotal</span>
-                        <span className="font-body-md text-body-md text-primary">AED 2,770</span>
+                        <span className="font-body-md text-body-md text-primary">{formatPrice(subtotal, currency)}</span>
                       </div>
                       <div className="flex justify-between items-center">
                         <span className="font-body-md text-body-md text-secondary">Shipping</span>
@@ -223,32 +220,23 @@ export default function CheckoutPage() {
                     </div>
                     <div className="border-t border-outline/15 pt-6 mb-8 flex justify-between items-center">
                       <span className="font-headline-md text-headline-md text-primary">Total</span>
-                      <span className="font-headline-md text-headline-md text-primary">AED 2,770</span>
+                      <span className="font-headline-md text-headline-md text-primary">{formatPrice(subtotal, currency)}</span>
                     </div>
                   </div>
                   <div>
                     <h4 className="font-label-caps text-label-caps text-secondary mb-4 tracking-[0.1em]">PAYMENT METHOD</h4>
                     <div className="flex flex-col gap-3 mb-8">
-                      {[
-                        { id: 'card', label: 'Credit / Debit Card', showCards: true },
-                        { id: 'apple', label: 'Apple Pay', showCards: false },
-                        { id: 'cod', label: 'Cash on Delivery', showCards: false },
-                      ].map((method) => (
-                        <label key={method.id} className={`flex items-center gap-3 p-4 border rounded cursor-pointer ${payment === method.id ? 'border-primary-container bg-surface' : 'border-outline-variant bg-transparent opacity-70 hover:opacity-100 transition-opacity'}`}>
-                          <input type="radio" name="payment" className="text-primary-container focus:ring-primary-container w-4 h-4" checked={payment === method.id} onChange={() => setPayment(method.id)} />
-                          <span className="font-body-md text-body-md text-primary">{method.label}</span>
-                          {method.showCards && (
-                            <div className="ml-auto flex gap-1">
-                              <span className="w-8 h-5 bg-surface-container rounded-sm border border-outline/10 text-[8px] flex items-center justify-center font-bold">VISA</span>
-                              <span className="w-8 h-5 bg-surface-container rounded-sm border border-outline/10 text-[8px] flex items-center justify-center font-bold">MC</span>
-                            </div>
-                          )}
-                        </label>
-                      ))}
+                      <div className="flex items-center gap-3 p-4 border border-primary-container bg-surface rounded">
+                        <span className="material-symbols-outlined text-primary">payments</span>
+                        <div>
+                          <p className="font-body-md text-body-md text-primary">Cash on Delivery</p>
+                          <p className="font-label-sm text-label-sm text-secondary">Pay the courier when your order arrives.</p>
+                        </div>
+                      </div>
                     </div>
                     {submitError && <p className="text-error text-sm mb-4">{submitError}</p>}
-                    <button type="submit" className="w-full bg-primary-container text-on-primary font-label-caps text-label-caps tracking-[0.1em] py-4 rounded hover:bg-tertiary transition-colors duration-300 flex items-center justify-center gap-2">
-                      PLACE ORDER
+                    <button type="submit" disabled={submitting || items.length === 0} className="w-full bg-primary-container text-on-primary font-label-caps text-label-caps tracking-[0.1em] py-4 rounded hover:bg-tertiary transition-colors duration-300 flex items-center justify-center gap-2 disabled:opacity-50">
+                      {submitting ? 'PLACING ORDER…' : 'PLACE ORDER'}
                       <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
                     </button>
                     <p className="text-center font-label-sm text-label-sm text-secondary mt-4">

@@ -106,6 +106,7 @@ export const api = {
     currency: '$' | 'AED'
     paymentMethod: string
   }): Promise<Order> {
+    if (!input.items.length) throw new Error('Your cart is empty')
     const now = new Date().toISOString()
     const order: Order = {
       id: crypto.randomUUID(),
@@ -115,7 +116,7 @@ export const api = {
       items: input.items,
       subtotal: input.subtotal,
       currency: input.currency,
-      paymentMethod: input.paymentMethod,
+      paymentMethod: 'Cash on Delivery',
       createdAt: now,
       updatedAt: now,
     }

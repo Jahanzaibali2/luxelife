@@ -48,6 +48,7 @@ export default function AdminOrdersPage() {
                 <th className="px-6 py-3">Order #</th>
                 <th className="px-6 py-3">Customer</th>
                 <th className="px-6 py-3">Items</th>
+                <th className="px-6 py-3">Payment</th>
                 <th className="px-6 py-3">Total</th>
                 <th className="px-6 py-3">Status</th>
                 <th className="px-6 py-3">Date</th>
@@ -62,7 +63,8 @@ export default function AdminOrdersPage() {
                     <p className="text-primary">{order.customer.firstName} {order.customer.lastName}</p>
                     <p className="text-sm text-secondary">{order.customer.email}</p>
                   </td>
-                  <td className="px-6 py-4 text-secondary">{order.items.length} item(s)</td>
+                  <td className="px-6 py-4 text-secondary">{order.items.reduce((n, i) => n + i.quantity, 0)} item(s)</td>
+                  <td className="px-6 py-4 text-secondary text-sm">{order.paymentMethod}</td>
                   <td className="px-6 py-4 text-primary">{order.currency} {order.subtotal.toFixed(2)}</td>
                   <td className="px-6 py-4"><StatusBadge status={order.status} /></td>
                   <td className="px-6 py-4 text-secondary text-sm">{new Date(order.createdAt).toLocaleString()}</td>

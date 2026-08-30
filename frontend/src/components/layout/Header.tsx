@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { LOGO_URL, NAV_ITEMS, type NavKey } from '../../data/constants'
+import { useCart } from '../../context/CartContext'
 
 export type HeaderVariant =
   | 'home'
@@ -60,6 +61,7 @@ function HeaderActions({
   hidePersonOnMobile?: boolean
   hideFavoriteOnMobile?: boolean
 }) {
+  const { itemCount } = useCart()
   const iconClass =
     iconStyle === 'opacity'
       ? 'hover:opacity-70 transition-opacity'
@@ -94,11 +96,11 @@ function HeaderActions({
       <Link
         to="/cart"
         aria-label="shopping_bag"
-        className={
+        className={`relative ${
           cartActive
             ? 'text-primary dark:text-primary-fixed border-b border-primary dark:border-primary-fixed pb-1'
             : iconClass
-        }
+        }`}
       >
         <span
           className="material-symbols-outlined"
@@ -110,6 +112,11 @@ function HeaderActions({
         >
           shopping_bag
         </span>
+        {itemCount > 0 && (
+          <span className="absolute -top-1 -right-2 min-w-4 h-4 px-1 rounded-full bg-primary text-on-primary text-[10px] font-label-caps flex items-center justify-center">
+            {itemCount}
+          </span>
+        )}
       </Link>
     </div>
   )

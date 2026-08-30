@@ -44,19 +44,23 @@ export default function ProductDetailPage() {
     )
   }
 
+  const cartPayload = {
+    id: product.slug,
+    name: product.name,
+    variant: product.subtitle || 'Standard',
+    price: product.price,
+    currency: product.currency,
+    image: product.image,
+  }
+
   const handleAddToCart = () => {
-    addItem(
-      {
-        id: product.slug,
-        name: product.name,
-        variant: product.subtitle || 'Standard',
-        price: product.price,
-        currency: product.currency,
-        image: product.image,
-      },
-      quantity,
-    )
+    addItem(cartPayload, quantity)
     navigate('/cart')
+  }
+
+  const handleBuyNow = () => {
+    addItem(cartPayload, quantity)
+    navigate('/checkout')
   }
 
   return (
@@ -134,7 +138,7 @@ export default function ProductDetailPage() {
                 Add to Cart
               </button>
               <div className="flex gap-4">
-                <button type="button" onClick={() => navigate('/checkout')} className="flex-1 h-14 border border-primary/20 text-primary bg-transparent font-label-caps text-label-caps hover:bg-surface-bright transition-colors flex items-center justify-center">
+                <button type="button" onClick={handleBuyNow} disabled={!product.inStock} className="flex-1 h-14 border border-primary/20 text-primary bg-transparent font-label-caps text-label-caps hover:bg-surface-bright transition-colors flex items-center justify-center disabled:opacity-50">
                   Buy Now
                 </button>
                 <button type="button" aria-label="Add to Wishlist" className="w-14 h-14 border border-primary/20 text-primary bg-transparent hover:bg-surface-bright transition-colors flex items-center justify-center focus:outline-none">

@@ -5,6 +5,7 @@ import { Header } from '../components/layout/Header'
 
 export default function CartPage() {
   const { items, removeItem, updateQuantity, subtotal } = useCart()
+  const currency = items[0]?.currency ?? '$'
 
   return (
     <div className="text-on-background font-body-md antialiased min-h-screen flex flex-col bg-warm-ivory">
@@ -14,6 +15,14 @@ export default function CartPage() {
           <h1 className="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-2">Your Curated Selection</h1>
           <p className="font-body-lg text-body-lg text-secondary">Review your items before proceeding to checkout.</p>
         </div>
+        {items.length === 0 ? (
+          <div className="bg-surface-container-lowest p-12 rounded-lg border border-outline/15 text-center">
+            <p className="font-body-lg text-secondary mb-6">Your cart is empty.</p>
+            <Link to="/shop" className="inline-flex items-center gap-2 font-label-caps text-label-caps text-primary underline">
+              Shop the collection
+            </Link>
+          </div>
+        ) : (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-gutter lg:gap-16">
           <div className="lg:col-span-8 flex flex-col gap-8">
             {items.map((item) => (
@@ -51,20 +60,20 @@ export default function CartPage() {
               <div className="space-y-4 mb-8">
                 <div className="flex justify-between font-body-md text-body-md text-secondary">
                   <span>Subtotal</span>
-                  <span>{formatPrice(subtotal, '$')}</span>
+                  <span>{formatPrice(subtotal, currency)}</span>
                 </div>
                 <div className="flex justify-between font-body-md text-body-md text-secondary">
                   <span>Estimated Shipping</span>
                   <span>Complimentary</span>
                 </div>
                 <div className="flex justify-between font-body-md text-body-md text-secondary">
-                  <span>Taxes</span>
-                  <span>Calculated at checkout</span>
+                  <span>Payment</span>
+                  <span>Cash on Delivery</span>
                 </div>
               </div>
               <div className="flex justify-between items-end mb-8 pt-6 border-t border-outline/15">
                 <span className="font-body-lg text-body-lg text-primary">Total</span>
-                <span className="font-headline-md text-headline-md text-primary">{formatPrice(subtotal, '$')}</span>
+                <span className="font-headline-md text-headline-md text-primary">{formatPrice(subtotal, currency)}</span>
               </div>
               <Link to="/checkout" className="block w-full bg-[#452829] text-white font-label-caps text-label-caps tracking-[0.1em] py-4 rounded hover:bg-[#3b2d25] transition-colors mb-6 uppercase text-center">
                 Proceed to Checkout
@@ -78,6 +87,7 @@ export default function CartPage() {
             </div>
           </div>
         </div>
+        )}
       </main>
       <Footer variant="cart" />
     </div>

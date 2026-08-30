@@ -102,7 +102,7 @@ export default function AdminOrderDetailPage() {
             </button>
           ))}
         </div>
-        <p className="text-sm text-secondary mt-3">Payment: {order.paymentMethod}</p>
+        <p className="text-sm text-secondary mt-3">Payment: {order.paymentMethod} — collect cash on delivery.</p>
       </div>
     </div>
   )
