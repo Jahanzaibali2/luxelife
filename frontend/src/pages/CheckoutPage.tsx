@@ -235,7 +235,7 @@ export default function CheckoutPage() {
                       </div>
                     </div>
                     {submitError && <p className="text-error text-sm mb-4">{submitError}</p>}
-                    <button type="submit" disabled={submitting || items.length === 0} className="w-full bg-primary-container text-on-primary font-label-caps text-label-caps tracking-[0.1em] py-4 rounded hover:bg-tertiary transition-colors duration-300 flex items-center justify-center gap-2 disabled:opacity-50">
+                    <button type="submit" disabled={submitting || items.length === 0} className="w-full bg-primary-container text-on-primary font-label-caps text-label-caps tracking-[0.1em] py-4 rounded hover:bg-tertiary transition-colors duration-300 btn-lift flex items-center justify-center gap-2 disabled:opacity-50">
                       {submitting ? 'PLACING ORDER…' : 'PLACE ORDER'}
                       <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
                     </button>
