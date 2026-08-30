@@ -1,0 +1,140 @@
+@import 'tailwindcss';
+@config '../tailwind.config.ts';
+@plugin '@tailwindcss/forms';
+
+@layer base {
+  html {
+    @apply antialiased;
+  }
+
+  body {
+    @apply m-0;
+  }
+}
+
+@layer components {
+  .material-symbols-outlined {
+    font-variation-settings:
+      'FILL' 0,
+      'wght' 400,
+      'GRAD' 0,
+      'opsz' 24;
+  }
+
+  .icon-fill {
+    font-variation-settings:
+      'FILL' 1,
+      'wght' 400,
+      'GRAD' 0,
+      'opsz' 24;
+  }
+
+  .product-card-hover:hover {
+    background-color: #e8d1c5;
+    transition: background-color 0.3s ease;
+  }
+
+  .product-card {
+    transition:
+      background-color 0.3s ease,
+      transform 0.3s ease;
+  }
+
+  .product-card:hover {
+    @apply bg-soft-blush;
+  }
+
+  .product-image {
+    transition: transform 0.5s ease;
+  }
+
+  .product-card:hover .product-image {
+    transform: scale(1.03);
+  }
+
+  .image-zoom-hover img {
+    transition: transform 0.7s ease;
+  }
+
+  .image-zoom-hover:hover img {
+    transform: scale(1.05);
+  }
+
+  .minimal-border {
+    border: 1px solid rgba(45, 20, 21, 0.15);
+  }
+
+  .gallery-main-image {
+    transition: transform 0.3s ease;
+  }
+
+  .gallery-main-image:hover {
+    transform: scale(1.05);
+  }
+
+  .input-minimal {
+    @apply border-0 border-b border-outline-variant bg-transparent px-0 shadow-none;
+    border-radius: 0;
+    transition: border-color 0.3s ease;
+  }
+
+  .input-minimal:focus {
+    @apply border-b-primary-container outline-none shadow-none;
+  }
+
+  .input-field {
+    border-bottom: 1px solid rgba(45, 20, 21, 0.15);
+    transition: border-color 0.3s ease;
+  }
+
+  .input-field:focus {
+    outline: none;
+    border-bottom-color: #2d1415;
+    box-shadow: none;
+  }
+
+  .accent-bg {
+    background-color: #e8d1c5;
+  }
+
+  .accordion-content {
+    max-height: 0;
+    overflow: hidden;
+    transition:
+      max-height 0.4s ease-out,
+      opacity 0.3s ease-out;
+    opacity: 0;
+  }
+
+  .accordion-content.open {
+    max-height: 500px;
+    opacity: 1;
+  }
+
+  .accordion-icon {
+    transition: transform 0.3s ease;
+  }
+
+  .admin-input {
+    @apply w-full border-b border-outline/30 bg-transparent py-2 font-body-md text-primary focus:border-primary focus:ring-0 focus:outline-none;
+  }
+}
+
+@layer utilities {
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #d4c3c2;
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #827474;
+  }
+}
