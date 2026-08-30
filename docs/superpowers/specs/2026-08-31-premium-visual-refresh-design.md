@@ -21,15 +21,11 @@ The user selected **B — Whisper Lift**: still avoids heavy/hard shadows (stays
 **In scope:** All customer-facing pages (`HomePage`, `ShopAllPage`, `ProductDetailPage`, `CartPage`, `CheckoutPage`, `AboutPage`, `FAQPage`, `ContactPage`) plus shared layout components (`Header`, `Footer`, `AnnouncementBar`, `Logo`) and all `admin/*` pages.
 
 **Out of scope / explicitly unchanged:**
-- Color palette / design tokens in `tailwind.config.ts` and `DESIGN.md` (one exception — see Bug Fix below)
+- Color palette / design tokens in `tailwind.config.ts` and `DESIGN.md`, including `primary-container: '#000000'` — this is an intentional deviation from the DESIGN.md frontmatter (deliberately darker/black), not a bug. Leave as-is.
 - Font sizes, line-heights, letter-spacing scale
 - Spacing scale, breakpoints, container widths
 - Component/page layout structure, DOM structure, routes, business logic
 - Responsiveness (mobile/tablet/desktop breakpoint behavior)
-
-## Bug Fix
-
-`tailwind.config.ts` defines `'primary-container': '#000000'`. `DESIGN.md`'s color frontmatter specifies `primary-container: '#452829'` (Deep Cocoa). This is a data-entry bug, not an intentional deviation — it currently renders the homepage "Your Lifestyle Deserves Better Choices" band (`bg-primary-container`) as pure black instead of the intended warm cocoa tone. Fix: change the value to `#452829` to match the spec.
 
 ## Design
 
@@ -70,6 +66,5 @@ Same `.surface-card`, `.btn-primary`/`.btn-secondary`, `.input-premium` classes 
 
 This is a pure visual/CSS change with no logic changes. Verification is manual:
 - Run the dev server and visually check each in-scope page (light and, if `darkMode: 'class'` is exercised anywhere, dark) for the new hover/elevation behavior.
-- Confirm the `primary-container` fix renders correctly on the homepage promise band.
 - Confirm no layout shift, size change, or responsive breakpoint regression versus current behavior (spot-check mobile widths for pages touched).
 - No automated test suite exists for visual styling in this repo; none is being added since there's no non-trivial branching logic introduced (pure CSS/class changes).
