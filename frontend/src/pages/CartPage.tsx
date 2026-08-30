@@ -26,7 +26,7 @@ export default function CartPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-gutter lg:gap-16">
           <div className="lg:col-span-8 flex flex-col gap-8">
             {items.map((item) => (
-              <div key={item.id} className="flex flex-col sm:flex-row gap-6 bg-surface-container-lowest p-6 rounded-lg border border-outline/15 group hover:bg-[#E8D1C5] transition-colors duration-500">
+              <div key={item.id} className="flex flex-col sm:flex-row gap-6 bg-surface-container-lowest p-6 rounded-lg border border-outline/15 group card-lift">
                 <div className="w-full sm:w-40 h-48 sm:h-40 shrink-0 bg-surface-container rounded overflow-hidden">
                   <img alt={item.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src={item.image} loading="lazy" decoding="async" />
                 </div>
@@ -75,7 +75,7 @@ export default function CartPage() {
                 <span className="font-body-lg text-body-lg text-primary">Total</span>
                 <span className="font-headline-md text-headline-md text-primary">{formatPrice(subtotal, currency)}</span>
               </div>
-              <Link to="/checkout" className="block w-full bg-[#452829] text-white font-label-caps text-label-caps tracking-[0.1em] py-4 rounded hover:bg-[#3b2d25] transition-colors mb-6 uppercase text-center">
+              <Link to="/checkout" className="block w-full bg-[#452829] text-white font-label-caps text-label-caps tracking-[0.1em] py-4 rounded hover:bg-[#3b2d25] transition-colors btn-lift mb-6 uppercase text-center">
                 Proceed to Checkout
               </Link>
               <div className="text-center">
