@@ -49,7 +49,7 @@ export default function AdminLoginPage() {
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-full border-b border-outline/30 bg-transparent py-2 font-body-md focus:border-primary focus:ring-0 focus:outline-none"
+              className="w-full border-b border-outline/30 bg-transparent py-2 font-body-md focus:border-primary focus:ring-0 focus:outline-none field-glow"
               placeholder="Enter admin ID"
               required
               autoComplete="username"
@@ -64,7 +64,7 @@ export default function AdminLoginPage() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full border-b border-outline/30 bg-transparent py-2 font-body-md focus:border-primary focus:ring-0 focus:outline-none"
+              className="w-full border-b border-outline/30 bg-transparent py-2 font-body-md focus:border-primary focus:ring-0 focus:outline-none field-glow"
               placeholder="Enter password"
               required
               autoComplete="current-password"
@@ -74,7 +74,7 @@ export default function AdminLoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-primary text-on-primary font-label-caps text-label-caps py-4 rounded hover:opacity-90 transition-opacity disabled:opacity-50"
+            className="w-full bg-primary text-on-primary font-label-caps text-label-caps py-4 rounded hover:opacity-90 transition-opacity btn-lift disabled:opacity-50"
           >
             {loading ? 'Signing in...' : 'Sign In'}
           </button>
