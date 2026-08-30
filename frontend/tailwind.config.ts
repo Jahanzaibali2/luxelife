@@ -22,7 +22,7 @@ export default {
         'on-primary-container': '#b78e8e',
         'surface-dim': '#e0d8d7',
         'on-primary-fixed-variant': '#5f3e3f',
-        'primary-container': '#452829',
+        'primary-container': '#000000',
         'secondary-fixed-dim': '#c5c6c9',
         'surface-tint': '#795556',
         surface: '#fff8f7',

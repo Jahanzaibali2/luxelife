@@ -7,15 +7,15 @@ import { slugify } from './utils.js'
 /** Reliable product photos when legacy external URLs fail */
 const FALLBACK_IMAGES: Record<string, string> = {
   'aura-ceramic-vase':
-    'https://images.unsplash.com/photo-1578746355630-4b1e9c5ecb8e?w=1200&q=85&auto=format',
+    'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=1200&q=85&auto=format',
   'essential-weekender':
     'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=1200&q=85&auto=format',
   'sculptural-vase-trio':
-    'https://images.unsplash.com/photo-1615485500908-256d38fa2d58?w=1200&q=85&auto=format',
+    'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=1200&q=85&auto=format',
   'titanium-chronograph':
     'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=1200&q=85&auto=format',
   'noir-fig-amber-candle':
-    'https://images.unsplash.com/photo-1602607623241-cf29a0b5be0a?w=1200&q=85&auto=format',
+    'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=1200&q=85&auto=format',
   'lumiere-pearl-pendant':
     'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=1200&q=85&auto=format',
   'oversized-linen-blazer':
@@ -24,8 +24,8 @@ const FALLBACK_IMAGES: Record<string, string> = {
 
 const GALLERY_FALLBACKS: Record<string, string[]> = {
   'aura-ceramic-vase': [
-    'https://images.unsplash.com/photo-1615485500908-256d38fa2d58?w=1200&q=85&auto=format',
     'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=1200&q=85&auto=format',
+    'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=1200&q=85&auto=format',
   ],
 }
 

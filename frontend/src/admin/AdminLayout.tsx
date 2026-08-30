@@ -1,4 +1,5 @@
 import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom'
+import { Logo } from '../components/brand/Logo'
 import { useAdminAuth } from '../context/AdminAuthContext'
 
 const NAV = [
@@ -20,9 +21,12 @@ export default function AdminLayout() {
     <div className="min-h-screen bg-warm-ivory flex font-body-md">
       <aside className="w-64 bg-primary-container text-on-primary flex flex-col shrink-0">
         <div className="p-6 border-b border-on-primary/10">
-          <Link to="/admin" className="font-headline-md text-headline-md text-surface-container block">
-            LuxeLife
-          </Link>
+          <Logo
+            to="/admin"
+            className="block"
+            textClassName="font-headline-md text-headline-md text-surface-container"
+            imageClassName="h-8 w-8 object-contain shrink-0"
+          />
           <span className="font-label-caps text-label-caps text-on-primary-container text-[10px] tracking-widest mt-1 block">
             ADMIN
           </span>

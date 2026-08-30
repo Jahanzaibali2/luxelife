@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
+import { Logo } from '../components/brand/Logo'
 import { useAdminAuth } from '../context/AdminAuthContext'
 
 export default function AdminLoginPage() {
@@ -30,7 +31,12 @@ export default function AdminLoginPage() {
     <div className="min-h-screen bg-primary-container flex items-center justify-center px-4 font-body-md">
       <div className="w-full max-w-md bg-surface p-8 md:p-12 rounded border border-outline/15">
         <div className="text-center mb-8">
-          <h1 className="font-display-lg text-headline-lg text-primary mb-2">LuxeLife</h1>
+          <Logo
+            to="/"
+            className="justify-center flex-col mb-2"
+            imageClassName="h-12 w-12 object-contain shrink-0"
+            textClassName="font-display-lg text-headline-lg text-primary"
+          />
           <p className="font-label-caps text-label-caps text-secondary tracking-widest">ADMIN LOGIN</p>
         </div>
         <form onSubmit={handleSubmit} className="space-y-6">

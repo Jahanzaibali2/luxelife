@@ -52,5 +52,8 @@ export async function uploadProductImageFromUrl(
 
   const mimeType = res.headers.get('content-type')?.split(';')[0] ?? 'image/jpeg'
   const buffer = Buffer.from(await res.arrayBuffer())
+  if (buffer.length < 1000) {
+    throw new Error(`Image too small (${buffer.length} bytes), likely a failed download: ${sourceUrl}`)
+  }
   return uploadProductImage(productSlug, buffer, mimeType, filename)
 }

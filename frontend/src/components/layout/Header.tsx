@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { LOGO_URL, NAV_ITEMS, type NavKey } from '../../data/constants'
+import { Logo } from '../brand/Logo'
+import { NAV_ITEMS, type NavKey } from '../../data/constants'
 import { useCart } from '../../context/CartContext'
 
 export type HeaderVariant =
@@ -154,12 +155,11 @@ export function Header({ variant, activeNav }: HeaderProps) {
         >
           <span className="material-symbols-outlined">menu</span>
         </button>
-        <Link
+        <Logo
           to="/"
-          className="font-headline-md text-headline-md font-semibold text-primary absolute left-1/2 -translate-x-1/2"
-        >
-          LuxeLife
-        </Link>
+          className="absolute left-1/2 -translate-x-1/2"
+          textClassName="font-headline-md text-headline-md font-semibold text-primary"
+        />
         <div className="flex space-x-4 text-primary">
           <button type="button" className="hover:text-surface-tint transition-colors">
             <span className="material-symbols-outlined">search</span>
@@ -193,9 +193,10 @@ export function Header({ variant, activeNav }: HeaderProps) {
         <button type="button" className="md:hidden text-primary flex items-center justify-center p-2" onClick={() => setMobileOpen(!mobileOpen)}>
           <span className="material-symbols-outlined">menu</span>
         </button>
-        <Link to="/" className="font-headline-md text-headline-md font-semibold text-primary dark:text-primary-fixed">
-          LuxeLife
-        </Link>
+        <Logo
+          to="/"
+          textClassName="font-headline-md text-headline-md font-semibold text-primary dark:text-primary-fixed"
+        />
         <div className="hidden md:flex items-center space-x-8 font-label-caps text-label-caps tracking-[0.1em]">
           {NAV_ITEMS.map((item) => (
             <Link key={item.key} to={item.href} className="text-secondary dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed transition-colors duration-300">
@@ -215,9 +216,10 @@ export function Header({ variant, activeNav }: HeaderProps) {
           <button type="button" className="md:hidden text-primary dark:text-on-primary-fixed" onClick={() => setMobileOpen(!mobileOpen)}>
             <span className="material-symbols-outlined">menu</span>
           </button>
-          <Link to="/" className="font-display-lg text-headline-md font-semibold tracking-tighter text-primary dark:text-on-primary-fixed">
-            LuxeLife
-          </Link>
+          <Logo
+            to="/"
+            textClassName="font-display-lg text-headline-md font-semibold tracking-tighter text-primary dark:text-on-primary-fixed"
+          />
           <nav className="hidden md:flex gap-8">
             {NAV_ITEMS.map((item) => (
               <NavLink key={item.key} href={item.href} label={item.label} active={resolveActive(item.key)} />
@@ -233,9 +235,10 @@ export function Header({ variant, activeNav }: HeaderProps) {
     return (
       <nav className="bg-surface dark:bg-surface-dim docked full-width top-0 border-b border-outline/15 flat no shadows flex justify-between items-center px-margin-mobile md:px-margin-desktop py-4 w-full sticky top-0 z-50 bg-surface/95 backdrop-blur-sm transition-all duration-200 ease-in-out">
         <div className="flex items-center gap-8">
-          <Link to="/" className="font-headline-md text-headline-md font-semibold text-primary dark:text-primary-fixed">
-            LuxeLife
-          </Link>
+          <Logo
+            to="/"
+            textClassName="font-headline-md text-headline-md font-semibold text-primary dark:text-primary-fixed"
+          />
           <div className="hidden md:flex items-center gap-6 font-label-caps text-label-caps tracking-[0.1em]">
             {NAV_ITEMS.map((item) => (
               <Link key={item.key} to={item.href} className="text-secondary dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed transition-colors duration-300">
@@ -254,9 +257,10 @@ export function Header({ variant, activeNav }: HeaderProps) {
       <nav className="bg-surface dark:bg-surface-container-highest border-b border-outline-variant/15 w-full top-0 sticky z-50">
         <div className="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 max-w-container-max mx-auto">
           <div className="flex items-center gap-6">
-            <Link to="/" className="font-display-lg text-headline-md font-semibold tracking-tighter text-primary dark:text-on-primary-fixed">
-              LuxeLife
-            </Link>
+        <Logo
+          to="/"
+          textClassName="font-display-lg text-headline-md font-semibold tracking-tighter text-primary dark:text-on-primary-fixed"
+        />
             <div className="hidden md:flex items-center gap-8 font-label-caps text-label-caps">
               {NAV_ITEMS.map((item) => (
                 <NavLink key={item.key} href={item.href} label={item.label} active={item.key === 'shop' || resolveActive(item.key)} className={item.key === 'shop' ? 'opacity-80 transition-opacity' : ''} />
@@ -273,9 +277,10 @@ export function Header({ variant, activeNav }: HeaderProps) {
     return (
       <header className="bg-surface dark:bg-surface-container-highest border-b border-outline-variant/15 w-full top-0 sticky z-50">
         <div className="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 max-w-container-max mx-auto">
-          <Link to="/" className="font-display-lg text-headline-md font-semibold tracking-tighter text-primary dark:text-on-primary-fixed">
-            LuxeLife
-          </Link>
+          <Logo
+            to="/"
+            textClassName="font-display-lg text-headline-md font-semibold tracking-tighter text-primary dark:text-on-primary-fixed"
+          />
           <nav className="hidden md:flex gap-8">
             {NAV_ITEMS.map((item) => (
               <NavLink
@@ -297,10 +302,10 @@ export function Header({ variant, activeNav }: HeaderProps) {
   return (
     <header className="bg-surface dark:bg-surface-container-highest border-b border-outline-variant/15 w-full sticky top-0 z-50">
       <div className="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 max-w-container-max mx-auto">
-        <Link to="/" className="flex items-center gap-2 font-display-lg text-headline-md font-semibold tracking-tighter text-primary dark:text-on-primary-fixed">
-          <img alt="LuxeLife Logo" className="h-8 w-8 object-contain mix-blend-multiply" src={LOGO_URL} />
-          LuxeLife
-        </Link>
+        <Logo
+          to="/"
+          textClassName="font-display-lg text-headline-md font-semibold tracking-tighter text-primary dark:text-on-primary-fixed"
+        />
         <nav className="hidden md:flex items-center gap-6 font-label-caps text-label-caps text-secondary dark:text-secondary-fixed-dim">
           {NAV_ITEMS.map((item) => (
             <NavLink key={item.key} href={item.href} label={item.label} active={resolveActive(item.key)} />
@@ -315,9 +320,11 @@ export function Header({ variant, activeNav }: HeaderProps) {
 export function CheckoutHeader() {
   return (
     <header className="w-full flex justify-center items-center py-8 border-b border-outline/15 sticky top-0 z-50 bg-surface/95 backdrop-blur-sm relative">
-      <Link to="/" className="font-headline-md text-headline-md font-semibold text-primary tracking-tight">
-        LuxeLife
-      </Link>
+      <Logo
+        to="/"
+        className="justify-center"
+        textClassName="font-headline-md text-headline-md font-semibold text-primary tracking-tight"
+      />
       <div className="absolute right-margin-mobile md:right-margin-desktop flex items-center gap-2 text-secondary font-label-caps text-label-caps">
         <span className="material-symbols-outlined text-[18px]">lock</span>
         SECURE CHECKOUT
