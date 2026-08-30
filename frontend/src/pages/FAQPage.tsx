@@ -109,7 +109,7 @@ export default function FAQPage() {
                 <h3 className="font-headline-md text-headline-md text-primary mb-2">Still need help?</h3>
                 <p className="font-body-md text-body-md text-secondary">Our dedicated concierge team is available to assist you.</p>
               </div>
-              <Link to="/contact" className="bg-primary text-on-primary font-label-caps text-label-caps tracking-[0.1em] px-8 py-4 rounded hover:bg-primary-container transition-colors btn-lift whitespace-nowrap">
+              <Link to="/contact" className="bg-primary text-on-primary font-label-caps text-label-caps tracking-[0.1em] px-8 py-4 rounded hover:bg-primary-container btn-lift whitespace-nowrap">
                 CONTACT US
               </Link>
             </div>

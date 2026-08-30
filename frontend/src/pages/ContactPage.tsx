@@ -51,31 +51,31 @@ export default function ContactPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div>
                     <label className="block font-label-caps text-label-caps text-secondary mb-2" htmlFor="name">Full Name</label>
-                    <input className="w-full bg-transparent border-0 border-b border-outline/30 focus:border-primary focus:ring-0 px-0 py-2 font-body-md field-glow" id="name" placeholder="Enter your name" type="text" {...register('name')} />
+                    <input className="w-full bg-transparent border-0 border-b border-outline/30 focus:border-primary px-0 py-2 font-body-md field-glow" id="name" placeholder="Enter your name" type="text" {...register('name')} />
                     {errors.name && <p className="text-error text-sm mt-1">{errors.name.message}</p>}
                   </div>
                   <div>
                     <label className="block font-label-caps text-label-caps text-secondary mb-2" htmlFor="email">Email Address</label>
-                    <input className="w-full bg-transparent border-0 border-b border-outline/30 focus:border-primary focus:ring-0 px-0 py-2 font-body-md field-glow" id="email" placeholder="Enter your email" type="email" {...register('email')} />
+                    <input className="w-full bg-transparent border-0 border-b border-outline/30 focus:border-primary px-0 py-2 font-body-md field-glow" id="email" placeholder="Enter your email" type="email" {...register('email')} />
                     {errors.email && <p className="text-error text-sm mt-1">{errors.email.message}</p>}
                   </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div>
                     <label className="block font-label-caps text-label-caps text-secondary mb-2" htmlFor="phone">Phone Number</label>
-                    <input className="w-full bg-transparent border-0 border-b border-outline/30 focus:border-primary focus:ring-0 px-0 py-2 font-body-md field-glow" id="phone" placeholder="Optional" type="tel" {...register('phone')} />
+                    <input className="w-full bg-transparent border-0 border-b border-outline/30 focus:border-primary px-0 py-2 font-body-md field-glow" id="phone" placeholder="Optional" type="tel" {...register('phone')} />
                   </div>
                   <div>
                     <label className="block font-label-caps text-label-caps text-secondary mb-2" htmlFor="subject">Subject</label>
-                    <input className="w-full bg-transparent border-0 border-b border-outline/30 focus:border-primary focus:ring-0 px-0 py-2 font-body-md field-glow" id="subject" placeholder="How can we help?" type="text" {...register('subject')} />
+                    <input className="w-full bg-transparent border-0 border-b border-outline/30 focus:border-primary px-0 py-2 font-body-md field-glow" id="subject" placeholder="How can we help?" type="text" {...register('subject')} />
                   </div>
                 </div>
                 <div>
                   <label className="block font-label-caps text-label-caps text-secondary mb-2" htmlFor="message">Your Message</label>
-                  <textarea className="w-full bg-transparent border-0 border-b border-outline/30 focus:border-primary focus:ring-0 px-0 py-2 font-body-md field-glow resize-none" id="message" placeholder="Type your message here..." rows={4} {...register('message')} />
+                  <textarea className="w-full bg-transparent border-0 border-b border-outline/30 focus:border-primary px-0 py-2 font-body-md field-glow resize-none" id="message" placeholder="Type your message here..." rows={4} {...register('message')} />
                   {errors.message && <p className="text-error text-sm mt-1">{errors.message.message}</p>}
                 </div>
-                <button className="bg-primary text-on-primary font-label-caps text-label-caps px-8 py-4 rounded hover:bg-tertiary transition-colors btn-lift w-full md:w-auto mt-4" type="submit">
+                <button className="bg-primary text-on-primary font-label-caps text-label-caps px-8 py-4 rounded hover:bg-tertiary btn-lift w-full md:w-auto mt-4" type="submit">
                   Send Inquiry
                 </button>
               </form>

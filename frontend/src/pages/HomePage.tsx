@@ -23,10 +23,10 @@ export default function HomePage() {
                 Discover thoughtfully selected products designed to add style, convenience and character to everyday life.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 mt-4">
-                <Link to="/shop" className="bg-primary text-on-primary font-label-caps text-label-caps px-8 py-4 rounded hover:opacity-90 transition-opacity btn-lift text-center">
+                <Link to="/shop" className="bg-primary text-on-primary font-label-caps text-label-caps px-8 py-4 rounded hover:opacity-90 btn-lift text-center">
                   Shop Collection
                 </Link>
-                <Link to="/shop" className="minimal-border text-primary font-label-caps text-label-caps px-8 py-4 rounded hover:bg-surface-variant transition-colors btn-lift-secondary text-center">
+                <Link to="/shop" className="minimal-border text-primary font-label-caps text-label-caps px-8 py-4 rounded hover:bg-surface-variant btn-lift-secondary text-center">
                   Explore Categories
                 </Link>
               </div>
@@ -38,7 +38,7 @@ export default function HomePage() {
           <div className="absolute top-0 right-0 w-1/3 h-full bg-soft-blush opacity-20 blur-3xl transform translate-x-1/2 -translate-y-1/4 rounded-full pointer-events-none" />
         </section>
 
-        <div className="section-divider max-w-container-max mx-auto" />
+        <div className="section-divider max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop" />
 
         <section className="py-section-gap px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
           <div className="text-center mb-16">
@@ -48,7 +48,7 @@ export default function HomePage() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-gutter auto-rows-[250px]">
             <Link to="/shop?category=fashion" className="md:col-span-2 md:row-span-2 relative group overflow-hidden minimal-border rounded image-zoom-hover card-lift block">
               <LazyImage
-                className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                className="absolute inset-0 w-full h-full object-cover"
                 alt="Fashion accessories"
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuDuLcu-YoGMpPa-kPAlcK3vcKFCJZTKVfg1EqvcR2B_6Lo_hUiXftBZIjCR7iYvZimqtx_JqSu98y9JtN2ajHUPVz1rmG0M2LMtyJK_Bz2p3OzOijL77qOMfwOp0D8QAZBgLA-CRQcqpapqCj4ZlJsMwjV3-iaAOz9uL54z_eRxV7tjf8-1ZNTIonBcVo_VV33G6IzvG_cSDJnfc5pjt6hCcO0_cLWWEyhwk0AdLAcaeFADBmYlV6QdHQ"
               />

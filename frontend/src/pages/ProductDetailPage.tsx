@@ -134,14 +134,14 @@ export default function ProductDetailPage() {
               </div>
             </div>
             <div className="flex flex-col gap-4 mb-8">
-              <button type="button" onClick={handleAddToCart} disabled={!product.inStock} className="w-full h-14 bg-primary-container text-white font-label-caps text-label-caps hover:bg-tertiary transition-colors btn-lift flex items-center justify-center gap-2 disabled:opacity-50">
+              <button type="button" onClick={handleAddToCart} disabled={!product.inStock} className="w-full h-14 bg-primary-container text-white font-label-caps text-label-caps hover:bg-tertiary btn-lift flex items-center justify-center gap-2 disabled:opacity-50">
                 Add to Cart
               </button>
               <div className="flex gap-4">
-                <button type="button" onClick={handleBuyNow} disabled={!product.inStock} className="flex-1 h-14 border border-primary/20 text-primary bg-transparent font-label-caps text-label-caps hover:bg-surface-bright transition-colors btn-lift-secondary flex items-center justify-center disabled:opacity-50">
+                <button type="button" onClick={handleBuyNow} disabled={!product.inStock} className="flex-1 h-14 border border-primary/20 text-primary bg-transparent font-label-caps text-label-caps hover:bg-surface-bright btn-lift-secondary flex items-center justify-center disabled:opacity-50">
                   Buy Now
                 </button>
-                <button type="button" aria-label="Add to Wishlist" className="w-14 h-14 border border-primary/20 text-primary bg-transparent hover:bg-surface-bright transition-colors btn-lift-secondary flex items-center justify-center focus:outline-none">
+                <button type="button" aria-label="Add to Wishlist" className="w-14 h-14 border border-primary/20 text-primary bg-transparent hover:bg-surface-bright btn-lift-secondary flex items-center justify-center focus:outline-none">
                   <span className="material-symbols-outlined">favorite_border</span>
                 </button>
               </div>

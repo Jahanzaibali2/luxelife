@@ -146,13 +146,18 @@
 
   .btn-lift-secondary {
     transition:
-      border-color 0.3s ease,
       background-color 0.3s ease,
       transform 0.3s ease;
   }
 
   .btn-lift-secondary:hover {
     transform: translateY(-1px);
+  }
+
+  .btn-lift:disabled:hover,
+  .btn-lift-secondary:disabled:hover {
+    transform: none;
+    box-shadow: none;
   }
 
   .field-glow {
@@ -193,5 +198,17 @@
 
   ::-webkit-scrollbar-thumb:hover {
     background: #827474;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .card-lift,
+    .card-lift:hover,
+    .btn-lift:hover,
+    .btn-lift-secondary:hover,
+    .image-zoom-hover:hover img,
+    .product-card:hover .product-image,
+    .gallery-main-image:hover {
+      transform: none;
+    }
   }
 }
