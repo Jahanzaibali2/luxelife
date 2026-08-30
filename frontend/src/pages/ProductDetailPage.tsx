@@ -134,14 +134,14 @@ export default function ProductDetailPage() {
               </div>
             </div>
             <div className="flex flex-col gap-4 mb-8">
-              <button type="button" onClick={handleAddToCart} disabled={!product.inStock} className="w-full h-14 bg-primary-container text-white font-label-caps text-label-caps hover:bg-tertiary transition-colors flex items-center justify-center gap-2 disabled:opacity-50">
+              <button type="button" onClick={handleAddToCart} disabled={!product.inStock} className="w-full h-14 bg-primary-container text-white font-label-caps text-label-caps hover:bg-tertiary transition-colors btn-lift flex items-center justify-center gap-2 disabled:opacity-50">
                 Add to Cart
               </button>
               <div className="flex gap-4">
-                <button type="button" onClick={handleBuyNow} disabled={!product.inStock} className="flex-1 h-14 border border-primary/20 text-primary bg-transparent font-label-caps text-label-caps hover:bg-surface-bright transition-colors flex items-center justify-center disabled:opacity-50">
+                <button type="button" onClick={handleBuyNow} disabled={!product.inStock} className="flex-1 h-14 border border-primary/20 text-primary bg-transparent font-label-caps text-label-caps hover:bg-surface-bright transition-colors btn-lift-secondary flex items-center justify-center disabled:opacity-50">
                   Buy Now
                 </button>
-                <button type="button" aria-label="Add to Wishlist" className="w-14 h-14 border border-primary/20 text-primary bg-transparent hover:bg-surface-bright transition-colors flex items-center justify-center focus:outline-none">
+                <button type="button" aria-label="Add to Wishlist" className="w-14 h-14 border border-primary/20 text-primary bg-transparent hover:bg-surface-bright transition-colors btn-lift-secondary flex items-center justify-center focus:outline-none">
                   <span className="material-symbols-outlined">favorite_border</span>
                 </button>
               </div>
@@ -173,7 +173,7 @@ export default function ProductDetailPage() {
           <h3 className="font-headline-md text-headline-md text-primary text-center mb-12">You May Also Like</h3>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-gutter">
             {RELATED_PRODUCTS.map((item) => (
-              <div key={item.name} className="group bg-white p-4 border border-outline-variant/15 hover:border-primary/30 transition-all cursor-pointer">
+              <div key={item.name} className="group bg-white p-4 border border-outline-variant/15 hover:border-primary/30 transition-all card-lift cursor-pointer">
                 <div className="w-full h-80 bg-surface-container-low mb-4 overflow-hidden relative">
                   <LazyImage className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt={item.name} src={item.image} />
                 </div>
