@@ -114,8 +114,8 @@ export default function AdminProductFormPage() {
   if (loading) return <p className="text-secondary">Loading...</p>
 
   return (
-    <div className="max-w-2xl">
-      <div className="mb-6">
+    <div className="max-w-2xl w-full">
+      <div className="mb-4 sm:mb-6">
         <Link to="/admin/products" className="text-secondary hover:text-primary font-label-sm text-label-sm flex items-center gap-1 mb-4">
           <span className="material-symbols-outlined text-[16px]">arrow_back</span>
           Back to Products
@@ -125,7 +125,7 @@ export default function AdminProductFormPage() {
         </h2>
       </div>
 
-      <form onSubmit={handleSubmit} className="bg-surface p-8 rounded border border-outline/15 space-y-6">
+      <form onSubmit={handleSubmit} className="bg-surface p-4 sm:p-8 rounded border border-outline/15 space-y-5 sm:space-y-6">
         <Field label="Product Name" required>
           <input className="admin-input" value={form.name} onChange={(e) => update('name', e.target.value)} required />
         </Field>
@@ -135,7 +135,7 @@ export default function AdminProductFormPage() {
         <Field label="Description">
           <textarea className="admin-input resize-none" rows={3} value={form.description} onChange={(e) => update('description', e.target.value)} />
         </Field>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Field label="Price" required>
             <input className="admin-input" type="number" min="0" step="0.01" value={form.price} onChange={(e) => update('price', e.target.value)} required />
           </Field>
@@ -170,7 +170,7 @@ export default function AdminProductFormPage() {
           <img src={form.image} alt="Preview" className="w-40 h-40 object-cover rounded border border-outline/15" loading="lazy" decoding="async" />
         )}
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Field label="Category">
             <select className="admin-input" value={form.category} onChange={(e) => update('category', e.target.value)}>
               {CATEGORIES.map((c) => (
@@ -191,7 +191,7 @@ export default function AdminProductFormPage() {
           <span className="text-primary">In Stock</span>
         </label>
         {error && <p className="text-error text-sm">{error}</p>}
-        <button type="submit" disabled={saving || uploading} className="bg-primary text-on-primary font-label-caps text-label-caps px-8 py-3 rounded hover:opacity-90 disabled:opacity-50">
+        <button type="submit" disabled={saving || uploading} className="w-full sm:w-auto bg-primary text-on-primary font-label-caps text-label-caps px-8 py-3 rounded hover:opacity-90 disabled:opacity-50">
           {saving ? 'Saving...' : isEdit ? 'Update Product' : 'Create Product'}
         </button>
       </form>

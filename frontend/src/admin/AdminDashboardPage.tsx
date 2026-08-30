@@ -29,67 +29,108 @@ export default function AdminDashboardPage() {
   ]
 
   return (
-    <div className="space-y-8">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter">
+    <div className="space-y-6 sm:space-y-8">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-gutter">
         {cards.map((card) => (
-          <div key={card.label} className="bg-surface p-6 rounded border border-outline/15">
-            <div className="flex items-center justify-between mb-4">
-              <span className="font-label-caps text-label-caps text-secondary text-[10px] tracking-wider">{card.label}</span>
-              <span className="material-symbols-outlined text-primary/40">{card.icon}</span>
+          <div key={card.label} className="bg-surface p-4 sm:p-6 rounded border border-outline/15">
+            <div className="flex items-center justify-between mb-2 sm:mb-4 gap-2">
+              <span className="font-label-caps text-label-caps text-secondary text-[9px] sm:text-[10px] tracking-wider leading-tight">
+                {card.label}
+              </span>
+              <span className="material-symbols-outlined text-primary/40 text-[20px] shrink-0">{card.icon}</span>
             </div>
             <p className="font-headline-lg text-headline-lg text-primary">{card.value}</p>
           </div>
         ))}
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-4">
-        <Link to="/admin/products/new" className="inline-flex items-center justify-center gap-2 bg-primary text-on-primary font-label-caps text-label-caps px-6 py-3 rounded hover:opacity-90 transition-opacity">
+      <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+        <Link
+          to="/admin/products/new"
+          className="inline-flex items-center justify-center gap-2 bg-primary text-on-primary font-label-caps text-label-caps px-5 sm:px-6 py-3 rounded hover:opacity-90 transition-opacity w-full sm:w-auto"
+        >
           <span className="material-symbols-outlined text-[18px]">add</span>
           Add Product
         </Link>
-        <Link to="/admin/orders" className="inline-flex items-center justify-center gap-2 minimal-border text-primary font-label-caps text-label-caps px-6 py-3 rounded hover:bg-surface-variant transition-colors">
+        <Link
+          to="/admin/orders"
+          className="inline-flex items-center justify-center gap-2 minimal-border text-primary font-label-caps text-label-caps px-5 sm:px-6 py-3 rounded hover:bg-surface-variant transition-colors w-full sm:w-auto"
+        >
           View All Orders
         </Link>
       </div>
 
       <div className="bg-surface rounded border border-outline/15 overflow-hidden">
-        <div className="px-6 py-4 border-b border-outline/15 flex justify-between items-center">
+        <div className="px-4 sm:px-6 py-4 border-b border-outline/15 flex justify-between items-center gap-3">
           <h2 className="font-headline-md text-headline-md text-primary">Recent Orders</h2>
-          <Link to="/admin/orders" className="font-label-sm text-label-sm text-secondary hover:text-primary">View all</Link>
+          <Link to="/admin/orders" className="font-label-sm text-label-sm text-secondary hover:text-primary shrink-0">
+            View all
+          </Link>
         </div>
         {recentOrders.length === 0 ? (
-          <p className="p-6 text-secondary">No orders yet.</p>
+          <p className="p-4 sm:p-6 text-secondary">No orders yet.</p>
         ) : (
-          <table className="w-full text-left">
-            <thead>
-              <tr className="border-b border-outline/15 font-label-caps text-label-caps text-[10px] text-secondary tracking-wider">
-                <th className="px-6 py-3">Order</th>
-                <th className="px-6 py-3">Customer</th>
-                <th className="px-6 py-3">Total</th>
-                <th className="px-6 py-3">Status</th>
-                <th className="px-6 py-3">Date</th>
-              </tr>
-            </thead>
-            <tbody>
+          <>
+            <div className="md:hidden divide-y divide-outline/10">
               {recentOrders.map((order) => (
-                <tr key={order.id} className="border-b border-outline/10 hover:bg-surface-container-low transition-colors">
-                  <td className="px-6 py-4">
-                    <Link to={`/admin/orders/${order.id}`} className="text-primary font-medium hover:underline">
-                      {order.orderNumber}
-                    </Link>
-                  </td>
-                  <td className="px-6 py-4 text-secondary">{order.customer.firstName} {order.customer.lastName}</td>
-                  <td className="px-6 py-4 text-primary">{order.currency} {order.subtotal.toFixed(2)}</td>
-                  <td className="px-6 py-4">
+                <Link
+                  key={order.id}
+                  to={`/admin/orders/${order.id}`}
+                  className="block px-4 py-4 hover:bg-surface-container-low transition-colors"
+                >
+                  <div className="flex items-start justify-between gap-3 mb-2">
+                    <span className="text-primary font-medium">{order.orderNumber}</span>
                     <StatusBadge status={order.status} />
-                  </td>
-                  <td className="px-6 py-4 text-secondary text-sm">
-                    {new Date(order.createdAt).toLocaleDateString()}
-                  </td>
-                </tr>
+                  </div>
+                  <p className="text-secondary text-sm">
+                    {order.customer.firstName} {order.customer.lastName}
+                  </p>
+                  <div className="flex items-center justify-between mt-2 text-sm">
+                    <span className="text-primary">
+                      {order.currency} {order.subtotal.toFixed(2)}
+                    </span>
+                    <span className="text-secondary">{new Date(order.createdAt).toLocaleDateString()}</span>
+                  </div>
+                </Link>
               ))}
-            </tbody>
-          </table>
+            </div>
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full text-left min-w-[640px]">
+                <thead>
+                  <tr className="border-b border-outline/15 font-label-caps text-label-caps text-[10px] text-secondary tracking-wider">
+                    <th className="px-6 py-3">Order</th>
+                    <th className="px-6 py-3">Customer</th>
+                    <th className="px-6 py-3">Total</th>
+                    <th className="px-6 py-3">Status</th>
+                    <th className="px-6 py-3">Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {recentOrders.map((order) => (
+                    <tr key={order.id} className="border-b border-outline/10 hover:bg-surface-container-low transition-colors">
+                      <td className="px-6 py-4">
+                        <Link to={`/admin/orders/${order.id}`} className="text-primary font-medium hover:underline">
+                          {order.orderNumber}
+                        </Link>
+                      </td>
+                      <td className="px-6 py-4 text-secondary">
+                        {order.customer.firstName} {order.customer.lastName}
+                      </td>
+                      <td className="px-6 py-4 text-primary">
+                        {order.currency} {order.subtotal.toFixed(2)}
+                      </td>
+                      <td className="px-6 py-4">
+                        <StatusBadge status={order.status} />
+                      </td>
+                      <td className="px-6 py-4 text-secondary text-sm">
+                        {new Date(order.createdAt).toLocaleDateString()}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
         )}
       </div>
     </div>
@@ -105,7 +146,9 @@ export function StatusBadge({ status }: { status: string }) {
     cancelled: 'bg-error-container text-error',
   }
   return (
-    <span className={`inline-block px-2 py-1 rounded text-[10px] font-label-caps text-label-caps tracking-wider uppercase ${colors[status] ?? 'bg-surface-variant'}`}>
+    <span
+      className={`inline-block px-2 py-1 rounded text-[10px] font-label-caps text-label-caps tracking-wider uppercase whitespace-nowrap ${colors[status] ?? 'bg-surface-variant'}`}
+    >
       {status}
     </span>
   )

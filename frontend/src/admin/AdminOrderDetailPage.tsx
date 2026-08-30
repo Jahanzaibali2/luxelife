@@ -32,7 +32,7 @@ export default function AdminOrderDetailPage() {
   if (!order) return <p className="text-error">Order not found.</p>
 
   return (
-    <div className="max-w-4xl space-y-6">
+    <div className="max-w-4xl w-full space-y-4 sm:space-y-6">
       <Link to="/admin/orders" className="text-secondary hover:text-primary font-label-sm text-label-sm flex items-center gap-1">
         <span className="material-symbols-outlined text-[16px]">arrow_back</span>
         Back to Orders
@@ -46,14 +46,14 @@ export default function AdminOrderDetailPage() {
         <StatusBadge status={order.status} />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-gutter">
-        <div className="bg-surface p-6 rounded border border-outline/15">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-gutter">
+        <div className="bg-surface p-4 sm:p-6 rounded border border-outline/15">
           <h3 className="font-label-caps text-label-caps text-secondary mb-4 tracking-wider text-[10px]">CUSTOMER</h3>
           <p className="text-primary font-medium">{order.customer.firstName} {order.customer.lastName}</p>
           <p className="text-secondary text-sm mt-1">{order.customer.email}</p>
           <p className="text-secondary text-sm">{order.customer.phone}</p>
         </div>
-        <div className="bg-surface p-6 rounded border border-outline/15">
+        <div className="bg-surface p-4 sm:p-6 rounded border border-outline/15">
           <h3 className="font-label-caps text-label-caps text-secondary mb-4 tracking-wider text-[10px]">SHIPPING</h3>
           <p className="text-primary">{order.customer.street}</p>
           <p className="text-secondary text-sm">{order.customer.area}, {order.customer.emirate}</p>
@@ -65,27 +65,42 @@ export default function AdminOrderDetailPage() {
       </div>
 
       <div className="bg-surface rounded border border-outline/15 overflow-hidden">
-        <div className="px-6 py-4 border-b border-outline/15">
+        <div className="px-4 sm:px-6 py-4 border-b border-outline/15">
           <h3 className="font-label-caps text-label-caps text-secondary tracking-wider text-[10px]">ITEMS</h3>
         </div>
         {order.items.map((item, i) => (
-          <div key={i} className="flex gap-4 px-6 py-4 border-b border-outline/10 items-center">
-            <img src={item.image} alt="" className="w-16 h-16 object-cover rounded" loading="lazy" decoding="async" />
-            <div className="flex-1">
-              <p className="text-primary font-medium">{item.name}</p>
-              <p className="text-sm text-secondary">{item.variant}</p>
+          <div
+            key={i}
+            className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 px-4 sm:px-6 py-4 border-b border-outline/10"
+          >
+            <div className="flex items-center gap-3 flex-1 min-w-0">
+              <img
+                src={item.image}
+                alt=""
+                className="w-14 h-14 sm:w-16 sm:h-16 object-cover rounded shrink-0"
+                loading="lazy"
+                decoding="async"
+              />
+              <div className="min-w-0">
+                <p className="text-primary font-medium truncate">{item.name}</p>
+                <p className="text-sm text-secondary truncate">{item.variant}</p>
+              </div>
             </div>
-            <p className="text-secondary text-sm">Qty: {item.quantity}</p>
-            <p className="text-primary font-medium">{item.currency} {(item.price * item.quantity).toFixed(2)}</p>
+            <div className="flex items-center justify-between sm:justify-end gap-4 sm:gap-6 pl-[4.25rem] sm:pl-0">
+              <p className="text-secondary text-sm">Qty: {item.quantity}</p>
+              <p className="text-primary font-medium whitespace-nowrap">
+                {item.currency} {(item.price * item.quantity).toFixed(2)}
+              </p>
+            </div>
           </div>
         ))}
-        <div className="px-6 py-4 flex justify-between items-center bg-surface-container-low">
+        <div className="px-4 sm:px-6 py-4 flex justify-between items-center bg-surface-container-low">
           <span className="font-headline-md text-headline-md text-primary">Total</span>
           <span className="font-headline-md text-headline-md text-primary">{order.currency} {order.subtotal.toFixed(2)}</span>
         </div>
       </div>
 
-      <div className="bg-surface p-6 rounded border border-outline/15">
+      <div className="bg-surface p-4 sm:p-6 rounded border border-outline/15">
         <h3 className="font-label-caps text-label-caps text-secondary mb-4 tracking-wider text-[10px]">UPDATE STATUS</h3>
         <div className="flex gap-2 flex-wrap">
           {STATUSES.map((s) => (
