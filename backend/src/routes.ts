@@ -3,7 +3,7 @@ import multer from 'multer'
 import { loginHandler, requireAuth } from './auth.js'
 import * as repo from './repository.js'
 import { uploadProductImage } from './storage.js'
-import type { Order, OrderStatus, Product } from './types.js'
+import type { Currency, Order, OrderStatus, Product } from './types.js'
 import { slugify } from './utils.js'
 
 export const publicRouter = Router()
@@ -56,7 +56,7 @@ publicRouter.post('/orders', async (req, res) => {
       customer: Order['customer']
       items: Order['items']
       subtotal: number
-      currency: '$' | 'AED'
+      currency: Currency
       paymentMethod: string
     }
 
@@ -157,7 +157,7 @@ adminRouter.post('/products', async (req, res) => {
       subtitle: body.subtitle ?? '',
       description: body.description ?? '',
       price: Number(body.price),
-      currency: body.currency ?? '$',
+      currency: body.currency ?? 'AED',
       image: body.image,
       gallery: body.gallery ?? [],
       category: body.category ?? 'fashion',

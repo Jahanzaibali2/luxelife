@@ -1,4 +1,4 @@
-import type { Order, OrderItem, OrderStatus, Product } from './types.js'
+import type { Currency, Order, OrderItem, OrderStatus, Product } from './types.js'
 
 type ProductRow = {
   id: string
@@ -7,7 +7,7 @@ type ProductRow = {
   subtitle: string
   description: string
   price: number
-  currency: '$' | 'AED'
+  currency: Currency
   image: string
   gallery: string[] | null
   category: string
@@ -25,7 +25,7 @@ type OrderRow = {
   customer: Order['customer']
   items: OrderItem[]
   subtotal: number
-  currency: '$' | 'AED'
+  currency: Currency
   payment_method: string
   created_at: string
   updated_at: string

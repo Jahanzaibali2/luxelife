@@ -10,7 +10,6 @@ const emptyForm = {
   subtitle: '',
   description: '',
   price: '',
-  currency: '$' as '$' | 'AED',
   image: '',
   category: 'fashion' as ProductCategory,
   badge: '' as '' | 'New Arrival' | 'Limited',
@@ -43,7 +42,6 @@ export default function AdminProductFormPage() {
         subtitle: p.subtitle,
         description: p.description ?? '',
         price: String(p.price),
-        currency: p.currency,
         image: p.image,
         category: p.category,
         badge: p.badge ?? '',
@@ -92,7 +90,7 @@ export default function AdminProductFormPage() {
         subtitle: form.subtitle,
         description: form.description,
         price: Number(form.price),
-        currency: form.currency,
+        currency: 'AED',
         image: form.image,
         category: form.category,
         badge: form.badge || undefined,
@@ -135,17 +133,9 @@ export default function AdminProductFormPage() {
         <Field label="Description">
           <textarea className="admin-input resize-none" rows={3} value={form.description} onChange={(e) => update('description', e.target.value)} />
         </Field>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <Field label="Price" required>
-            <input className="admin-input" type="number" min="0" step="0.01" value={form.price} onChange={(e) => update('price', e.target.value)} required />
-          </Field>
-          <Field label="Currency">
-            <select className="admin-input" value={form.currency} onChange={(e) => update('currency', e.target.value)}>
-              <option value="$">USD ($)</option>
-              <option value="AED">AED</option>
-            </select>
-          </Field>
-        </div>
+        <Field label="Price (AED)" required>
+          <input className="admin-input" type="number" min="0" step="0.01" value={form.price} onChange={(e) => update('price', e.target.value)} required />
+        </Field>
 
         <Field label="Product Image" required>
           <div className="space-y-3">

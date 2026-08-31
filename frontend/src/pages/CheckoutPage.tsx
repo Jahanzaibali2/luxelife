@@ -26,7 +26,6 @@ const COD = 'Cash on Delivery'
 
 export default function CheckoutPage() {
   const { items, subtotal, clearCart } = useCart()
-  const currency = items[0]?.currency ?? '$'
   const [submitted, setSubmitted] = useState(false)
   const [orderNumber, setOrderNumber] = useState('')
   const [submitError, setSubmitError] = useState('')
@@ -64,7 +63,7 @@ export default function CheckoutPage() {
           image: item.image,
         })),
         subtotal,
-        currency,
+        currency: 'AED',
         paymentMethod: COD,
       })
       setOrderNumber(order.orderNumber)
@@ -196,7 +195,7 @@ export default function CheckoutPage() {
                           <div className="flex flex-col flex-grow">
                             <div className="flex justify-between items-start mb-1">
                               <span className="font-body-md text-body-md font-medium text-primary line-clamp-2 pr-4">{item.name}</span>
-                              <span className="font-body-md text-body-md font-medium text-primary whitespace-nowrap">{formatPrice(item.price * item.quantity, item.currency)}</span>
+                              <span className="font-body-md text-body-md font-medium text-primary whitespace-nowrap">{formatPrice(item.price * item.quantity)}</span>
                             </div>
                             <span className="font-label-sm text-label-sm text-secondary mb-2">{item.variant}</span>
                             <span className="font-label-sm text-label-sm text-secondary">Qty: {item.quantity}</span>
@@ -207,7 +206,7 @@ export default function CheckoutPage() {
                     <div className="border-t border-outline/15 pt-6 pb-6 flex flex-col gap-3">
                       <div className="flex justify-between items-center">
                         <span className="font-body-md text-body-md text-secondary">Subtotal</span>
-                        <span className="font-body-md text-body-md text-primary">{formatPrice(subtotal, currency)}</span>
+                        <span className="font-body-md text-body-md text-primary">{formatPrice(subtotal)}</span>
                       </div>
                       <div className="flex justify-between items-center">
                         <span className="font-body-md text-body-md text-secondary">Shipping</span>
@@ -220,7 +219,7 @@ export default function CheckoutPage() {
                     </div>
                     <div className="border-t border-outline/15 pt-6 mb-8 flex justify-between items-center">
                       <span className="font-headline-md text-headline-md text-primary">Total</span>
-                      <span className="font-headline-md text-headline-md text-primary">{formatPrice(subtotal, currency)}</span>
+                      <span className="font-headline-md text-headline-md text-primary">{formatPrice(subtotal)}</span>
                     </div>
                   </div>
                   <div>

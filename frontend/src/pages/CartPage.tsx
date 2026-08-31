@@ -5,7 +5,6 @@ import { Header } from '../components/layout/Header'
 
 export default function CartPage() {
   const { items, removeItem, updateQuantity, subtotal } = useCart()
-  const currency = items[0]?.currency ?? '$'
 
   return (
     <div className="text-on-background font-body-md antialiased min-h-screen flex flex-col bg-warm-ivory">
@@ -47,7 +46,7 @@ export default function CartPage() {
                       <button type="button" aria-label="Increase quantity" onClick={() => updateQuantity(item.id, item.quantity + 1)} className="px-3 py-1 text-secondary hover:text-primary transition-colors">+</button>
                     </div>
                     <span className="font-headline-md text-headline-md text-primary">
-                      {formatPrice(item.price * item.quantity, item.currency)}
+                      {formatPrice(item.price * item.quantity)}
                     </span>
                   </div>
                 </div>
@@ -60,7 +59,7 @@ export default function CartPage() {
               <div className="space-y-4 mb-8">
                 <div className="flex justify-between font-body-md text-body-md text-secondary">
                   <span>Subtotal</span>
-                  <span>{formatPrice(subtotal, currency)}</span>
+                  <span>{formatPrice(subtotal)}</span>
                 </div>
                 <div className="flex justify-between font-body-md text-body-md text-secondary">
                   <span>Estimated Shipping</span>
@@ -73,7 +72,7 @@ export default function CartPage() {
               </div>
               <div className="flex justify-between items-end mb-8 pt-6 border-t border-outline/15">
                 <span className="font-body-lg text-body-lg text-primary">Total</span>
-                <span className="font-headline-md text-headline-md text-primary">{formatPrice(subtotal, currency)}</span>
+                <span className="font-headline-md text-headline-md text-primary">{formatPrice(subtotal)}</span>
               </div>
               <Link to="/checkout" className="block w-full bg-[#452829] text-white font-label-caps text-label-caps tracking-[0.1em] py-4 rounded hover:bg-[#3b2d25] btn-lift mb-6 uppercase text-center">
                 Proceed to Checkout

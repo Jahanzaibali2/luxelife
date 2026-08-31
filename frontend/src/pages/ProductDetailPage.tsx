@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { useCart } from '../context/CartContext'
+import { formatPrice, useCart } from '../context/CartContext'
 import { Footer } from '../components/layout/Footer'
 import { Header } from '../components/layout/Header'
 import { LazyImage } from '../components/LazyImage'
@@ -112,7 +112,7 @@ export default function ProductDetailPage() {
                 <span className="font-label-sm text-label-sm text-secondary">(4.8 / 12 reviews)</span>
               </div>
               <div className="font-headline-md text-headline-md text-primary mb-2">
-                {product.currency} {product.price}
+                {formatPrice(product.price)}
               </div>
               <div className="font-label-sm text-label-sm text-[#452829] flex items-center gap-1">
                 <span className="w-2 h-2 rounded-full bg-[#452829]" /> {product.inStock ? 'In Stock - Ready to Ship' : 'Out of Stock'}
@@ -179,7 +179,7 @@ export default function ProductDetailPage() {
                 </div>
                 <div className="font-label-caps text-label-caps text-secondary mb-1">{item.category}</div>
                 <div className="font-body-lg text-body-lg font-medium text-primary mb-2">{item.name}</div>
-                <div className="font-body-md text-body-md text-primary">{item.currency} {item.price}</div>
+                <div className="font-body-md text-body-md text-primary">{formatPrice(item.price)}</div>
               </div>
             ))}
           </div>

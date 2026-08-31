@@ -1,3 +1,5 @@
+export type Currency = 'AED'
+
 export type ProductCategory =
   | 'fashion'
   | 'home-lifestyle'
@@ -15,7 +17,7 @@ export interface Product {
   subtitle: string
   description?: string
   price: number
-  currency: '$' | 'AED'
+  currency: Currency
   image: string
   gallery?: string[]
   category: ProductCategory
@@ -38,7 +40,7 @@ export interface OrderItem {
   name: string
   variant: string
   price: number
-  currency: '$' | 'AED'
+  currency: Currency
   quantity: number
   image: string
 }
@@ -62,7 +64,7 @@ export interface Order {
   }
   items: OrderItem[]
   subtotal: number
-  currency: '$' | 'AED'
+  currency: Currency
   paymentMethod: string
 }
 

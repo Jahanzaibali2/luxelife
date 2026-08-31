@@ -1,5 +1,5 @@
 import { getSupabase } from './supabase'
-import type { AdminStats, Order, OrderStatus, Product } from '../types/api'
+import type { AdminStats, Currency, Order, OrderStatus, Product } from '../types/api'
 
 type ProductRow = {
   id: string
@@ -8,7 +8,7 @@ type ProductRow = {
   subtitle: string
   description: string
   price: number
-  currency: '$' | 'AED'
+  currency: Currency
   image: string
   gallery: string[] | null
   category: Product['category']
@@ -26,7 +26,7 @@ type OrderRow = {
   customer: Order['customer']
   items: Order['items']
   subtotal: number
-  currency: '$' | 'AED'
+  currency: Currency
   payment_method: string
   created_at: string
   updated_at: string
@@ -103,7 +103,7 @@ export const api = {
     customer: Order['customer']
     items: Order['items']
     subtotal: number
-    currency: '$' | 'AED'
+    currency: Currency
     paymentMethod: string
   }): Promise<Order> {
     if (!input.items.length) throw new Error('Your cart is empty')
@@ -178,7 +178,7 @@ export const adminApi = {
         subtitle: input.subtitle ?? '',
         description: input.description ?? '',
         price: Number(input.price),
-        currency: input.currency ?? '$',
+        currency: input.currency ?? 'AED',
         image: input.image,
         gallery: input.gallery ?? [],
         category: input.category ?? 'fashion',

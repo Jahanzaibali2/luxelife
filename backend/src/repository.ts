@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid'
 import { mapOrder, mapProduct, productToRow } from './mappers.js'
 import { getSupabase } from './supabase.js'
-import type { Order, OrderStatus, Product } from './types.js'
+import type { Currency, Order, OrderStatus, Product } from './types.js'
 
 export async function listProducts(): Promise<Product[]> {
   const { data, error } = await getSupabase()
@@ -125,7 +125,7 @@ export async function createOrder(input: {
   customer: Order['customer']
   items: Order['items']
   subtotal: number
-  currency: '$' | 'AED'
+  currency: Currency
   paymentMethod: string
 }): Promise<Order> {
   const now = new Date().toISOString()

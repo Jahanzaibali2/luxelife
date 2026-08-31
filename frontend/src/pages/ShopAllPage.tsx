@@ -3,6 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom'
 import { Footer } from '../components/layout/Footer'
 import { Header } from '../components/layout/Header'
 import { LazyImage } from '../components/LazyImage'
+import { formatPrice } from '../context/CartContext'
 import { api } from '../lib/api'
 import { PRODUCTS as FALLBACK_PRODUCTS } from '../data/products'
 import type { Product, ProductCategory } from '../types/api'
@@ -229,7 +230,7 @@ function ProductCard({ product, wishlisted, onWishlist }: { product: Product; wi
           <h3 className="font-body-lg text-body-lg text-charcoal-grey mb-1">{product.name}</h3>
         </Link>
         <p className="text-secondary text-sm mb-4">{product.subtitle}</p>
-        <p className="font-headline-md text-headline-md text-charcoal-grey mt-auto">${product.price}</p>
+        <p className="font-headline-md text-headline-md text-charcoal-grey mt-auto">{formatPrice(product.price)}</p>
       </div>
     </div>
   )

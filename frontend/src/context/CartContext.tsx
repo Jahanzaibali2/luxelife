@@ -7,13 +7,14 @@ import {
   useState,
   type ReactNode,
 } from 'react'
+import type { Currency } from '../types/api'
 
 export interface CartItem {
   id: string
   name: string
   variant: string
   price: number
-  currency: '$' | 'AED'
+  currency: Currency
   image: string
   quantity: number
 }
@@ -35,7 +36,12 @@ const CartContext = createContext<CartContextValue | null>(null)
 function loadCart(): CartItem[] {
   try {
     const stored = localStorage.getItem(STORAGE_KEY)
-    if (stored) return JSON.parse(stored) as CartItem[]
+    if (stored) {
+      return (JSON.parse(stored) as CartItem[]).map((item) => ({
+        ...item,
+        currency: 'AED' as const,
+      }))
+    }
   } catch {
     /* empty cart */
   }
@@ -116,7 +122,6 @@ export function useCart() {
   return ctx
 }
 
-export function formatPrice(amount: number, currency: '$' | 'AED') {
-  if (currency === 'AED') return `AED ${amount.toLocaleString()}`
-  return `$${amount.toFixed(2)}`
+export function formatPrice(amount: number) {
+  return `AED ${amount.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`
 }
