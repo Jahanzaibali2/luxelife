@@ -5,7 +5,8 @@ import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CheckoutHeader } from '../components/layout/Header'
 import { Footer } from '../components/layout/Footer'
-import { formatPrice, useCart } from '../context/CartContext'
+import { Price } from '../components/Price'
+import { useCart } from '../context/CartContext'
 import { api } from '../lib/api'
 
 const checkoutSchema = z.object({
@@ -195,7 +196,7 @@ export default function CheckoutPage() {
                           <div className="flex flex-col flex-grow">
                             <div className="flex justify-between items-start mb-1">
                               <span className="font-body-md text-body-md font-medium text-primary line-clamp-2 pr-4">{item.name}</span>
-                              <span className="font-body-md text-body-md font-medium text-primary whitespace-nowrap">{formatPrice(item.price * item.quantity)}</span>
+                              <Price amount={item.price * item.quantity} variant="line" className="whitespace-nowrap shrink-0" />
                             </div>
                             <span className="font-label-sm text-label-sm text-secondary mb-2">{item.variant}</span>
                             <span className="font-label-sm text-label-sm text-secondary">Qty: {item.quantity}</span>
@@ -206,7 +207,7 @@ export default function CheckoutPage() {
                     <div className="border-t border-outline/15 pt-6 pb-6 flex flex-col gap-3">
                       <div className="flex justify-between items-center">
                         <span className="font-body-md text-body-md text-secondary">Subtotal</span>
-                        <span className="font-body-md text-body-md text-primary">{formatPrice(subtotal)}</span>
+                        <Price amount={subtotal} variant="inline" />
                       </div>
                       <div className="flex justify-between items-center">
                         <span className="font-body-md text-body-md text-secondary">Shipping</span>
@@ -219,7 +220,7 @@ export default function CheckoutPage() {
                     </div>
                     <div className="border-t border-outline/15 pt-6 mb-8 flex justify-between items-center">
                       <span className="font-headline-md text-headline-md text-primary">Total</span>
-                      <span className="font-headline-md text-headline-md text-primary">{formatPrice(subtotal)}</span>
+                      <Price amount={subtotal} variant="emphasis" />
                     </div>
                   </div>
                   <div>

@@ -122,6 +122,4 @@ export function useCart() {
   return ctx
 }
 
-export function formatPrice(amount: number) {
-  return `AED ${amount.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`
-}
+export { formatPrice } from '../components/Price'

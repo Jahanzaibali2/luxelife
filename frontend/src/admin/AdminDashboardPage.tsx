@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { formatPrice } from '../context/CartContext'
+import { Price } from '../components/Price'
 import { adminApi } from '../lib/api'
 import type { AdminStats, Order } from '../types/api'
 
@@ -87,9 +87,7 @@ export default function AdminDashboardPage() {
                     {order.customer.firstName} {order.customer.lastName}
                   </p>
                   <div className="flex items-center justify-between mt-2 text-sm">
-                    <span className="text-primary">
-                      {formatPrice(order.subtotal)}
-                    </span>
+                    <Price amount={order.subtotal} variant="inline" />
                     <span className="text-secondary">{new Date(order.createdAt).toLocaleDateString()}</span>
                   </div>
                 </Link>
@@ -117,8 +115,8 @@ export default function AdminDashboardPage() {
                       <td className="px-6 py-4 text-secondary">
                         {order.customer.firstName} {order.customer.lastName}
                       </td>
-                      <td className="px-6 py-4 text-primary">
-                        {formatPrice(order.subtotal)}
+                      <td className="px-6 py-4">
+                        <Price amount={order.subtotal} variant="inline" />
                       </td>
                       <td className="px-6 py-4">
                         <StatusBadge status={order.status} />

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { formatPrice } from '../context/CartContext'
+import { Price } from '../components/Price'
 import { adminApi } from '../lib/api'
 import type { Order, OrderStatus } from '../types/api'
 import { StatusBadge } from './AdminDashboardPage'
@@ -64,9 +64,7 @@ export default function AdminOrdersPage() {
                   <span className="text-secondary">
                     {order.items.reduce((n, i) => n + i.quantity, 0)} item(s) · {order.paymentMethod}
                   </span>
-                  <span className="text-primary font-medium">
-                    {formatPrice(order.subtotal)}
-                  </span>
+                  <Price amount={order.subtotal} variant="inline" />
                 </div>
                 <p className="text-secondary text-xs mt-2">{new Date(order.createdAt).toLocaleString()}</p>
               </Link>
@@ -101,8 +99,8 @@ export default function AdminOrdersPage() {
                       {order.items.reduce((n, i) => n + i.quantity, 0)} item(s)
                     </td>
                     <td className="px-6 py-4 text-secondary text-sm">{order.paymentMethod}</td>
-                    <td className="px-6 py-4 text-primary whitespace-nowrap">
-                      {formatPrice(order.subtotal)}
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <Price amount={order.subtotal} variant="inline" />
                     </td>
                     <td className="px-6 py-4">
                       <StatusBadge status={order.status} />

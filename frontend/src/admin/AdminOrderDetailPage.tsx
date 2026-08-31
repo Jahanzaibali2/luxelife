@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { formatPrice } from '../context/CartContext'
+import { Price } from '../components/Price'
 import { adminApi } from '../lib/api'
 import type { Order, OrderStatus } from '../types/api'
 import { StatusBadge } from './AdminDashboardPage'
@@ -89,15 +89,13 @@ export default function AdminOrderDetailPage() {
             </div>
             <div className="flex items-center justify-between sm:justify-end gap-4 sm:gap-6 pl-[4.25rem] sm:pl-0">
               <p className="text-secondary text-sm">Qty: {item.quantity}</p>
-              <p className="text-primary font-medium whitespace-nowrap">
-                {formatPrice(item.price * item.quantity)}
-              </p>
+              <Price amount={item.price * item.quantity} variant="line" className="whitespace-nowrap shrink-0" />
             </div>
           </div>
         ))}
         <div className="px-4 sm:px-6 py-4 flex justify-between items-center bg-surface-container-low">
           <span className="font-headline-md text-headline-md text-primary">Total</span>
-          <span className="font-headline-md text-headline-md text-primary">{formatPrice(order.subtotal)}</span>
+          <Price amount={order.subtotal} variant="emphasis" />
         </div>
       </div>
 

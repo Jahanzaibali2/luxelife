@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { formatPrice } from '../context/CartContext'
+import { Price } from '../components/Price'
 import { adminApi } from '../lib/api'
 import type { Product } from '../types/api'
 import { StatusBadge } from './AdminDashboardPage'
@@ -57,9 +57,9 @@ export default function AdminProductsPage() {
                   <div className="flex-1 min-w-0">
                     <p className="font-medium text-primary truncate">{p.name}</p>
                     <p className="text-sm text-secondary truncate">{p.subtitle}</p>
-                    <p className="text-sm text-primary mt-1">
-                      {formatPrice(p.price)}
-                    </p>
+                    <div className="mt-1">
+                      <Price amount={p.price} variant="inline" />
+                    </div>
                   </div>
                   <div className="flex flex-col gap-2 shrink-0">
                     <Link to={`/admin/products/${p.id}/edit`} className="text-secondary hover:text-primary p-1">
@@ -115,8 +115,8 @@ export default function AdminProductsPage() {
                       </div>
                     </td>
                     <td className="px-6 py-4 text-secondary capitalize">{p.category.replace('-', ' ')}</td>
-                    <td className="px-6 py-4 text-primary whitespace-nowrap">
-                      {formatPrice(p.price)}
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <Price amount={p.price} variant="inline" />
                     </td>
                     <td className="px-6 py-4">
                       <StatusBadge status={p.inStock ? 'delivered' : 'cancelled'} />
