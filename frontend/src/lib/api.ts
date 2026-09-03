@@ -232,10 +232,10 @@ export const adminApi = {
     throwIfError(error)
   },
 
-  async uploadImage(file: File, slug?: string, _name?: string): Promise<{ url: string; slug: string }> {
+  async uploadImage(file: File, slug?: string, filename = 'main'): Promise<{ url: string; slug: string }> {
     const folder = slug?.trim() || `upload-${Date.now()}`
     const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg'
-    const path = `${folder}/main.${ext}`
+    const path = `${folder}/${filename}.${ext}`
     const { error } = await getSupabase().storage.from('product-images').upload(path, file, {
       upsert: true,
       contentType: file.type || 'image/jpeg',

@@ -11,6 +11,7 @@ const emptyForm = {
   description: '',
   price: '',
   image: '',
+  gallery: [] as string[],
   category: 'fashion' as ProductCategory,
   badge: '' as '' | 'New Arrival' | 'Limited',
   inStock: true,
@@ -28,10 +29,12 @@ export default function AdminProductFormPage() {
   const isEdit = Boolean(id)
   const navigate = useNavigate()
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const galleryInputRef = useRef<HTMLInputElement>(null)
   const [form, setForm] = useState(emptyForm)
   const [loading, setLoading] = useState(isEdit)
   const [saving, setSaving] = useState(false)
   const [uploading, setUploading] = useState(false)
+  const [uploadingGallery, setUploadingGallery] = useState(false)
   const [error, setError] = useState('')
 
   useEffect(() => {
@@ -43,6 +46,7 @@ export default function AdminProductFormPage() {
         description: p.description ?? '',
         price: String(p.price),
         image: p.image,
+        gallery: p.gallery ?? [],
         category: p.category,
         badge: p.badge ?? '',
         inStock: p.inStock,
@@ -50,7 +54,7 @@ export default function AdminProductFormPage() {
     }).finally(() => setLoading(false))
   }, [id])
 
-  const update = (field: string, value: string | boolean) => {
+  const update = (field: string, value: string | boolean | string[]) => {
     setForm((f) => ({ ...f, [field]: value }))
   }
 
@@ -60,11 +64,7 @@ export default function AdminProductFormPage() {
     setError('')
     setUploading(true)
     try {
-      const { url } = await adminApi.uploadImage(
-        file,
-        productSlug || undefined,
-        form.name || undefined,
-      )
+      const { url } = await adminApi.uploadImage(file, productSlug || undefined)
       update('image', url)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Image upload failed')
@@ -72,6 +72,27 @@ export default function AdminProductFormPage() {
       setUploading(false)
       if (fileInputRef.current) fileInputRef.current.value = ''
     }
+  }
+
+  const handleGalleryUpload = async (files: FileList) => {
+    setError('')
+    setUploadingGallery(true)
+    try {
+      for (let i = 0; i < files.length; i++) {
+        const filename = `gallery-${Date.now()}-${i}`
+        const { url } = await adminApi.uploadImage(files[i], productSlug || undefined, filename)
+        setForm((f) => ({ ...f, gallery: [...f.gallery, url] }))
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Gallery upload failed')
+    } finally {
+      setUploadingGallery(false)
+      if (galleryInputRef.current) galleryInputRef.current.value = ''
+    }
+  }
+
+  const removeGalleryImage = (index: number) => {
+    setForm((f) => ({ ...f, gallery: f.gallery.filter((_, i) => i !== index) }))
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -92,6 +113,7 @@ export default function AdminProductFormPage() {
         price: Number(form.price),
         currency: 'AED',
         image: form.image,
+        gallery: form.gallery,
         category: form.category,
         badge: form.badge || undefined,
         inStock: form.inStock,
@@ -109,7 +131,22 @@ export default function AdminProductFormPage() {
     }
   }
 
-  if (loading) return <p className="text-secondary">Loading...</p>
+  if (loading) {
+    return (
+      <div className="max-w-2xl w-full space-y-6">
+        <div className="animate-pulse bg-outline/10 rounded h-4 w-24" />
+        <div className="animate-pulse bg-outline/10 rounded h-8 w-40" />
+        <div className="bg-surface rounded-lg border border-outline/15 p-8 space-y-6">
+          {[...Array(5)].map((_, i) => (
+            <div key={i} className="space-y-2">
+              <div className="animate-pulse bg-outline/10 rounded h-3 w-24" />
+              <div className="animate-pulse bg-outline/10 rounded h-8 w-full" />
+            </div>
+          ))}
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="max-w-2xl w-full">
@@ -123,7 +160,7 @@ export default function AdminProductFormPage() {
         </h2>
       </div>
 
-      <form onSubmit={handleSubmit} className="bg-surface p-4 sm:p-8 rounded border border-outline/15 space-y-5 sm:space-y-6">
+      <form onSubmit={handleSubmit} className="bg-surface p-4 sm:p-8 rounded-lg border border-outline/15 space-y-5 sm:space-y-6">
         <Field label="Product Name" required>
           <input className="admin-input" value={form.name} onChange={(e) => update('name', e.target.value)} required />
         </Field>
@@ -137,7 +174,8 @@ export default function AdminProductFormPage() {
           <input className="admin-input" type="number" min="0" step="0.01" value={form.price} onChange={(e) => update('price', e.target.value)} required />
         </Field>
 
-        <Field label="Product Image" required>
+        {/* Main image */}
+        <Field label="Cover Image" required>
           <div className="space-y-3">
             <input
               ref={fileInputRef}
@@ -150,15 +188,55 @@ export default function AdminProductFormPage() {
               }}
               disabled={uploading}
             />
-            <p className="text-secondary text-xs">
-              Stored in Supabase Storage ({productSlug || 'slug from name'}/main). Max 5 MB.
-            </p>
-            {uploading && <p className="text-secondary text-sm">Uploading image...</p>}
+            {uploading && <p className="text-secondary text-sm animate-pulse">Uploading...</p>}
+            {form.image && (
+              <img src={form.image} alt="Cover preview" className="w-28 h-28 object-cover rounded-lg border border-outline/15" loading="lazy" decoding="async" />
+            )}
           </div>
         </Field>
-        {form.image && (
-          <img src={form.image} alt="Preview" className="w-40 h-40 object-cover rounded border border-outline/15" loading="lazy" decoding="async" />
-        )}
+
+        {/* Gallery */}
+        <Field label="Gallery Images">
+          <div className="space-y-3">
+            <p className="text-secondary text-xs -mt-1">Additional photos shown in the product image carousel.</p>
+            <input
+              ref={galleryInputRef}
+              type="file"
+              multiple
+              accept="image/jpeg,image/png,image/webp,image/gif"
+              className="admin-input file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:bg-surface-variant file:text-primary file:font-label-caps file:text-label-caps file:cursor-pointer"
+              onChange={(e) => {
+                const files = e.target.files
+                if (files && files.length > 0) void handleGalleryUpload(files)
+              }}
+              disabled={uploadingGallery}
+            />
+            {uploadingGallery && <p className="text-secondary text-sm animate-pulse">Uploading...</p>}
+            {form.gallery.length > 0 && (
+              <div className="flex flex-wrap gap-3">
+                {form.gallery.map((url, i) => (
+                  <div key={url} className="relative group">
+                    <img
+                      src={url}
+                      alt={`Gallery ${i + 1}`}
+                      className="w-24 h-24 object-cover rounded-lg border border-outline/15"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeGalleryImage(i)}
+                      aria-label="Remove image"
+                      className="absolute -top-2 -right-2 w-6 h-6 bg-primary text-on-primary rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                    >
+                      <span className="material-symbols-outlined text-[14px]">close</span>
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </Field>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Field label="Category">
@@ -181,7 +259,11 @@ export default function AdminProductFormPage() {
           <span className="text-primary">In Stock</span>
         </label>
         {error && <p className="text-error text-sm">{error}</p>}
-        <button type="submit" disabled={saving || uploading} className="w-full sm:w-auto bg-primary text-on-primary font-label-caps text-label-caps px-8 py-3 rounded hover:opacity-90 disabled:opacity-50">
+        <button
+          type="submit"
+          disabled={saving || uploading || uploadingGallery}
+          className="w-full sm:w-auto bg-primary text-on-primary font-label-caps text-label-caps px-8 py-3 rounded hover:opacity-90 disabled:opacity-50 cursor-pointer"
+        >
           {saving ? 'Saving...' : isEdit ? 'Update Product' : 'Create Product'}
         </button>
       </form>

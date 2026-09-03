@@ -105,41 +105,6 @@ export const AURA_CERAMIC_VASE = {
   ],
 }
 
-export const RELATED_PRODUCTS = [
-  {
-    name: 'Noir Candle Holder',
-    category: 'Home & Lifestyle',
-    price: 280,
-    currency: 'AED' as const,
-    image:
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuCy6Wlxp37uBzZEF6XVUovUnhbxaQH9IQGgsOhiyNQSbO07fmRu13fudgKgDXHkgtYsJWkPcxGhC4JxpxKXOVJ5vz7s686HA6v-j_yryubqKjKw4OrhklktapF3b8wvyy3TnRLyEdqwyI3jPkwIkHQcZkIvk0y6pZy0_VvJH-hpEvqyPmNM6pwcIKVzltRLNeXbEa1l2GRU8tXSBbkSFomaofMfH6OY5mt5nGy3jmANgQtwkeVxWtS3zQ',
-  },
-  {
-    name: 'Woven Linen Throw',
-    category: 'Home & Lifestyle',
-    price: 650,
-    currency: 'AED' as const,
-    image:
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuCTSfy7V4kz-hmVCuSdMiMTUM2j4bM5AyAKeeYzqUDci_RAdoRhBMgSn9nyOeY8Gwcc9beL084YaCaihroqHAv_xLmBmxZIMJ9HfftD41rJ4uigrggy-wo6mwxaWEV58amxnplmMneljSzjXbLR9VmPOTsvJE0p44ZtUGKtxFRXtyulNQQztJDxuaWn55hHxOm51UkXivL7eMxlzbdkPjMCMlOjU01ttAQ-biSMwHNDwj0LeJvWmNZW8g',
-  },
-  {
-    name: 'Concrete Decor Tray',
-    category: 'Home & Lifestyle',
-    price: 195,
-    currency: 'AED' as const,
-    image:
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuCtPZbg8GD03XgT4EAZpPgiHugF81-h8DjUG14jSI_PGEGR_6VFBWPNgCyEDCQ_d7R1_ZpH-EZZq3D2XnjMoMURJbcNC1DgkEP8ufINbOUphe9YRcjwhzilvyKSgjHKCoVCahQr6TDY6OlJLzZukxK6zTW_okUp9LZVPP2z1xpw71cmMFBPwPpgliGrXvDiZ4LcLT35CjWVb5a-07pzs-AxfquMG1jkMcPXZXqYQbCZjgRsav68KRiKow',
-  },
-  {
-    name: 'Artisan Glass Carafe',
-    category: 'Kitchenware',
-    price: 320,
-    currency: 'AED' as const,
-    image:
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuAk8Sp-V9gjtCvn-oyBXCpwL61SQP_Y8N1sPC0flXGjnpqjWIfaYW9zYvKYnVgXCFmerwMa6gGfupBU8js5XkFtshWvyQUJ2v8lxbB_jIboDVdHaaHAMiNxqODP5bNpXjLzRuAOYD8z0MhdfUfWBgbBOrV2XiezqOjGlv7kxLVURTjIL4pNwqeElsq7SwiVQ0XQ3CnTN5iC5cKYKj_ngLw0AriFiy7uDEzJAH2csd23IvpTDnlwzzicHg',
-  },
-]
-
 export function getProductBySlug(slug: string): Product | undefined {
   if (slug === AURA_CERAMIC_VASE.slug) {
     return {

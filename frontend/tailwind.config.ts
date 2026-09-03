@@ -5,6 +5,10 @@ export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
+      screens: {
+        short: { raw: '(max-height: 700px)' },
+        tall: { raw: '(min-height: 900px)' },
+      },
       colors: {
         'on-tertiary': '#ffffff',
         'on-error-container': '#93000a',
