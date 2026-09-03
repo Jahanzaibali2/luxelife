@@ -28,10 +28,10 @@ export default function AdminOrdersPage() {
             key={s}
             type="button"
             onClick={() => setFilter(s)}
-            className={`px-3 sm:px-4 py-2 rounded font-label-caps text-label-caps text-[10px] tracking-wider uppercase transition-colors whitespace-nowrap shrink-0 ${
+            className={`px-4 py-1.5 rounded-full font-label-caps text-label-caps text-[10px] tracking-wider uppercase transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
               filter === s
                 ? 'bg-primary text-on-primary'
-                : 'bg-surface border border-outline/15 text-secondary hover:text-primary'
+                : 'bg-surface border border-outline/20 text-secondary hover:text-primary hover:border-outline/40'
             }`}
           >
             {s}
@@ -40,9 +40,25 @@ export default function AdminOrdersPage() {
       </div>
 
       {loading ? (
-        <p className="text-secondary">Loading orders...</p>
+        <div className="space-y-3">
+          {[...Array(5)].map((_, i) => (
+            <div key={i} className="bg-surface rounded-lg border border-outline/15 p-4 space-y-2">
+              <div className="flex justify-between">
+                <div className="animate-pulse bg-outline/10 rounded h-4 w-32" />
+                <div className="animate-pulse bg-outline/10 rounded-full h-6 w-20" />
+              </div>
+              <div className="animate-pulse bg-outline/10 rounded h-3 w-48" />
+              <div className="animate-pulse bg-outline/10 rounded h-3 w-24" />
+            </div>
+          ))}
+        </div>
       ) : filtered.length === 0 ? (
-        <p className="text-secondary">No orders found.</p>
+        <div className="bg-surface rounded-lg border border-outline/15 py-16 px-6 text-center">
+          <span className="material-symbols-outlined text-[48px] text-secondary/30 block mb-3">receipt_long</span>
+          <p className="text-secondary text-sm">
+            {filter === 'all' ? 'No orders yet.' : `No ${filter} orders.`}
+          </p>
+        </div>
       ) : (
         <>
           <div className="md:hidden space-y-3">
@@ -50,7 +66,7 @@ export default function AdminOrdersPage() {
               <Link
                 key={order.id}
                 to={`/admin/orders/${order.id}`}
-                className="block bg-surface rounded border border-outline/15 p-4 hover:bg-surface-container-low transition-colors"
+                className="block bg-surface rounded-lg border border-outline/15 p-4 hover:bg-surface-container-low transition-colors cursor-pointer"
               >
                 <div className="flex items-start justify-between gap-3 mb-2">
                   <span className="font-medium text-primary">{order.orderNumber}</span>
@@ -71,23 +87,23 @@ export default function AdminOrdersPage() {
             ))}
           </div>
 
-          <div className="hidden md:block bg-surface rounded border border-outline/15 overflow-x-auto">
+          <div className="hidden md:block bg-surface rounded-lg border border-outline/15 overflow-x-auto">
             <table className="w-full text-left min-w-[800px]">
               <thead>
-                <tr className="border-b border-outline/15 font-label-caps text-label-caps text-[10px] text-secondary tracking-wider">
-                  <th className="px-6 py-3">Order #</th>
-                  <th className="px-6 py-3">Customer</th>
-                  <th className="px-6 py-3">Items</th>
-                  <th className="px-6 py-3">Payment</th>
-                  <th className="px-6 py-3">Total</th>
-                  <th className="px-6 py-3">Status</th>
-                  <th className="px-6 py-3">Date</th>
-                  <th className="px-6 py-3"></th>
+                <tr className="border-b border-outline/15 bg-surface-container-low/50 font-label-caps text-label-caps text-[10px] text-secondary tracking-wider">
+                  <th className="px-6 py-3.5">Order #</th>
+                  <th className="px-6 py-3.5">Customer</th>
+                  <th className="px-6 py-3.5">Items</th>
+                  <th className="px-6 py-3.5">Payment</th>
+                  <th className="px-6 py-3.5">Total</th>
+                  <th className="px-6 py-3.5">Status</th>
+                  <th className="px-6 py-3.5">Date</th>
+                  <th className="px-6 py-3.5"></th>
                 </tr>
               </thead>
               <tbody>
                 {filtered.map((order) => (
-                  <tr key={order.id} className="border-b border-outline/10 hover:bg-surface-container-low">
+                  <tr key={order.id} className="border-b border-outline/10 hover:bg-surface-container-low transition-colors cursor-pointer">
                     <td className="px-6 py-4 font-medium text-primary">{order.orderNumber}</td>
                     <td className="px-6 py-4">
                       <p className="text-primary">
