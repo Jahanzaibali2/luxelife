@@ -29,7 +29,22 @@ export default function AdminOrderDetailPage() {
     }
   }
 
-  if (loading) return <p className="text-secondary">Loading order...</p>
+  if (loading) {
+    return (
+      <div className="max-w-4xl w-full space-y-6">
+        <div className="animate-pulse bg-outline/10 rounded h-4 w-24" />
+        <div className="space-y-2">
+          <div className="animate-pulse bg-outline/10 rounded h-8 w-48" />
+          <div className="animate-pulse bg-outline/10 rounded h-3 w-36" />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="animate-pulse bg-surface rounded-lg border border-outline/15 h-36" />
+          <div className="animate-pulse bg-surface rounded-lg border border-outline/15 h-36" />
+        </div>
+        <div className="animate-pulse bg-surface rounded-lg border border-outline/15 h-64" />
+      </div>
+    )
+  }
   if (!order) return <p className="text-error">Order not found.</p>
 
   return (
@@ -48,13 +63,13 @@ export default function AdminOrderDetailPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-gutter">
-        <div className="bg-surface p-4 sm:p-6 rounded border border-outline/15">
+        <div className="bg-surface p-4 sm:p-6 rounded-lg border border-outline/15">
           <h3 className="font-label-caps text-label-caps text-secondary mb-4 tracking-wider text-[10px]">CUSTOMER</h3>
           <p className="text-primary font-medium">{order.customer.firstName} {order.customer.lastName}</p>
           <p className="text-secondary text-sm mt-1">{order.customer.email}</p>
           <p className="text-secondary text-sm">{order.customer.phone}</p>
         </div>
-        <div className="bg-surface p-4 sm:p-6 rounded border border-outline/15">
+        <div className="bg-surface p-4 sm:p-6 rounded-lg border border-outline/15">
           <h3 className="font-label-caps text-label-caps text-secondary mb-4 tracking-wider text-[10px]">SHIPPING</h3>
           <p className="text-primary">{order.customer.street}</p>
           <p className="text-secondary text-sm">{order.customer.area}, {order.customer.emirate}</p>
@@ -65,7 +80,7 @@ export default function AdminOrderDetailPage() {
         </div>
       </div>
 
-      <div className="bg-surface rounded border border-outline/15 overflow-hidden">
+      <div className="bg-surface rounded-lg border border-outline/15 overflow-hidden">
         <div className="px-4 sm:px-6 py-4 border-b border-outline/15">
           <h3 className="font-label-caps text-label-caps text-secondary tracking-wider text-[10px]">ITEMS</h3>
         </div>
@@ -99,7 +114,7 @@ export default function AdminOrderDetailPage() {
         </div>
       </div>
 
-      <div className="bg-surface p-4 sm:p-6 rounded border border-outline/15">
+      <div className="bg-surface p-4 sm:p-6 rounded-lg border border-outline/15">
         <h3 className="font-label-caps text-label-caps text-secondary mb-4 tracking-wider text-[10px]">UPDATE STATUS</h3>
         <div className="flex gap-2 flex-wrap">
           {STATUSES.map((s) => (
@@ -108,8 +123,8 @@ export default function AdminOrderDetailPage() {
               type="button"
               disabled={updating || order.status === s}
               onClick={() => updateStatus(s)}
-              className={`px-4 py-2 rounded font-label-caps text-label-caps text-[10px] tracking-wider uppercase transition-colors disabled:opacity-40 ${
-                order.status === s ? 'bg-primary text-on-primary' : 'border border-outline/15 text-secondary hover:text-primary'
+              className={`px-4 py-1.5 rounded-full font-label-caps text-label-caps text-[10px] tracking-wider uppercase transition-colors disabled:opacity-40 cursor-pointer disabled:cursor-default ${
+                order.status === s ? 'bg-primary text-on-primary' : 'border border-outline/20 text-secondary hover:text-primary hover:border-outline/40'
               }`}
             >
               {s}
