@@ -19,28 +19,43 @@ export default function AdminDashboardPage() {
   }, [])
 
   if (loading) {
-    return <p className="text-secondary">Loading dashboard...</p>
+    return (
+      <div className="space-y-6 sm:space-y-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-gutter">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="bg-surface p-5 rounded-lg border border-outline/15 space-y-3">
+              <div className="animate-pulse bg-outline/10 rounded-lg w-11 h-11" />
+              <div className="animate-pulse bg-outline/10 rounded h-8 w-14" />
+              <div className="animate-pulse bg-outline/10 rounded h-3 w-24" />
+            </div>
+          ))}
+        </div>
+        <div className="animate-pulse bg-surface rounded-lg border border-outline/15 h-64" />
+      </div>
+    )
   }
 
   const cards = [
-    { label: 'Total Products', value: stats?.totalProducts ?? 0, icon: 'inventory_2' },
-    { label: 'Total Orders', value: stats?.totalOrders ?? 0, icon: 'receipt_long' },
-    { label: 'Pending Orders', value: stats?.pendingOrders ?? 0, icon: 'pending_actions' },
-    { label: 'Out of Stock', value: stats?.lowStock ?? 0, icon: 'warning' },
+    { label: 'Total Products', value: stats?.totalProducts ?? 0, icon: 'inventory_2', iconBg: 'bg-secondary-container text-primary' },
+    { label: 'Total Orders', value: stats?.totalOrders ?? 0, icon: 'receipt_long', iconBg: 'bg-soft-blush text-primary' },
+    { label: 'Pending Orders', value: stats?.pendingOrders ?? 0, icon: 'pending_actions', iconBg: 'bg-primary-fixed/60 text-primary' },
+    { label: 'Out of Stock', value: stats?.lowStock ?? 0, icon: 'warning', iconBg: 'bg-error-container text-error' },
   ]
 
   return (
     <div className="space-y-6 sm:space-y-8">
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-gutter">
         {cards.map((card) => (
-          <div key={card.label} className="bg-surface p-4 sm:p-6 rounded border border-outline/15">
-            <div className="flex items-center justify-between mb-2 sm:mb-4 gap-2">
-              <span className="font-label-caps text-label-caps text-secondary text-[9px] sm:text-[10px] tracking-wider leading-tight">
-                {card.label}
-              </span>
-              <span className="material-symbols-outlined text-primary/40 text-[20px] shrink-0">{card.icon}</span>
+          <div key={card.label} className="bg-surface p-5 rounded-lg border border-outline/15">
+            <div className={`inline-flex p-2.5 rounded-lg mb-4 ${card.iconBg}`}>
+              <span className="material-symbols-outlined text-[20px]">{card.icon}</span>
             </div>
-            <p className="font-headline-lg text-headline-lg text-primary">{card.value}</p>
+            <p className="font-headline-lg text-headline-lg text-primary tabular-nums leading-none mb-1.5">
+              {card.value}
+            </p>
+            <span className="font-label-caps text-label-caps text-secondary text-[10px] tracking-wider">
+              {card.label}
+            </span>
           </div>
         ))}
       </div>
@@ -61,7 +76,7 @@ export default function AdminDashboardPage() {
         </Link>
       </div>
 
-      <div className="bg-surface rounded border border-outline/15 overflow-hidden">
+      <div className="bg-surface rounded-lg border border-outline/15 overflow-hidden">
         <div className="px-4 sm:px-6 py-4 border-b border-outline/15 flex justify-between items-center gap-3">
           <h2 className="font-headline-md text-headline-md text-primary">Recent Orders</h2>
           <Link to="/admin/orders" className="font-label-sm text-label-sm text-secondary hover:text-primary shrink-0">
@@ -69,7 +84,10 @@ export default function AdminDashboardPage() {
           </Link>
         </div>
         {recentOrders.length === 0 ? (
-          <p className="p-4 sm:p-6 text-secondary">No orders yet.</p>
+          <div className="py-12 px-6 text-center">
+            <span className="material-symbols-outlined text-[48px] text-secondary/30 block mb-3">receipt_long</span>
+            <p className="text-secondary text-sm">No orders yet.</p>
+          </div>
         ) : (
           <>
             <div className="md:hidden divide-y divide-outline/10">
@@ -77,7 +95,7 @@ export default function AdminDashboardPage() {
                 <Link
                   key={order.id}
                   to={`/admin/orders/${order.id}`}
-                  className="block px-4 py-4 hover:bg-surface-container-low transition-colors"
+                  className="block px-4 py-4 hover:bg-surface-container-low transition-colors cursor-pointer"
                 >
                   <div className="flex items-start justify-between gap-3 mb-2">
                     <span className="text-primary font-medium">{order.orderNumber}</span>
@@ -96,17 +114,17 @@ export default function AdminDashboardPage() {
             <div className="hidden md:block overflow-x-auto">
               <table className="w-full text-left min-w-[640px]">
                 <thead>
-                  <tr className="border-b border-outline/15 font-label-caps text-label-caps text-[10px] text-secondary tracking-wider">
-                    <th className="px-6 py-3">Order</th>
-                    <th className="px-6 py-3">Customer</th>
-                    <th className="px-6 py-3">Total</th>
-                    <th className="px-6 py-3">Status</th>
-                    <th className="px-6 py-3">Date</th>
+                  <tr className="border-b border-outline/15 bg-surface-container-low/50 font-label-caps text-label-caps text-[10px] text-secondary tracking-wider">
+                    <th className="px-6 py-3.5">Order</th>
+                    <th className="px-6 py-3.5">Customer</th>
+                    <th className="px-6 py-3.5">Total</th>
+                    <th className="px-6 py-3.5">Status</th>
+                    <th className="px-6 py-3.5">Date</th>
                   </tr>
                 </thead>
                 <tbody>
                   {recentOrders.map((order) => (
-                    <tr key={order.id} className="border-b border-outline/10 hover:bg-surface-container-low transition-colors">
+                    <tr key={order.id} className="border-b border-outline/10 hover:bg-surface-container-low transition-colors cursor-pointer">
                       <td className="px-6 py-4">
                         <Link to={`/admin/orders/${order.id}`} className="text-primary font-medium hover:underline">
                           {order.orderNumber}
@@ -146,7 +164,7 @@ export function StatusBadge({ status }: { status: string }) {
   }
   return (
     <span
-      className={`inline-block px-2 py-1 rounded text-[10px] font-label-caps text-label-caps tracking-wider uppercase whitespace-nowrap ${colors[status] ?? 'bg-surface-variant'}`}
+      className={`inline-block px-2.5 py-1 rounded-full text-[10px] font-label-caps text-label-caps tracking-wider uppercase whitespace-nowrap ${colors[status] ?? 'bg-surface-variant text-primary'}`}
     >
       {status}
     </span>

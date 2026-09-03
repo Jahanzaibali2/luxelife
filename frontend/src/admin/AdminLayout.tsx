@@ -45,8 +45,8 @@ export default function AdminLayout() {
   const navLinkClass = ({ isActive }: { isActive: boolean }) =>
     `flex items-center gap-3 px-4 py-3 rounded font-label-caps text-label-caps text-[11px] tracking-wider transition-colors ${
       isActive
-        ? 'bg-primary text-on-primary'
-        : 'text-on-primary-container hover:bg-on-primary/10 hover:text-surface-bright'
+        ? 'bg-white/[0.12] text-on-primary border-l-[3px] border-inverse-primary pl-[13px]'
+        : 'text-on-primary-container hover:bg-white/[0.06] hover:text-on-primary border-l-[3px] border-transparent pl-[13px]'
     }`
 
   const sidebar = (
