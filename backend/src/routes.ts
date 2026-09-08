@@ -5,6 +5,7 @@ import * as repo from './repository.js'
 import { uploadProductImage } from './storage.js'
 import type { Currency, Order, OrderStatus, Product } from './types.js'
 import { slugify } from './utils.js'
+import { createPaymentIntent, getPaymentIntent, mapZiinaStatus } from './payments/ziina.js'
 
 export const publicRouter = Router()
 export const adminRouter = Router()
@@ -58,10 +59,15 @@ publicRouter.post('/orders', async (req, res) => {
       subtotal: number
       currency: Currency
       paymentMethod: string
+      paymentProvider: Order['paymentProvider']
     }
 
     if (!body.customer?.email || !body.items?.length) {
       res.status(400).json({ error: 'Invalid order data' })
+      return
+    }
+    if (body.paymentProvider !== 'cod' && body.paymentProvider !== 'ziina') {
+      res.status(400).json({ error: 'Invalid payment provider' })
       return
     }
 
@@ -71,8 +77,77 @@ publicRouter.post('/orders', async (req, res) => {
       subtotal: body.subtotal,
       currency: body.currency,
       paymentMethod: body.paymentMethod,
+      paymentProvider: body.paymentProvider,
     })
     res.status(201).json(order)
+  } catch (err) {
+    handleError(res, err)
+  }
+})
+
+publicRouter.post('/payments/ziina/create', async (req, res) => {
+  try {
+    const { orderId, successUrl, cancelUrl } = req.body as {
+      orderId?: string
+      successUrl?: string
+      cancelUrl?: string
+    }
+    if (!orderId || !successUrl || !cancelUrl) {
+      res.status(400).json({ error: 'orderId, successUrl, and cancelUrl are required' })
+      return
+    }
+
+    const order = await repo.getOrderById(orderId)
+    if (!order) {
+      res.status(404).json({ error: 'Order not found' })
+      return
+    }
+    if (order.paymentProvider !== 'ziina') {
+      res.status(400).json({ error: 'This order is not set up for Ziina payment' })
+      return
+    }
+    if (order.paymentStatus === 'paid') {
+      res.status(400).json({ error: 'This order is already paid' })
+      return
+    }
+
+    const intent = await createPaymentIntent({
+      amountAed: order.subtotal,
+      orderNumber: order.orderNumber,
+      successUrl,
+      cancelUrl,
+    })
+    await repo.updateOrderPayment(order.id, { paymentStatus: 'unpaid', paymentReference: intent.id })
+    res.json({ redirectUrl: intent.redirectUrl })
+  } catch (err) {
+    handleError(res, err)
+  }
+})
+
+publicRouter.get('/payments/ziina/status/:orderId', async (req, res) => {
+  try {
+    const order = await repo.getOrderById(req.params.orderId)
+    if (!order) {
+      res.status(404).json({ error: 'Order not found' })
+      return
+    }
+    if (!order.paymentReference) {
+      res.json(order)
+      return
+    }
+
+    const intent = await getPaymentIntent(order.paymentReference)
+    const paymentStatus = mapZiinaStatus(intent.status)
+    if (paymentStatus === order.paymentStatus) {
+      res.json(order)
+      return
+    }
+
+    const updated = await repo.updateOrderPayment(order.id, {
+      paymentStatus,
+      status: paymentStatus === 'paid' ? 'processing' : order.status,
+    })
+    res.json(updated ?? order)
   } catch (err) {
     handleError(res, err)
   }
