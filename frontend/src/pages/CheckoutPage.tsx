@@ -23,7 +23,12 @@ const checkoutSchema = z.object({
 
 type CheckoutForm = z.infer<typeof checkoutSchema>
 
-const COD = 'Cash on Delivery'
+type PaymentMethod = 'cod' | 'ziina'
+
+const PAYMENT_LABELS: Record<PaymentMethod, string> = {
+  cod: 'Cash on Delivery',
+  ziina: 'Ziina',
+}
 
 export default function CheckoutPage() {
   const { items, subtotal, clearCart } = useCart()
@@ -31,6 +36,7 @@ export default function CheckoutPage() {
   const [orderNumber, setOrderNumber] = useState('')
   const [submitError, setSubmitError] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('cod')
   const {
     register,
     handleSubmit,
@@ -65,8 +71,21 @@ export default function CheckoutPage() {
         })),
         subtotal,
         currency: 'AED',
-        paymentMethod: COD,
+        paymentMethod: PAYMENT_LABELS[paymentMethod],
+        paymentProvider: paymentMethod,
       })
+
+      if (paymentMethod === 'ziina') {
+        const origin = window.location.origin
+        const { redirectUrl } = await api.createZiinaPayment(
+          order.id,
+          `${origin}/checkout/success?order=${order.id}`,
+          `${origin}/checkout/success?order=${order.id}`,
+        )
+        window.location.href = redirectUrl
+        return
+      }
+
       setOrderNumber(order.orderNumber)
       clearCart()
       setSubmitted(true)
@@ -226,13 +245,22 @@ export default function CheckoutPage() {
                   <div>
                     <h4 className="font-label-caps text-label-caps text-secondary mb-4 tracking-[0.1em]">PAYMENT METHOD</h4>
                     <div className="flex flex-col gap-3 mb-8">
-                      <div className="flex items-center gap-3 p-4 border border-primary-container bg-surface rounded">
+                      <label className={`flex items-center gap-3 p-4 border rounded cursor-pointer ${paymentMethod === 'cod' ? 'border-primary-container bg-surface' : 'border-outline/15'}`}>
+                        <input type="radio" name="paymentMethod" value="cod" checked={paymentMethod === 'cod'} onChange={() => setPaymentMethod('cod')} className="accent-primary" />
                         <span className="material-symbols-outlined text-primary">payments</span>
                         <div>
                           <p className="font-body-md text-body-md text-primary">Cash on Delivery</p>
                           <p className="font-label-sm text-label-sm text-secondary">Pay the courier when your order arrives.</p>
                         </div>
-                      </div>
+                      </label>
+                      <label className={`flex items-center gap-3 p-4 border rounded cursor-pointer ${paymentMethod === 'ziina' ? 'border-primary-container bg-surface' : 'border-outline/15'}`}>
+                        <input type="radio" name="paymentMethod" value="ziina" checked={paymentMethod === 'ziina'} onChange={() => setPaymentMethod('ziina')} className="accent-primary" />
+                        <span className="material-symbols-outlined text-primary">credit_card</span>
+                        <div>
+                          <p className="font-body-md text-body-md text-primary">Pay with Ziina</p>
+                          <p className="font-label-sm text-label-sm text-secondary">You'll be redirected to Ziina to complete payment.</p>
+                        </div>
+                      </label>
                     </div>
                     {submitError && <p className="text-error text-sm mb-4">{submitError}</p>}
                     <button type="submit" disabled={submitting || items.length === 0} className="w-full bg-primary-container text-on-primary font-label-caps text-label-caps tracking-[0.1em] py-4 rounded hover:bg-tertiary btn-lift flex items-center justify-center gap-2 disabled:opacity-50">

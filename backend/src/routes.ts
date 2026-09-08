@@ -5,6 +5,7 @@ import * as repo from './repository.js'
 import { uploadProductImage } from './storage.js'
 import type { Currency, Order, OrderStatus, Product } from './types.js'
 import { slugify } from './utils.js'
+import { createPaymentIntent, getPaymentIntent, mapZiinaStatus } from './payments/ziina.js'
 
 export const publicRouter = Router()
 export const adminRouter = Router()
@@ -54,25 +55,128 @@ publicRouter.post('/orders', async (req, res) => {
   try {
     const body = req.body as {
       customer: Order['customer']
-      items: Order['items']
-      subtotal: number
+      items: { productId: string; variant?: string; quantity?: number }[]
       currency: Currency
       paymentMethod: string
+      paymentProvider: Order['paymentProvider']
     }
 
     if (!body.customer?.email || !body.items?.length) {
       res.status(400).json({ error: 'Invalid order data' })
       return
     }
+    if (body.paymentProvider !== 'cod' && body.paymentProvider !== 'ziina') {
+      res.status(400).json({ error: 'Invalid payment provider' })
+      return
+    }
+
+    // Never trust client-supplied price/subtotal — look up the real product
+    // and price server-side so a customer can't post an arbitrary amount.
+    const items: Order['items'] = []
+    for (const reqItem of body.items) {
+      const product = await repo.getProductById(reqItem.productId)
+      if (!product) {
+        res.status(400).json({ error: `Unknown product: ${reqItem.productId}` })
+        return
+      }
+      const quantity = Math.max(1, Math.floor(Number(reqItem.quantity) || 1))
+      items.push({
+        productId: product.id,
+        name: product.name,
+        variant: reqItem.variant ?? '',
+        price: product.price,
+        currency: product.currency,
+        quantity,
+        image: product.image,
+      })
+    }
+    const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0)
 
     const order = await repo.createOrder({
       customer: body.customer,
-      items: body.items,
-      subtotal: body.subtotal,
+      items,
+      subtotal,
       currency: body.currency,
       paymentMethod: body.paymentMethod,
+      paymentProvider: body.paymentProvider,
     })
     res.status(201).json(order)
+  } catch (err) {
+    handleError(res, err)
+  }
+})
+
+publicRouter.post('/payments/ziina/create', async (req, res) => {
+  try {
+    const { orderId, successUrl, cancelUrl } = req.body as {
+      orderId?: string
+      successUrl?: string
+      cancelUrl?: string
+    }
+    if (!orderId || !successUrl || !cancelUrl) {
+      res.status(400).json({ error: 'orderId, successUrl, and cancelUrl are required' })
+      return
+    }
+
+    const order = await repo.getOrderById(orderId)
+    if (!order) {
+      res.status(404).json({ error: 'Order not found' })
+      return
+    }
+    if (order.paymentProvider !== 'ziina') {
+      res.status(400).json({ error: 'This order is not set up for Ziina payment' })
+      return
+    }
+    if (order.paymentStatus === 'paid') {
+      res.status(400).json({ error: 'This order is already paid' })
+      return
+    }
+
+    const intent = await createPaymentIntent({
+      amountAed: order.subtotal,
+      orderNumber: order.orderNumber,
+      successUrl,
+      cancelUrl,
+    })
+    const updated = await repo.updateOrderPayment(order.id, {
+      paymentStatus: 'unpaid',
+      paymentReference: intent.id,
+    })
+    if (!updated) {
+      res.status(500).json({ error: 'Failed to save payment reference' })
+      return
+    }
+    res.json({ redirectUrl: intent.redirectUrl })
+  } catch (err) {
+    handleError(res, err)
+  }
+})
+
+publicRouter.get('/payments/ziina/status/:orderId', async (req, res) => {
+  try {
+    const order = await repo.getOrderById(req.params.orderId)
+    if (!order) {
+      res.status(404).json({ error: 'Order not found' })
+      return
+    }
+    if (!order.paymentReference) {
+      res.json({ orderNumber: order.orderNumber, paymentStatus: order.paymentStatus })
+      return
+    }
+
+    const intent = await getPaymentIntent(order.paymentReference)
+    const paymentStatus = mapZiinaStatus(intent.status)
+    if (paymentStatus === order.paymentStatus) {
+      res.json({ orderNumber: order.orderNumber, paymentStatus: order.paymentStatus })
+      return
+    }
+
+    const updated = await repo.updateOrderPayment(order.id, {
+      paymentStatus,
+      status: paymentStatus === 'paid' ? 'processing' : order.status,
+    })
+    const result = updated ?? order
+    res.json({ orderNumber: result.orderNumber, paymentStatus: result.paymentStatus })
   } catch (err) {
     handleError(res, err)
   }
