@@ -1,5 +1,5 @@
 import { getSupabase } from './supabase'
-import type { AdminStats, Currency, Order, OrderStatus, Product } from '../types/api'
+import type { AdminStats, Currency, Order, OrderStatus, PaymentStatus, Product } from '../types/api'
 
 type ProductRow = {
   id: string
@@ -97,10 +97,12 @@ async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
     ...init,
     headers: { 'Content-Type': 'application/json', ...init?.headers },
   })
-  const data = await res.json()
+  const data = await res.json().catch(() => ({}))
   if (!res.ok) throw new Error(data.error ?? `Request failed (${res.status})`)
   return data as T
 }
+
+export type ZiinaPaymentStatus = { orderNumber: string; paymentStatus: PaymentStatus }
 
 export const api = {
   async getProducts(): Promise<Product[]> {
@@ -149,7 +151,7 @@ export const api = {
     })
   },
 
-  async getZiinaPaymentStatus(orderId: string): Promise<Order> {
+  async getZiinaPaymentStatus(orderId: string): Promise<ZiinaPaymentStatus> {
     return apiFetch(`/api/payments/ziina/status/${orderId}`)
   },
 }

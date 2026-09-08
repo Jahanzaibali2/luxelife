@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { CheckoutHeader } from '../components/layout/Header'
 import { Footer } from '../components/layout/Footer'
-import { api } from '../lib/api'
-import type { Order } from '../types/api'
+import { api, type ZiinaPaymentStatus } from '../lib/api'
+import { useCart } from '../context/CartContext'
 
 const POLL_ATTEMPTS = 5
 const POLL_DELAY_MS = 2000
@@ -15,8 +15,10 @@ function sleep(ms: number) {
 export default function CheckoutSuccessPage() {
   const [searchParams] = useSearchParams()
   const orderId = searchParams.get('order')
-  const [order, setOrder] = useState<Order | null>(null)
+  const [order, setOrder] = useState<ZiinaPaymentStatus | null>(null)
   const [error, setError] = useState('')
+  const { clearCart } = useCart()
+  const clearedRef = useRef(false)
 
   useEffect(() => {
     if (!orderId) {
@@ -32,6 +34,10 @@ export default function CheckoutSuccessPage() {
           const result = await api.getZiinaPaymentStatus(orderId as string)
           if (cancelled) return
           setOrder(result)
+          if (result.paymentStatus === 'paid' && !clearedRef.current) {
+            clearedRef.current = true
+            clearCart()
+          }
           if (result.paymentStatus !== 'unpaid') return
         } catch (err) {
           if (cancelled) return
@@ -46,7 +52,7 @@ export default function CheckoutSuccessPage() {
     return () => {
       cancelled = true
     }
-  }, [orderId])
+  }, [orderId, clearCart])
 
   return (
     <div className="bg-background text-on-background min-h-screen flex flex-col font-body-md text-body-md antialiased">

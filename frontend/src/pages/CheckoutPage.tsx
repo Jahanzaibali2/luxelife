@@ -80,9 +80,8 @@ export default function CheckoutPage() {
         const { redirectUrl } = await api.createZiinaPayment(
           order.id,
           `${origin}/checkout/success?order=${order.id}`,
-          `${origin}/checkout`,
+          `${origin}/checkout/success?order=${order.id}`,
         )
-        clearCart()
         window.location.href = redirectUrl
         return
       }

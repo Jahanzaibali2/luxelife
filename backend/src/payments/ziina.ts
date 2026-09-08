@@ -24,8 +24,9 @@ function isTestMode(): boolean {
  * first real test — their exact status strings weren't confirmable here.
  */
 export function mapZiinaStatus(status: string): 'unpaid' | 'paid' | 'failed' {
-  if (status === 'completed') return 'paid'
-  if (status === 'failed' || status === 'cancelled' || status === 'canceled') return 'failed'
+  const normalized = status.toLowerCase()
+  if (normalized === 'completed') return 'paid'
+  if (normalized === 'failed' || normalized === 'cancelled' || normalized === 'canceled') return 'failed'
   return 'unpaid'
 }
 

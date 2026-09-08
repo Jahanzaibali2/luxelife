@@ -65,6 +65,8 @@ Default credentials (override via `.env`):
 
 Payment confirmation works by asking Ziina directly for the payment intent's status when the customer returns from checkout (`GET /api/payments/ziina/status/:orderId`), rather than a webhook. This is simpler and doesn't depend on your server being reachable from the internet for webhooks, at the cost of a small delay confirming payment vs. an instant webhook push.
 
+**Deploy order matters.** All order creation — including Cash on Delivery — now goes through this backend's `POST /api/orders` so prices can be recomputed server-side, and the frontend needs `VITE_API_URL` pointed at a reachable backend to call it. Deploy and verify this backend first; if the frontend build ships before the backend is up, every checkout (COD included, not just Ziina) will fail with "Missing VITE_API_URL" or a failed fetch.
+
 ## API routes
 
 | Method | Path | Auth |

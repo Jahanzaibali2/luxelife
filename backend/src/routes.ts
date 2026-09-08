@@ -55,8 +55,7 @@ publicRouter.post('/orders', async (req, res) => {
   try {
     const body = req.body as {
       customer: Order['customer']
-      items: Order['items']
-      subtotal: number
+      items: { productId: string; variant?: string; quantity?: number }[]
       currency: Currency
       paymentMethod: string
       paymentProvider: Order['paymentProvider']
@@ -71,10 +70,32 @@ publicRouter.post('/orders', async (req, res) => {
       return
     }
 
+    // Never trust client-supplied price/subtotal — look up the real product
+    // and price server-side so a customer can't post an arbitrary amount.
+    const items: Order['items'] = []
+    for (const reqItem of body.items) {
+      const product = await repo.getProductById(reqItem.productId)
+      if (!product) {
+        res.status(400).json({ error: `Unknown product: ${reqItem.productId}` })
+        return
+      }
+      const quantity = Math.max(1, Math.floor(Number(reqItem.quantity) || 1))
+      items.push({
+        productId: product.id,
+        name: product.name,
+        variant: reqItem.variant ?? '',
+        price: product.price,
+        currency: product.currency,
+        quantity,
+        image: product.image,
+      })
+    }
+    const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0)
+
     const order = await repo.createOrder({
       customer: body.customer,
-      items: body.items,
-      subtotal: body.subtotal,
+      items,
+      subtotal,
       currency: body.currency,
       paymentMethod: body.paymentMethod,
       paymentProvider: body.paymentProvider,
@@ -117,7 +138,14 @@ publicRouter.post('/payments/ziina/create', async (req, res) => {
       successUrl,
       cancelUrl,
     })
-    await repo.updateOrderPayment(order.id, { paymentStatus: 'unpaid', paymentReference: intent.id })
+    const updated = await repo.updateOrderPayment(order.id, {
+      paymentStatus: 'unpaid',
+      paymentReference: intent.id,
+    })
+    if (!updated) {
+      res.status(500).json({ error: 'Failed to save payment reference' })
+      return
+    }
     res.json({ redirectUrl: intent.redirectUrl })
   } catch (err) {
     handleError(res, err)
@@ -132,14 +160,14 @@ publicRouter.get('/payments/ziina/status/:orderId', async (req, res) => {
       return
     }
     if (!order.paymentReference) {
-      res.json(order)
+      res.json({ orderNumber: order.orderNumber, paymentStatus: order.paymentStatus })
       return
     }
 
     const intent = await getPaymentIntent(order.paymentReference)
     const paymentStatus = mapZiinaStatus(intent.status)
     if (paymentStatus === order.paymentStatus) {
-      res.json(order)
+      res.json({ orderNumber: order.orderNumber, paymentStatus: order.paymentStatus })
       return
     }
 
@@ -147,7 +175,8 @@ publicRouter.get('/payments/ziina/status/:orderId', async (req, res) => {
       paymentStatus,
       status: paymentStatus === 'paid' ? 'processing' : order.status,
     })
-    res.json(updated ?? order)
+    const result = updated ?? order
+    res.json({ orderNumber: result.orderNumber, paymentStatus: result.paymentStatus })
   } catch (err) {
     handleError(res, err)
   }
