@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { Price } from '../components/Price'
 import { adminApi } from '../lib/api'
 import type { Order, OrderStatus } from '../types/api'
-import { StatusBadge } from './AdminDashboardPage'
+import { PaymentBadge, StatusBadge } from './AdminDashboardPage'
 
 const STATUSES: OrderStatus[] = ['pending', 'processing', 'shipped', 'delivered', 'cancelled']
 
@@ -77,8 +77,9 @@ export default function AdminOrdersPage() {
                 </p>
                 <p className="text-secondary text-sm truncate">{order.customer.email}</p>
                 <div className="flex flex-wrap items-center justify-between gap-2 mt-3 pt-3 border-t border-outline/10 text-sm">
-                  <span className="text-secondary">
+                  <span className="text-secondary flex items-center gap-2">
                     {order.items.reduce((n, i) => n + i.quantity, 0)} item(s) · {order.paymentMethod}
+                    <PaymentBadge status={order.paymentStatus} />
                   </span>
                   <Price amount={order.subtotal} variant="inline" />
                 </div>
@@ -114,7 +115,12 @@ export default function AdminOrdersPage() {
                     <td className="px-6 py-4 text-secondary">
                       {order.items.reduce((n, i) => n + i.quantity, 0)} item(s)
                     </td>
-                    <td className="px-6 py-4 text-secondary text-sm">{order.paymentMethod}</td>
+                    <td className="px-6 py-4 text-secondary text-sm">
+                      <div className="flex items-center gap-2">
+                        {order.paymentMethod}
+                        <PaymentBadge status={order.paymentStatus} />
+                      </div>
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <Price amount={order.subtotal} variant="inline" />
                     </td>

@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router-dom'
 import { Price } from '../components/Price'
 import { adminApi } from '../lib/api'
 import type { Order, OrderStatus } from '../types/api'
-import { StatusBadge } from './AdminDashboardPage'
+import { PaymentBadge, StatusBadge } from './AdminDashboardPage'
 
 const STATUSES: OrderStatus[] = ['pending', 'processing', 'shipped', 'delivered', 'cancelled']
 
@@ -131,7 +131,12 @@ export default function AdminOrderDetailPage() {
             </button>
           ))}
         </div>
-        <p className="text-sm text-secondary mt-3">Payment: {order.paymentMethod} — collect cash on delivery.</p>
+        <div className="text-sm text-secondary mt-3 flex items-center gap-2 flex-wrap">
+          <span>Payment: {order.paymentMethod}</span>
+          <PaymentBadge status={order.paymentStatus} />
+          {order.paymentProvider === 'cod' && <span>— collect cash on delivery.</span>}
+          {order.paymentReference && <span className="text-xs">Ref: {order.paymentReference}</span>}
+        </div>
       </div>
     </div>
   )

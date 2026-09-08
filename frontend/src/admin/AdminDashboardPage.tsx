@@ -170,3 +170,18 @@ export function StatusBadge({ status }: { status: string }) {
     </span>
   )
 }
+
+export function PaymentBadge({ status }: { status: string }) {
+  const colors: Record<string, string> = {
+    paid: 'bg-primary-container text-on-primary',
+    unpaid: 'bg-soft-blush text-primary',
+    failed: 'bg-error-container text-error',
+  }
+  return (
+    <span
+      className={`inline-block px-2.5 py-1 rounded-full text-[10px] font-label-caps text-label-caps tracking-wider uppercase whitespace-nowrap ${colors[status] ?? 'bg-surface-variant text-primary'}`}
+    >
+      {status}
+    </span>
+  )
+}
