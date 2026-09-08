@@ -28,8 +28,8 @@ type OrderRow = {
   subtotal: number
   currency: Currency
   payment_method: string
-  payment_provider: string
-  payment_status: string
+  payment_provider: Order['paymentProvider']
+  payment_status: Order['paymentStatus']
   payment_reference: string | null
   created_at: string
   updated_at: string
@@ -65,8 +65,8 @@ function mapOrder(row: OrderRow): Order {
     subtotal: Number(row.subtotal),
     currency: row.currency,
     paymentMethod: row.payment_method,
-    paymentProvider: row.payment_provider as any,
-    paymentStatus: row.payment_status as any,
+    paymentProvider: row.payment_provider,
+    paymentStatus: row.payment_status,
     paymentReference: row.payment_reference,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
