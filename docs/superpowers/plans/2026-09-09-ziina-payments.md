@@ -1090,6 +1090,111 @@ No commit for this task — it's verification only. If any step fails, fix the r
 
 ---
 
+### Task 12: Admin panel — show payment status
+
+**Files:**
+- Modify: `frontend/src/admin/AdminDashboardPage.tsx`
+- Modify: `frontend/src/admin/AdminOrdersPage.tsx`
+- Modify: `frontend/src/admin/AdminOrderDetailPage.tsx`
+
+**Interfaces:**
+- Consumes: `Order.paymentProvider`/`paymentStatus`/`paymentReference` (Task 7), `Order.paymentMethod` (existing).
+- Produces: `PaymentBadge` component exported from `AdminDashboardPage.tsx` (alongside the existing `StatusBadge`) — consumed by the other two files in this same task.
+
+Added after Task 11: the admin panel currently shows only `order.paymentMethod` (a label like "Cash on Delivery" or "Ziina") with no indication of whether the order was actually paid, and `AdminOrderDetailPage.tsx` hardcodes "collect cash on delivery" regardless of payment method — misleading for a Ziina order that's already been paid online. This task adds a payment-status badge and, on the detail page, the Ziina reference id when present.
+
+- [ ] **Step 1: Add `PaymentBadge` next to `StatusBadge`**
+
+In `frontend/src/admin/AdminDashboardPage.tsx`, add after the existing `StatusBadge` function:
+
+```tsx
+export function PaymentBadge({ status }: { status: string }) {
+  const colors: Record<string, string> = {
+    paid: 'bg-primary-container text-on-primary',
+    unpaid: 'bg-soft-blush text-primary',
+    failed: 'bg-error-container text-error',
+  }
+  return (
+    <span
+      className={`inline-block px-2.5 py-1 rounded-full text-[10px] font-label-caps text-label-caps tracking-wider uppercase whitespace-nowrap ${colors[status] ?? 'bg-surface-variant text-primary'}`}
+    >
+      {status}
+    </span>
+  )
+}
+```
+
+- [ ] **Step 2: Show it in `AdminOrdersPage.tsx`**
+
+Import it: `import { PaymentBadge, StatusBadge } from './AdminDashboardPage'` (replacing the existing `StatusBadge`-only import).
+
+In the mobile card view, replace:
+```tsx
+                  <span className="text-secondary">
+                    {order.items.reduce((n, i) => n + i.quantity, 0)} item(s) · {order.paymentMethod}
+                  </span>
+```
+with:
+```tsx
+                  <span className="text-secondary flex items-center gap-2">
+                    {order.items.reduce((n, i) => n + i.quantity, 0)} item(s) · {order.paymentMethod}
+                    <PaymentBadge status={order.paymentStatus} />
+                  </span>
+```
+
+In the desktop table, replace:
+```tsx
+                    <td className="px-6 py-4 text-secondary text-sm">{order.paymentMethod}</td>
+```
+with:
+```tsx
+                    <td className="px-6 py-4 text-secondary text-sm">
+                      <div className="flex items-center gap-2">
+                        {order.paymentMethod}
+                        <PaymentBadge status={order.paymentStatus} />
+                      </div>
+                    </td>
+```
+
+- [ ] **Step 3: Show payment detail in `AdminOrderDetailPage.tsx`**
+
+Import it: `import { PaymentBadge, StatusBadge } from './AdminDashboardPage'` (replacing the existing `StatusBadge`-only import).
+
+Replace:
+```tsx
+        <p className="text-sm text-secondary mt-3">Payment: {order.paymentMethod} — collect cash on delivery.</p>
+```
+with:
+```tsx
+        <div className="text-sm text-secondary mt-3 flex items-center gap-2 flex-wrap">
+          <span>Payment: {order.paymentMethod}</span>
+          <PaymentBadge status={order.paymentStatus} />
+          {order.paymentProvider === 'cod' && <span>— collect cash on delivery.</span>}
+          {order.paymentReference && <span className="text-xs">Ref: {order.paymentReference}</span>}
+        </div>
+```
+
+- [ ] **Step 4: Type-check**
+
+Run: `cd frontend && npx tsc --noEmit`
+Expected: no errors.
+
+- [ ] **Step 5: Build**
+
+Run: `cd frontend && npm run build`
+Expected: build succeeds.
+
+- [ ] **Step 6: Commit**
+
+```bash
+git add frontend/src/admin/AdminDashboardPage.tsx frontend/src/admin/AdminOrdersPage.tsx frontend/src/admin/AdminOrderDetailPage.tsx
+git commit -m "feat(admin): show payment status and reference on orders
+
+Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>"
+```
+
+---
+
 ## Self-Review Notes
 
 - **Spec coverage:** Data model (Task 1), backend Ziina client + routes (Tasks 4–5), README rollout doc (Task 6), frontend order-creation-via-backend + Ziina calls (Task 8), checkout UI (Task 9), success/verification page (Task 10), end-to-end manual test (Task 11) — all spec sections have a task. PayPal and webhooks are explicitly out of scope per the spec and have no tasks, correctly.
