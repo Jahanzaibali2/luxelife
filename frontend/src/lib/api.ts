@@ -78,6 +78,24 @@ function throwIfError(error: { message: string } | null) {
   if (error) throw new Error(error.message)
 }
 
+function apiUrl(path: string): string {
+  const base = import.meta.env.VITE_API_URL
+  if (!base) {
+    throw new Error('Missing VITE_API_URL. Set it in frontend/.env.local to your backend URL (e.g. http://localhost:3001).')
+  }
+  return `${base}${path}`
+}
+
+async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
+  const res = await fetch(apiUrl(path), {
+    ...init,
+    headers: { 'Content-Type': 'application/json', ...init?.headers },
+  })
+  const data = await res.json()
+  if (!res.ok) throw new Error(data.error ?? `Request failed (${res.status})`)
+  return data as T
+}
+
 export const api = {
   async getProducts(): Promise<Product[]> {
     const { data, error } = await getSupabase()
@@ -105,36 +123,28 @@ export const api = {
     subtotal: number
     currency: Currency
     paymentMethod: string
+    paymentProvider: Order['paymentProvider']
   }): Promise<Order> {
     if (!input.items.length) throw new Error('Your cart is empty')
-    const now = new Date().toISOString()
-    const order: Order = {
-      id: crypto.randomUUID(),
-      orderNumber: `LL-${Date.now().toString().slice(-8)}`,
-      status: 'pending',
-      customer: input.customer,
-      items: input.items,
-      subtotal: input.subtotal,
-      currency: input.currency,
-      paymentMethod: 'Cash on Delivery',
-      createdAt: now,
-      updatedAt: now,
-    }
-
-    const { error } = await getSupabase().from('orders').insert({
-      id: order.id,
-      order_number: order.orderNumber,
-      status: order.status,
-      customer: order.customer,
-      items: order.items,
-      subtotal: order.subtotal,
-      currency: order.currency,
-      payment_method: order.paymentMethod,
-      created_at: now,
-      updated_at: now,
+    return apiFetch<Order>('/api/orders', {
+      method: 'POST',
+      body: JSON.stringify(input),
     })
-    throwIfError(error)
-    return order
+  },
+
+  async createZiinaPayment(
+    orderId: string,
+    successUrl: string,
+    cancelUrl: string,
+  ): Promise<{ redirectUrl: string }> {
+    return apiFetch('/api/payments/ziina/create', {
+      method: 'POST',
+      body: JSON.stringify({ orderId, successUrl, cancelUrl }),
+    })
+  },
+
+  async getZiinaPaymentStatus(orderId: string): Promise<Order> {
+    return apiFetch(`/api/payments/ziina/status/${orderId}`)
   },
 }
 
