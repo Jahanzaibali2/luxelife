@@ -1,4 +1,4 @@
-import type { Currency, Order, OrderItem, OrderStatus, Product } from './types.js'
+import type { Currency, Order, OrderItem, OrderStatus, PaymentProvider, PaymentStatus, Product } from './types.js'
 
 type ProductRow = {
   id: string
@@ -27,6 +27,9 @@ type OrderRow = {
   subtotal: number
   currency: Currency
   payment_method: string
+  payment_provider: PaymentProvider
+  payment_status: PaymentStatus
+  payment_reference: string | null
   created_at: string
   updated_at: string
 }
@@ -61,6 +64,9 @@ export function mapOrder(row: OrderRow): Order {
     subtotal: Number(row.subtotal),
     currency: row.currency,
     paymentMethod: row.payment_method,
+    paymentProvider: row.payment_provider,
+    paymentStatus: row.payment_status,
+    paymentReference: row.payment_reference,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   }

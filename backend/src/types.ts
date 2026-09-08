@@ -35,6 +35,9 @@ export type OrderStatus =
   | 'delivered'
   | 'cancelled'
 
+export type PaymentProvider = 'cod' | 'ziina'
+export type PaymentStatus = 'unpaid' | 'paid' | 'failed'
+
 export interface OrderItem {
   productId: string
   name: string
@@ -66,6 +69,9 @@ export interface Order {
   subtotal: number
   currency: Currency
   paymentMethod: string
+  paymentProvider: PaymentProvider
+  paymentStatus: PaymentStatus
+  paymentReference: string | null
 }
 
 export interface Database {
