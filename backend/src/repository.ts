@@ -127,6 +127,7 @@ export async function createOrder(input: {
   subtotal: number
   currency: Currency
   paymentMethod: string
+  paymentProvider: Order['paymentProvider']
 }): Promise<Order> {
   const now = new Date().toISOString()
   const orderNumber = `LL-${Date.now().toString().slice(-8)}`
@@ -142,6 +143,9 @@ export async function createOrder(input: {
       subtotal: input.subtotal,
       currency: input.currency,
       payment_method: input.paymentMethod,
+      payment_provider: input.paymentProvider,
+      payment_status: 'unpaid',
+      payment_reference: null,
       created_at: now,
       updated_at: now,
     })
@@ -160,6 +164,32 @@ export async function updateOrderStatus(
   const { data, error } = await getSupabase()
     .from('orders')
     .update({ status, updated_at: now })
+    .eq('id', id)
+    .select('*')
+    .single()
+
+  if (error) {
+    if (error.code === 'PGRST116') return null
+    throw error
+  }
+  return mapOrder(data)
+}
+
+export async function updateOrderPayment(
+  id: string,
+  updates: { paymentStatus: Order['paymentStatus']; paymentReference?: string; status?: OrderStatus },
+): Promise<Order | null> {
+  const now = new Date().toISOString()
+  const patch: Record<string, unknown> = {
+    payment_status: updates.paymentStatus,
+    updated_at: now,
+  }
+  if (updates.paymentReference !== undefined) patch.payment_reference = updates.paymentReference
+  if (updates.status !== undefined) patch.status = updates.status
+
+  const { data, error } = await getSupabase()
+    .from('orders')
+    .update(patch)
     .eq('id', id)
     .select('*')
     .single()
