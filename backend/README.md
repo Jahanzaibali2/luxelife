@@ -52,6 +52,19 @@ Default credentials (override via `.env`):
 - **ID:** `admin`
 - **Password:** `admin`
 
+## Payments (Ziina)
+
+1. Create a Ziina merchant account at [ziina.com](https://ziina.com) and find your API key under **Payments → API keys**.
+2. Add to `backend/.env`:
+   ```
+   ZIINA_API_KEY=your-ziina-api-key
+   ZIINA_TEST_MODE=true
+   ```
+3. Leave `ZIINA_TEST_MODE=true` while testing — Ziina will process the payment intent in test mode. Set it to `false` before accepting real payments.
+4. No code changes needed — the checkout flow picks this up automatically once the key is set and the backend is redeployed/restarted.
+
+Payment confirmation works by asking Ziina directly for the payment intent's status when the customer returns from checkout (`GET /api/payments/ziina/status/:orderId`), rather than a webhook. This is simpler and doesn't depend on your server being reachable from the internet for webhooks, at the cost of a small delay confirming payment vs. an instant webhook push.
+
 ## API routes
 
 | Method | Path | Auth |
