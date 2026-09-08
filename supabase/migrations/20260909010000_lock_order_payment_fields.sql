@@ -19,7 +19,13 @@ security definer
 set search_path = public
 as $$
 begin
-  if auth.role() is distinct from 'service_role' then
+  -- Checked two ways rather than relying solely on the auth.role() helper:
+  -- Postgres role Supabase's PostgREST switches into per-request (current_user),
+  -- and the raw JWT role claim, for robustness across Supabase versions.
+  if not (
+    current_user = 'service_role'
+    or coalesce(current_setting('request.jwt.claim.role', true), '') = 'service_role'
+  ) then
     new.payment_status := old.payment_status;
     new.payment_provider := old.payment_provider;
     new.payment_reference := old.payment_reference;

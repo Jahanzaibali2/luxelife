@@ -76,6 +76,7 @@ export async function getPaymentIntent(intentId: string): Promise<{ id: string; 
 function demo() {
   const cases: [string, 'unpaid' | 'paid' | 'failed'][] = [
     ['completed', 'paid'],
+    ['Completed', 'paid'],
     ['failed', 'failed'],
     ['cancelled', 'failed'],
     ['requires_payment_instrument', 'unpaid'],
