@@ -13,8 +13,10 @@ const checkoutSchema = z.object({
   email: z.string().email('Please enter a valid email'),
   firstName: z.string().min(1, 'First name is required'),
   lastName: z.string().min(1, 'Last name is required'),
+  phoneCode: z.string().min(1, 'Required'),
   phone: z.string().min(7, 'Please enter a valid phone number'),
-  emirate: z.string().min(1, 'Please select an emirate'),
+  country: z.string().min(1, 'Please select a country'),
+  state: z.string().min(1, 'State / Province is required'),
   area: z.string().min(1, 'Area is required'),
   street: z.string().min(1, 'Street address is required'),
   apartment: z.string().optional(),
@@ -30,6 +32,19 @@ const PAYMENT_LABELS: Record<PaymentMethod, string> = {
   ziina: 'Ziina',
 }
 
+// UAE listed first and preselected — every other value is opt-in.
+const COUNTRIES = [
+  { code: 'AE', name: 'United Arab Emirates', dial: '+971' },
+  { code: 'SA', name: 'Saudi Arabia', dial: '+966' },
+  { code: 'QA', name: 'Qatar', dial: '+974' },
+  { code: 'KW', name: 'Kuwait', dial: '+965' },
+  { code: 'BH', name: 'Bahrain', dial: '+973' },
+  { code: 'OM', name: 'Oman', dial: '+968' },
+  { code: 'US', name: 'United States', dial: '+1' },
+  { code: 'GB', name: 'United Kingdom', dial: '+44' },
+  { code: 'IN', name: 'India', dial: '+91' },
+]
+
 export default function CheckoutPage() {
   const { items, subtotal, clearCart } = useCart()
   const [submitted, setSubmitted] = useState(false)
@@ -41,7 +56,10 @@ export default function CheckoutPage() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<CheckoutForm>({ resolver: zodResolver(checkoutSchema) })
+  } = useForm<CheckoutForm>({
+    resolver: zodResolver(checkoutSchema),
+    defaultValues: { country: 'AE', phoneCode: '+971' },
+  })
 
   const onSubmit = async (data: CheckoutForm) => {
     if (!items.length) return
@@ -53,8 +71,9 @@ export default function CheckoutPage() {
           email: data.email,
           firstName: data.firstName,
           lastName: data.lastName,
-          phone: data.phone,
-          emirate: data.emirate,
+          phone: `${data.phoneCode} ${data.phone}`,
+          country: COUNTRIES.find((c) => c.code === data.country)?.name ?? data.country,
+          state: data.state,
           area: data.area,
           street: data.street,
           apartment: data.apartment,
@@ -144,9 +163,13 @@ export default function CheckoutPage() {
                       {errors.lastName && <p className="text-error text-sm mt-1">{errors.lastName.message}</p>}
                     </div>
                     <div className="col-span-1 md:col-span-2">
-                      <label className="block font-label-sm text-label-sm text-secondary mb-1" htmlFor="phone">Phone Number (UAE)</label>
+                      <label className="block font-label-sm text-label-sm text-secondary mb-1" htmlFor="phone">Phone Number</label>
                       <div className="flex gap-4">
-                        <span className="font-body-md text-body-md text-secondary py-2 border-b border-outline-variant">+971</span>
+                        <select className="input-minimal font-body-md text-body-md text-on-surface bg-transparent appearance-none" id="phoneCode" {...register('phoneCode')}>
+                          {COUNTRIES.map((c) => (
+                            <option key={c.code} value={c.dial}>{c.dial}</option>
+                          ))}
+                        </select>
                         <input className="input-minimal flex-grow font-body-md text-body-md text-on-surface" id="phone" placeholder="50 123 4567" type="tel" {...register('phone')} />
                       </div>
                       {errors.phone && <p className="text-error text-sm mt-1">{errors.phone.message}</p>}
@@ -161,15 +184,18 @@ export default function CheckoutPage() {
                   </h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-x-gutter gap-y-8">
                     <div className="col-span-1 md:col-span-2">
-                      <label className="block font-label-sm text-label-sm text-secondary mb-1" htmlFor="emirate">Emirate</label>
-                      <select className="input-minimal w-full font-body-md text-body-md text-on-surface bg-transparent appearance-none" id="emirate" {...register('emirate')}>
-                        <option value="">Select Emirate</option>
-                        <option value="dubai">Dubai</option>
-                        <option value="abudhabi">Abu Dhabi</option>
-                        <option value="sharjah">Sharjah</option>
-                        <option value="ajman">Ajman</option>
+                      <label className="block font-label-sm text-label-sm text-secondary mb-1" htmlFor="country">Country</label>
+                      <select className="input-minimal w-full font-body-md text-body-md text-on-surface bg-transparent appearance-none" id="country" {...register('country')}>
+                        {COUNTRIES.map((c) => (
+                          <option key={c.code} value={c.code}>{c.name}</option>
+                        ))}
                       </select>
-                      {errors.emirate && <p className="text-error text-sm mt-1">{errors.emirate.message}</p>}
+                      {errors.country && <p className="text-error text-sm mt-1">{errors.country.message}</p>}
+                    </div>
+                    <div className="col-span-1 md:col-span-2">
+                      <label className="block font-label-sm text-label-sm text-secondary mb-1" htmlFor="state">State / Province / Emirate</label>
+                      <input className="input-minimal w-full font-body-md text-body-md text-on-surface" id="state" placeholder="e.g. Dubai" type="text" {...register('state')} />
+                      {errors.state && <p className="text-error text-sm mt-1">{errors.state.message}</p>}
                     </div>
                     <div className="col-span-1 md:col-span-2">
                       <label className="block font-label-sm text-label-sm text-secondary mb-1" htmlFor="area">Area / Neighborhood</label>

@@ -72,7 +72,7 @@ export default function AdminOrderDetailPage() {
         <div className="bg-surface p-4 sm:p-6 rounded-lg border border-outline/15">
           <h3 className="font-label-caps text-label-caps text-secondary mb-4 tracking-wider text-[10px]">SHIPPING</h3>
           <p className="text-primary">{order.customer.street}</p>
-          <p className="text-secondary text-sm">{order.customer.area}, {order.customer.emirate}</p>
+          <p className="text-secondary text-sm">{order.customer.area}, {order.customer.state}, {order.customer.country}</p>
           {order.customer.apartment && <p className="text-secondary text-sm">{order.customer.apartment}</p>}
           {order.customer.instructions && (
             <p className="text-secondary text-sm mt-2 italic">Note: {order.customer.instructions}</p>
