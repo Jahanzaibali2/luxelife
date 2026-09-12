@@ -59,7 +59,8 @@ export interface Order {
     firstName: string
     lastName: string
     phone: string
-    emirate: string
+    country: string
+    state: string
     area: string
     street: string
     apartment?: string
