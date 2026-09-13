@@ -115,15 +115,6 @@ export default function ProductDetailPage() {
                   {product.category.replace('-', ' ')}
                 </h2>
                 <h1 className="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-4">{product.name}</h1>
-                <div className="flex items-center gap-2 mb-4">
-                  <div className="flex text-primary">
-                    {[1, 2, 3, 4].map((s) => (
-                      <span key={s} className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
-                    ))}
-                    <span className="material-symbols-outlined">star_half</span>
-                  </div>
-                  <span className="font-label-sm text-label-sm text-secondary">(4.8 / 12 reviews)</span>
-                </div>
                 <div className="mb-2">
                   <Price amount={product.price} variant="emphasis" />
                 </div>

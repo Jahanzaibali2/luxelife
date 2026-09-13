@@ -1,4 +1,5 @@
 import { resolve } from 'node:path'
+import { HttpError } from '../utils.js'
 
 const ZIINA_API_BASE = 'https://api-v2.ziina.com/api'
 
@@ -54,7 +55,10 @@ export async function createPaymentIntent(input: {
 
   const data = (await res.json()) as { id?: string; redirect_url?: string; message?: string }
   if (!res.ok || !data.id || !data.redirect_url) {
-    throw new Error(data.message ?? `Ziina payment intent creation failed (${res.status})`)
+    throw new HttpError(
+      res.status >= 400 && res.status < 500 ? res.status : 502,
+      data.message ?? `Ziina payment intent creation failed (${res.status})`,
+    )
   }
   return { id: data.id, redirectUrl: data.redirect_url }
 }
@@ -66,7 +70,10 @@ export async function getPaymentIntent(intentId: string): Promise<{ id: string; 
 
   const data = (await res.json()) as { id?: string; status?: string; message?: string }
   if (!res.ok || !data.id || !data.status) {
-    throw new Error(data.message ?? `Ziina payment intent lookup failed (${res.status})`)
+    throw new HttpError(
+      res.status >= 400 && res.status < 500 ? res.status : 502,
+      data.message ?? `Ziina payment intent lookup failed (${res.status})`,
+    )
   }
   return { id: data.id, status: data.status }
 }

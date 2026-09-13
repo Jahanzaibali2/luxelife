@@ -64,10 +64,6 @@ export default function CartPage() {
                   <span>Estimated Shipping</span>
                   <span>Complimentary</span>
                 </div>
-                <div className="flex justify-between font-body-md text-body-md text-secondary">
-                  <span>Payment</span>
-                  <span>Cash on Delivery</span>
-                </div>
               </div>
               <div className="flex justify-between items-end mb-8 pt-6 border-t border-outline/15">
                 <span className="font-body-lg text-body-lg text-primary">Total</span>

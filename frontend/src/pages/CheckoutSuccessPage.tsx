@@ -91,7 +91,7 @@ export default function CheckoutSuccessPage() {
             <>
               <span className="material-symbols-outlined text-4xl text-primary mb-4">hourglass_top</span>
               <h2 className="font-headline-md text-headline-md text-primary mb-2">Still Processing</h2>
-              <p className="font-body-md text-secondary mb-6">Ziina hasn't confirmed this payment yet. Refresh this page in a minute, or check your email for confirmation.</p>
+              <p className="font-body-md text-secondary mb-6">We haven't confirmed this payment yet. Refresh this page in a minute, or check your email for confirmation.</p>
             </>
           )}
           <Link to="/shop" className="font-label-caps text-label-caps text-primary underline">Continue shopping</Link>

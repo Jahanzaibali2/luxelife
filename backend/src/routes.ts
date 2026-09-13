@@ -4,7 +4,7 @@ import { loginHandler, requireAuth } from './auth.js'
 import * as repo from './repository.js'
 import { uploadProductImage } from './storage.js'
 import type { Currency, Order, OrderStatus, Product } from './types.js'
-import { slugify } from './utils.js'
+import { slugify, HttpError } from './utils.js'
 import { createPaymentIntent, getPaymentIntent, mapZiinaStatus } from './payments/ziina.js'
 
 export const publicRouter = Router()
@@ -24,6 +24,10 @@ const upload = multer({
 
 function handleError(res: import('express').Response, err: unknown) {
   console.error(err)
+  if (err instanceof HttpError) {
+    res.status(err.status).json({ error: err.message })
+    return
+  }
   res.status(500).json({ error: 'Internal server error' })
 }
 

@@ -283,8 +283,8 @@ export default function CheckoutPage() {
                         <input type="radio" name="paymentMethod" value="ziina" checked={paymentMethod === 'ziina'} onChange={() => setPaymentMethod('ziina')} className="accent-primary" />
                         <span className="material-symbols-outlined text-primary">credit_card</span>
                         <div>
-                          <p className="font-body-md text-body-md text-primary">Pay with Ziina</p>
-                          <p className="font-label-sm text-label-sm text-secondary">You'll be redirected to Ziina to complete payment.</p>
+                          <p className="font-body-md text-body-md text-primary">Pay with Card (Credit or Debit)</p>
+                          <p className="font-label-sm text-label-sm text-secondary">You'll be redirected to a secure page to complete payment.</p>
                         </div>
                       </label>
                     </div>
