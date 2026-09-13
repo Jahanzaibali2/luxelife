@@ -76,9 +76,14 @@ publicRouter.post('/orders', async (req, res) => {
 
     // Never trust client-supplied price/subtotal — look up the real product
     // and price server-side so a customer can't post an arbitrary amount.
+    // Looked up in parallel, not one-by-one - a sequential await per item
+    // stacked round-trips and could push multi-item carts past the
+    // function's execution timeout.
+    const products = await Promise.all(body.items.map((reqItem) => repo.getProductById(reqItem.productId)))
     const items: Order['items'] = []
-    for (const reqItem of body.items) {
-      const product = await repo.getProductById(reqItem.productId)
+    for (let i = 0; i < body.items.length; i++) {
+      const reqItem = body.items[i]
+      const product = products[i]
       if (!product) {
         res.status(400).json({ error: `Unknown product: ${reqItem.productId}` })
         return
