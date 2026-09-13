@@ -12,6 +12,9 @@ const CheckoutSuccessPage = lazy(() => import('./pages/CheckoutSuccessPage'))
 const AboutPage = lazy(() => import('./pages/AboutPage'))
 const FAQPage = lazy(() => import('./pages/FAQPage'))
 const ContactPage = lazy(() => import('./pages/ContactPage'))
+const TermsPage = lazy(() => import('./pages/TermsPage'))
+const PrivacyPage = lazy(() => import('./pages/PrivacyPage'))
+const ShippingReturnsPage = lazy(() => import('./pages/ShippingReturnsPage'))
 const AdminLayout = lazy(() => import('./admin/AdminLayout'))
 const AdminLoginPage = lazy(() => import('./admin/AdminLoginPage'))
 const AdminProtectedRoute = lazy(() => import('./admin/AdminProtectedRoute'))
@@ -41,6 +44,9 @@ export default function App() {
               <Route path="/about" element={<AboutPage />} />
               <Route path="/faq" element={<FAQPage />} />
               <Route path="/contact" element={<ContactPage />} />
+              <Route path="/terms" element={<TermsPage />} />
+              <Route path="/privacy" element={<PrivacyPage />} />
+              <Route path="/shipping-returns" element={<ShippingReturnsPage />} />
 
               <Route path="/admin/login" element={<AdminLoginPage />} />
               <Route element={<AdminProtectedRoute />}>

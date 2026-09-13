@@ -51,11 +51,11 @@ export function Footer({ variant }: FooterProps) {
             </div>
             <div className="flex flex-col space-y-4">
               <Link to="/faq" className="text-on-primary/80 hover:text-surface-bright transition-colors">FAQ</Link>
-              <a href="#" className="text-on-primary/80 hover:text-surface-bright transition-colors">Shipping & Returns</a>
+              <Link to="/shipping-returns" className="text-on-primary/80 hover:text-surface-bright transition-colors">Shipping & Returns</Link>
             </div>
             <div className="flex flex-col space-y-4 col-span-2 md:col-span-1">
-              <a href="#" className="text-on-primary/80 hover:text-surface-bright transition-colors">Privacy Policy</a>
-              <a href="#" className="text-on-primary/80 hover:text-surface-bright transition-colors">Terms of Service</a>
+              <Link to="/privacy" className="text-on-primary/80 hover:text-surface-bright transition-colors">Privacy Policy</Link>
+              <Link to="/terms" className="text-on-primary/80 hover:text-surface-bright transition-colors">Terms of Service</Link>
             </div>
           </div>
         </div>
@@ -79,9 +79,9 @@ export function Footer({ variant }: FooterProps) {
           <Link to="/about" className="text-on-primary/80 hover:text-on-primary-container transition-colors">About Us</Link>
           <Link to="/contact" className="text-on-primary/80 hover:text-on-primary-container transition-colors">Contact Us</Link>
           <Link to="/faq" className={`text-on-primary/80 hover:text-on-primary-container transition-colors ${variant === 'faq' ? 'underline' : ''}`}>FAQ</Link>
-          <a href="#" className="text-on-primary/80 hover:text-on-primary-container transition-colors">Privacy Policy</a>
-          <a href="#" className="text-on-primary/80 hover:text-on-primary-container transition-colors">Terms of Service</a>
-          <a href="#" className="text-on-primary/80 hover:text-on-primary-container transition-colors">Shipping & Returns</a>
+          <Link to="/privacy" className="text-on-primary/80 hover:text-on-primary-container transition-colors">Privacy Policy</Link>
+          <Link to="/terms" className="text-on-primary/80 hover:text-on-primary-container transition-colors">Terms of Service</Link>
+          <Link to="/shipping-returns" className="text-on-primary/80 hover:text-on-primary-container transition-colors">Shipping & Returns</Link>
         </div>
       </footer>
     )
@@ -110,7 +110,7 @@ export function Footer({ variant }: FooterProps) {
           </div>
           <div className="flex flex-col gap-4">
             <h4 className="font-label-caps text-label-caps text-surface-bright mb-2">Support</h4>
-            <a href="#" className="font-body-md text-body-md text-on-tertiary-container dark:text-on-tertiary-fixed-variant hover:text-surface-bright transition-colors duration-200">Customer Care</a>
+            <Link to="/contact" className="font-body-md text-body-md text-on-tertiary-container dark:text-on-tertiary-fixed-variant hover:text-surface-bright transition-colors duration-200">Customer Care</Link>
             <Link to="/contact" className="font-body-md text-body-md text-on-tertiary-container dark:text-on-tertiary-fixed-variant hover:text-surface-bright transition-colors duration-200">Contact</Link>
           </div>
           <div className="flex flex-col gap-4">
@@ -136,7 +136,7 @@ export function Footer({ variant }: FooterProps) {
           </div>
           <div className="flex flex-col gap-4 font-label-caps text-label-caps">
             <Link to="/shop" className="text-on-tertiary-container dark:text-on-tertiary-fixed-variant hover:text-surface-bright transition-colors duration-200">Shop</Link>
-            <a href="#" className="text-on-tertiary-container dark:text-on-tertiary-fixed-variant hover:text-surface-bright transition-colors duration-200">Customer Care</a>
+            <Link to="/contact" className="text-on-tertiary-container dark:text-on-tertiary-fixed-variant hover:text-surface-bright transition-colors duration-200">Customer Care</Link>
           </div>
           <div className="flex flex-col gap-4 font-label-caps text-label-caps">
             <Link to="/about" className="text-on-tertiary-container dark:text-on-tertiary-fixed-variant hover:text-surface-bright transition-colors duration-200">About</Link>
@@ -166,7 +166,7 @@ export function Footer({ variant }: FooterProps) {
           </div>
           <div className="flex flex-col gap-4">
             <Link to="/shop" className="text-surface-bright font-bold font-label-caps text-label-caps hover:text-surface-bright transition-colors duration-200">Shop</Link>
-            <a href="#" className="text-on-tertiary-container dark:text-on-tertiary-fixed-variant hover:text-surface-bright transition-colors duration-200 font-label-caps text-label-caps">Customer Care</a>
+            <Link to="/contact" className="text-on-tertiary-container dark:text-on-tertiary-fixed-variant hover:text-surface-bright transition-colors duration-200 font-label-caps text-label-caps">Customer Care</Link>
             <Link to="/about" className="text-on-tertiary-container dark:text-on-tertiary-fixed-variant hover:text-surface-bright transition-colors duration-200 font-label-caps text-label-caps">About</Link>
             <Link to="/contact" className="text-on-tertiary-container dark:text-on-tertiary-fixed-variant hover:text-surface-bright transition-colors duration-200 font-label-caps text-label-caps">Contact</Link>
             <a href="#" className="text-on-tertiary-container dark:text-on-tertiary-fixed-variant hover:text-surface-bright transition-colors duration-200 font-label-caps text-label-caps">Newsletter</a>
@@ -202,15 +202,15 @@ export function Footer({ variant }: FooterProps) {
         </div>
         <div className="flex flex-col gap-4">
           <span className="font-label-caps text-label-caps text-surface-container opacity-50 mb-2">Support</span>
-          <a href="#" className="font-body-md text-body-md text-on-tertiary-container dark:text-on-tertiary-fixed-variant hover:text-surface-bright transition-colors duration-200">Customer Care</a>
+          <Link to="/contact" className="font-body-md text-body-md text-on-tertiary-container dark:text-on-tertiary-fixed-variant hover:text-surface-bright transition-colors duration-200">Customer Care</Link>
           <Link to="/contact" className="font-body-md text-body-md text-on-tertiary-container dark:text-on-tertiary-fixed-variant hover:text-surface-bright transition-colors duration-200">Contact Us</Link>
           <Link to="/faq" className="font-body-md text-body-md text-on-tertiary-container dark:text-on-tertiary-fixed-variant hover:text-surface-bright transition-colors duration-200">FAQ</Link>
         </div>
         <div className="flex flex-col gap-4">
           <span className="font-label-caps text-label-caps text-surface-container opacity-50 mb-2">Company</span>
           <Link to="/about" className="font-body-md text-body-md text-on-tertiary-container dark:text-on-tertiary-fixed-variant hover:text-surface-bright transition-colors duration-200">About</Link>
-          <a href="#" className="font-body-md text-body-md text-on-tertiary-container dark:text-on-tertiary-fixed-variant hover:text-surface-bright transition-colors duration-200">Terms</a>
-          <a href="#" className="font-body-md text-body-md text-on-tertiary-container dark:text-on-tertiary-fixed-variant hover:text-surface-bright transition-colors duration-200">Privacy</a>
+          <Link to="/terms" className="font-body-md text-body-md text-on-tertiary-container dark:text-on-tertiary-fixed-variant hover:text-surface-bright transition-colors duration-200">Terms</Link>
+          <Link to="/privacy" className="font-body-md text-body-md text-on-tertiary-container dark:text-on-tertiary-fixed-variant hover:text-surface-bright transition-colors duration-200">Privacy</Link>
         </div>
       </div>
       <div className="border-t border-on-tertiary-container/20 px-margin-mobile md:px-margin-desktop py-6 max-w-container-max mx-auto flex flex-col md:flex-row justify-between items-center gap-4">

@@ -294,7 +294,7 @@ export default function CheckoutPage() {
                       <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
                     </button>
                     <p className="text-center font-label-sm text-label-sm text-secondary mt-4">
-                      By placing your order, you agree to our <a className="underline hover:text-primary" href="#">Terms & Conditions</a>.
+                      By placing your order, you agree to our <Link className="underline hover:text-primary" to="/terms">Terms & Conditions</Link>.
                     </p>
                   </div>
                 </div>
