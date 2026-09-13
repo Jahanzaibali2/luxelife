@@ -158,7 +158,7 @@ export function Header({ variant, activeNav }: HeaderProps) {
         <button
           type="button"
           aria-label="menu"
-          className="md:hidden text-primary dark:text-on-primary-fixed"
+          className="xl:hidden text-primary dark:text-on-primary-fixed"
           onClick={() => setMobileOpen(!mobileOpen)}
         >
           <span className="material-symbols-outlined">menu</span>
@@ -167,7 +167,7 @@ export function Header({ variant, activeNav }: HeaderProps) {
           to="/"
           textClassName="font-display-lg text-headline-md font-semibold tracking-tighter text-primary dark:text-on-primary-fixed"
         />
-        <nav className="hidden md:flex gap-6 lg:gap-8">
+        <nav className="hidden xl:flex gap-6 lg:gap-8">
           {NAV_ITEMS.map((item) => (
             <NavLink key={item.key} href={item.href} label={item.label} active={resolveActive(item.key)} />
           ))}
@@ -175,7 +175,7 @@ export function Header({ variant, activeNav }: HeaderProps) {
         <HeaderActions {...HEADER_ACTIONS_BY_VARIANT[variant]} />
       </div>
       {mobileOpen && (
-        <div className="md:hidden border-t border-outline-variant/15 bg-surface dark:bg-surface-container-highest px-margin-mobile py-4 flex flex-col gap-4">
+        <div className="xl:hidden border-t border-outline-variant/15 bg-surface dark:bg-surface-container-highest px-margin-mobile py-4 flex flex-col gap-4">
           {NAV_ITEMS.map((item) => (
             <NavLink
               key={item.key}

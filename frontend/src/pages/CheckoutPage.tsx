@@ -165,7 +165,7 @@ export default function CheckoutPage() {
                     <div className="col-span-1 md:col-span-2">
                       <label className="block font-label-sm text-label-sm text-secondary mb-1" htmlFor="phone">Phone Number</label>
                       <div className="flex gap-4">
-                        <select className="input-minimal font-body-md text-body-md text-on-surface bg-transparent appearance-none" id="phoneCode" {...register('phoneCode')}>
+                        <select className="input-minimal font-body-md text-body-md text-on-surface bg-transparent pr-6" id="phoneCode" {...register('phoneCode')}>
                           {COUNTRIES.map((c) => (
                             <option key={c.code} value={c.dial}>{c.dial}</option>
                           ))}
@@ -185,7 +185,7 @@ export default function CheckoutPage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-x-gutter gap-y-8">
                     <div className="col-span-1 md:col-span-2">
                       <label className="block font-label-sm text-label-sm text-secondary mb-1" htmlFor="country">Country</label>
-                      <select className="input-minimal w-full font-body-md text-body-md text-on-surface bg-transparent appearance-none" id="country" {...register('country')}>
+                      <select className="input-minimal w-full font-body-md text-body-md text-on-surface bg-transparent pr-6" id="country" {...register('country')}>
                         {COUNTRIES.map((c) => (
                           <option key={c.code} value={c.code}>{c.name}</option>
                         ))}
