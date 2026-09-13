@@ -2,6 +2,10 @@ import { resolve } from 'node:path'
 import { HttpError } from '../utils.js'
 
 const ZIINA_API_BASE = 'https://api-v2.ziina.com/api'
+// Vercel kills the whole function past its own execution limit with a raw,
+// unhandled "Internal server error" - this timeout lets a slow Ziina
+// response fail fast into a clean HttpError instead.
+const ZIINA_TIMEOUT_MS = 8000
 
 function getApiKey(): string {
   const key = process.env.ZIINA_API_KEY
@@ -15,6 +19,17 @@ function getApiKey(): string {
 
 function isTestMode(): boolean {
   return process.env.ZIINA_TEST_MODE === 'true'
+}
+
+async function ziinaFetch(url: string, init: RequestInit): Promise<Response> {
+  try {
+    return await fetch(url, { ...init, signal: AbortSignal.timeout(ZIINA_TIMEOUT_MS) })
+  } catch (err) {
+    if (err instanceof Error && err.name === 'TimeoutError') {
+      throw new HttpError(504, 'Payment provider took too long to respond. Please try again.')
+    }
+    throw err
+  }
 }
 
 /**
@@ -37,7 +52,7 @@ export async function createPaymentIntent(input: {
   successUrl: string
   cancelUrl: string
 }): Promise<{ id: string; redirectUrl: string }> {
-  const res = await fetch(`${ZIINA_API_BASE}/payment_intent`, {
+  const res = await ziinaFetch(`${ZIINA_API_BASE}/payment_intent`, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${getApiKey()}`,
@@ -64,7 +79,7 @@ export async function createPaymentIntent(input: {
 }
 
 export async function getPaymentIntent(intentId: string): Promise<{ id: string; status: string }> {
-  const res = await fetch(`${ZIINA_API_BASE}/payment_intent/${intentId}`, {
+  const res = await ziinaFetch(`${ZIINA_API_BASE}/payment_intent/${intentId}`, {
     headers: { Authorization: `Bearer ${getApiKey()}` },
   })
 
