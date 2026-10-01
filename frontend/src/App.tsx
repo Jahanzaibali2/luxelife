@@ -4,6 +4,7 @@ import { AnimatePresence, MotionConfig, motion } from 'motion/react'
 import { useLenis } from 'lenis/react'
 import { CartProvider } from './context/CartContext'
 import { AdminAuthProvider } from './context/AdminAuthContext'
+import { CartDrawer } from './components/CartDrawer'
 import { Cursor } from './components/Cursor'
 import { EASE_EDITORIAL } from './components/motion/ease'
 import { SmoothScroll } from './components/motion/SmoothScroll'
@@ -92,6 +93,7 @@ export default function App() {
           <CartProvider>
             <AdminAuthProvider>
               <AnimatedRoutes />
+              <CartDrawer />
               <Cursor />
             </AdminAuthProvider>
           </CartProvider>

@@ -1,8 +1,12 @@
 import { useState } from 'react'
+import { createPortal } from 'react-dom'
 import { Link, useLocation } from 'react-router-dom'
+import { AnimatePresence, motion, useMotionValueEvent, useScroll } from 'motion/react'
 import { Logo } from '../brand/Logo'
 import { NAV_ITEMS, type NavKey } from '../../data/constants'
 import { useCart } from '../../context/CartContext'
+import { EASE_EDITORIAL } from '../motion/ease'
+import { useScrollLock } from '../motion/useScrollLock'
 
 export type HeaderVariant =
   | 'home'
@@ -14,194 +18,145 @@ export type HeaderVariant =
   | 'contact'
 
 interface HeaderProps {
+  /** 'home' renders transparent over the full-bleed hero until scrolled; others are solid. */
   variant: HeaderVariant
   activeNav?: NavKey
 }
 
-function NavLink({
-  href,
-  label,
-  active,
-  className = '',
-  onClick,
-}: {
-  href: string
-  label: string
-  active?: boolean
-  className?: string
-  onClick?: () => void
-}) {
-  const base =
-    'font-label-caps text-label-caps transition-colors duration-300'
-  if (active) {
-    return (
-      <Link
-        to={href}
-        onClick={onClick}
-        className={`${base} text-primary dark:text-on-primary-fixed border-b border-primary dark:border-on-primary-fixed pb-1 ${className}`}
-      >
-        {label}
-      </Link>
-    )
-  }
-  return (
-    <Link
-      to={href}
-      onClick={onClick}
-      className={`${base} text-secondary dark:text-secondary-fixed-dim hover:text-primary dark:hover:text-primary-fixed ${className}`}
-    >
-      {label}
-    </Link>
-  )
-}
-
-function HeaderActions({
-  cartActive,
-  iconStyle = 'primary',
-  hidePersonOnMobile = false,
-  hideFavoriteOnMobile = false,
-}: {
-  cartActive?: boolean
-  iconStyle?: 'primary' | 'opacity' | 'secondary'
-  hidePersonOnMobile?: boolean
-  hideFavoriteOnMobile?: boolean
-}) {
-  const { itemCount } = useCart()
-  const iconClass =
-    iconStyle === 'opacity'
-      ? 'hover:opacity-70 transition-opacity'
-      : iconStyle === 'secondary'
-        ? 'hover:text-primary dark:hover:text-primary-fixed transition-all duration-300 text-secondary dark:text-secondary-fixed-dim'
-        : 'hover:text-primary dark:hover:text-primary-fixed transition-all duration-300'
-
-  const textClass =
-    iconStyle === 'secondary'
-      ? 'text-secondary dark:text-secondary-fixed-dim'
-      : 'text-primary dark:text-on-primary-fixed'
-
-  return (
-    <div className={`flex items-center gap-4 ${textClass}`}>
-      <button type="button" aria-label="search" className={iconClass}>
-        <span className="material-symbols-outlined">search</span>
-      </button>
-      <button
-        type="button"
-        aria-label="person"
-        className={`${iconClass} ${hidePersonOnMobile ? 'hidden md:block' : ''}`}
-      >
-        <span className="material-symbols-outlined">person</span>
-      </button>
-      <button
-        type="button"
-        aria-label="favorite"
-        className={`${iconClass} ${hideFavoriteOnMobile ? 'hidden md:block' : ''}`}
-      >
-        <span className="material-symbols-outlined">favorite</span>
-      </button>
-      <Link
-        to="/cart"
-        aria-label="shopping_bag"
-        className={`relative ${
-          cartActive
-            ? 'text-primary dark:text-primary-fixed border-b border-primary dark:border-primary-fixed pb-1'
-            : iconClass
-        }`}
-      >
-        <span
-          className="material-symbols-outlined"
-          style={
-            cartActive
-              ? { fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" }
-              : undefined
-          }
-        >
-          shopping_bag
-        </span>
-        {itemCount > 0 && (
-          <span className="absolute -top-1 -right-2 min-w-4 h-4 px-1 rounded-full bg-primary text-on-primary text-[10px] font-label-caps flex items-center justify-center">
-            {itemCount}
-          </span>
-        )}
-      </Link>
-    </div>
-  )
-}
-
-const HEADER_ACTIONS_BY_VARIANT: Record<
-  HeaderVariant,
-  { iconStyle?: 'primary' | 'opacity' | 'secondary'; hidePersonOnMobile?: boolean; hideFavoriteOnMobile?: boolean; cartActive?: boolean }
-> = {
-  home: { hidePersonOnMobile: true },
-  shop: { iconStyle: 'secondary' },
-  product: {},
-  cart: { cartActive: true },
-  about: { hidePersonOnMobile: true, hideFavoriteOnMobile: true },
-  faq: { iconStyle: 'opacity' },
-  contact: {},
-}
+const PRIMARY_NAV: NavKey[] = ['shop', 'fashion', 'home-lifestyle', 'gadgets', 'gifts']
+const SECONDARY_NAV: NavKey[] = ['about', 'contact']
+const navItems = (keys: NavKey[]) => NAV_ITEMS.filter((i) => keys.includes(i.key))
 
 export function Header({ variant, activeNav }: HeaderProps) {
-  const [mobileOpen, setMobileOpen] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
+  const [hidden, setHidden] = useState(false)
   const location = useLocation()
+  const { itemCount, openCart } = useCart()
+  const { scrollY } = useScroll()
 
-  const resolveActive = (key: NavKey) => {
+  useScrollLock(menuOpen)
+
+  // Solid after a little scroll; slide away while scrolling down, return on scroll up.
+  useMotionValueEvent(scrollY, 'change', (y) => {
+    const prev = scrollY.getPrevious() ?? 0
+    setScrolled(y > 40)
+    setHidden(y > 240 && y > prev)
+  })
+
+  const isActive = (key: NavKey) => {
     if (activeNav) return activeNav === key
-    if (key === 'home') return location.pathname === '/'
-    if (key === 'shop') return location.pathname.startsWith('/shop') || location.pathname.startsWith('/products')
-    if (key === 'about' || key === 'faq' || key === 'contact') return location.pathname.startsWith(`/${key}`)
-    return false
+    const href = NAV_ITEMS.find((i) => i.key === key)?.href ?? ''
+    return href === location.pathname + location.search
   }
 
+  const overHero = variant === 'home' && !scrolled && !menuOpen
+  const tone = overHero ? 'text-white' : 'text-ink'
+
   return (
-    <header className="bg-surface dark:bg-surface-container-highest border-b border-outline-variant/15 w-full sticky top-0 z-50">
-      <div className="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 max-w-container-max mx-auto">
-        <button
-          type="button"
-          aria-label="menu"
-          className="xl:hidden text-primary dark:text-on-primary-fixed"
-          onClick={() => setMobileOpen(!mobileOpen)}
-        >
-          <span className="material-symbols-outlined">menu</span>
-        </button>
-        <Logo
-          to="/"
-          textClassName="font-display-lg text-headline-md font-semibold tracking-tighter text-primary dark:text-on-primary-fixed"
-        />
-        <nav className="hidden xl:flex gap-6 lg:gap-8">
-          {NAV_ITEMS.map((item) => (
-            <NavLink key={item.key} href={item.href} label={item.label} active={resolveActive(item.key)} />
-          ))}
-        </nav>
-        <HeaderActions {...HEADER_ACTIONS_BY_VARIANT[variant]} />
-      </div>
-      {mobileOpen && (
-        <div className="xl:hidden border-t border-outline-variant/15 bg-surface dark:bg-surface-container-highest px-margin-mobile py-4 flex flex-col gap-4">
-          {NAV_ITEMS.map((item) => (
-            <NavLink
-              key={item.key}
-              href={item.href}
-              label={item.label}
-              active={resolveActive(item.key)}
-              onClick={() => setMobileOpen(false)}
-            />
-          ))}
+    <>
+      <motion.header
+        className={`sticky top-0 z-50 w-full transition-colors duration-500 ease-editorial ${
+          overHero ? 'bg-transparent border-b border-white/0' : 'bg-white/95 backdrop-blur-sm border-b border-hairline'
+        } ${tone}`}
+        animate={{ y: hidden && !menuOpen ? '-100%' : '0%' }}
+        transition={{ duration: 0.5, ease: EASE_EDITORIAL }}
+      >
+        <div className="mx-auto grid h-16 max-w-container-max grid-cols-[1fr_auto_1fr] items-center px-margin-mobile md:h-20 md:px-margin-desktop">
+          <nav className="hidden items-center gap-7 lg:flex" aria-label="Primary">
+            {navItems(PRIMARY_NAV).map((item) => (
+              <Link
+                key={item.key}
+                to={item.href}
+                aria-current={isActive(item.key) ? 'page' : undefined}
+                className="link-underline font-label-caps text-label-caps"
+              >
+                {item.label}
+              </Link>
+            ))}
+          </nav>
+          <button
+            type="button"
+            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={menuOpen}
+            className="font-label-caps text-label-caps justify-self-start lg:hidden"
+            onClick={() => setMenuOpen((o) => !o)}
+          >
+            {menuOpen ? 'Close' : 'Menu'}
+          </button>
+
+          <Logo
+            to="/"
+            className="flex items-center gap-2 justify-self-center"
+            imageClassName={`h-6 w-6 object-contain shrink-0 transition-[filter] duration-500 ${overHero ? 'invert brightness-0' : ''}`}
+            textClassName="font-serif text-[1.65rem] leading-none tracking-tight"
+          />
+
+          <div className="flex items-center justify-self-end gap-7">
+            {navItems(SECONDARY_NAV).map((item) => (
+              <Link
+                key={item.key}
+                to={item.href}
+                aria-current={isActive(item.key) ? 'page' : undefined}
+                className="link-underline font-label-caps text-label-caps hidden lg:inline"
+              >
+                {item.label}
+              </Link>
+            ))}
+            <button type="button" onClick={openCart} className="link-underline font-label-caps text-label-caps">
+              Cart <span className="tabular-nums">({itemCount})</span>
+            </button>
+          </div>
         </div>
+      </motion.header>
+
+      {createPortal(
+        <AnimatePresence>
+          {menuOpen && (
+            <motion.div
+              className="fixed inset-x-0 bottom-0 top-16 z-40 flex flex-col overflow-y-auto bg-white px-margin-mobile pb-10 pt-8 md:top-20 lg:hidden"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1, transition: { duration: 0.4 } }}
+              exit={{ opacity: 0, transition: { duration: 0.25 } }}
+            >
+              <nav className="flex flex-col" aria-label="Mobile">
+                {[...navItems(PRIMARY_NAV), ...navItems(SECONDARY_NAV), ...navItems(['faq'])].map((item, i) => (
+                  <motion.div
+                    key={item.key}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0, transition: { delay: 0.08 + i * 0.05, duration: 0.6, ease: EASE_EDITORIAL } }}
+                  >
+                    <Link
+                      to={item.href}
+                      onClick={() => setMenuOpen(false)}
+                      className="block border-b border-hairline py-4 font-serif text-4xl leading-none text-ink"
+                    >
+                      {item.label}
+                    </Link>
+                  </motion.div>
+                ))}
+              </nav>
+            </motion.div>
+          )}
+        </AnimatePresence>,
+        document.body,
       )}
-    </header>
+    </>
   )
 }
 
 export function CheckoutHeader() {
   return (
-    <header className="w-full flex justify-center items-center py-8 border-b border-outline/15 sticky top-0 z-50 bg-surface/95 backdrop-blur-sm relative">
-      <Logo
-        to="/"
-        className="justify-center"
-        textClassName="font-headline-md text-headline-md font-semibold text-primary tracking-tight"
-      />
-      <div className="absolute right-margin-mobile md:right-margin-desktop flex items-center gap-2 text-secondary font-label-caps text-label-caps">
-        <span className="material-symbols-outlined text-[18px]">lock</span>
-        SECURE CHECKOUT
+    <header className="sticky top-0 z-50 w-full border-b border-hairline bg-white/95 backdrop-blur-sm">
+      <div className="relative mx-auto flex h-16 max-w-container-max items-center justify-center px-margin-mobile md:h-20 md:px-margin-desktop">
+        <Logo
+          to="/"
+          imageClassName="h-6 w-6 object-contain shrink-0"
+          textClassName="font-serif text-[1.65rem] leading-none tracking-tight text-ink"
+        />
+        <span className="absolute right-margin-mobile hidden font-label-caps text-label-caps text-secondary sm:block md:right-margin-desktop">
+          Secure checkout
+        </span>
       </div>
     </header>
   )

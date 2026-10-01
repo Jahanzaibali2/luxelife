@@ -11,7 +11,7 @@ import type { Product } from '../types/api'
 export default function ProductDetailPage() {
   const { slug } = useParams<{ slug: string }>()
   const navigate = useNavigate()
-  const { addItem } = useCart()
+  const { addItem, openCart } = useCart()
   const [product, setProduct] = useState<Product | null>(null)
   const [loading, setLoading] = useState(true)
   const [selectedImage, setSelectedImage] = useState(0)
@@ -67,7 +67,7 @@ export default function ProductDetailPage() {
 
   const handleAddToCart = () => {
     addItem(cartPayload, quantity)
-    navigate('/cart')
+    openCart()
   }
 
   const handleBuyNow = () => {

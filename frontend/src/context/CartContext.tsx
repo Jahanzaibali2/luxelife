@@ -27,6 +27,9 @@ interface CartContextValue {
   clearCart: () => void
   subtotal: number
   itemCount: number
+  isCartOpen: boolean
+  openCart: () => void
+  closeCart: () => void
 }
 
 const STORAGE_KEY = 'luxelife-cart-v2'
@@ -50,6 +53,9 @@ function loadCart(): CartItem[] {
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>(loadCart)
+  const [isCartOpen, setCartOpen] = useState(false)
+  const openCart = useCallback(() => setCartOpen(true), [])
+  const closeCart = useCallback(() => setCartOpen(false), [])
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(items))
@@ -109,8 +115,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
       clearCart,
       subtotal,
       itemCount,
+      isCartOpen,
+      openCart,
+      closeCart,
     }),
-    [items, addItem, removeItem, updateQuantity, clearCart, subtotal, itemCount],
+    [items, addItem, removeItem, updateQuantity, clearCart, subtotal, itemCount, isCartOpen, openCart, closeCart],
   )
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>
