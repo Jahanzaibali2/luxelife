@@ -1,7 +1,12 @@
 import { lazy, Suspense } from 'react'
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom'
+import { AnimatePresence, MotionConfig, motion } from 'motion/react'
+import { useLenis } from 'lenis/react'
 import { CartProvider } from './context/CartContext'
 import { AdminAuthProvider } from './context/AdminAuthContext'
+import { Cursor } from './components/Cursor'
+import { EASE_EDITORIAL } from './components/motion/ease'
+import { SmoothScroll } from './components/motion/SmoothScroll'
 import HomePage from './pages/HomePage'
 
 const ShopAllPage = lazy(() => import('./pages/ShopAllPage'))
@@ -25,44 +30,73 @@ const AdminOrdersPage = lazy(() => import('./admin/AdminOrdersPage'))
 const AdminOrderDetailPage = lazy(() => import('./admin/AdminOrderDetailPage'))
 
 function PageFallback() {
-  return <div className="min-h-screen bg-warm-ivory" aria-busy="true" />
+  return <div className="min-h-screen bg-white" aria-busy="true" />
+}
+
+function AnimatedRoutes() {
+  const location = useLocation()
+  const lenis = useLenis()
+  // Admin pages share one layout; don't replay the transition between them.
+  const key = location.pathname.startsWith('/admin') ? 'admin' : location.pathname
+
+  return (
+    <AnimatePresence
+      mode="wait"
+      initial={false}
+      onExitComplete={() => (lenis ? lenis.scrollTo(0, { immediate: true }) : window.scrollTo(0, 0))}
+    >
+      <motion.div
+        key={key}
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0, transition: { duration: 0.5, ease: EASE_EDITORIAL } }}
+        exit={{ opacity: 0, transition: { duration: 0.3, ease: 'easeIn' } }}
+      >
+        <Suspense fallback={<PageFallback />}>
+          <Routes location={location}>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/shop" element={<ShopAllPage />} />
+            <Route path="/products/:slug" element={<ProductDetailPage />} />
+            <Route path="/cart" element={<CartPage />} />
+            <Route path="/checkout" element={<CheckoutPage />} />
+            <Route path="/checkout/success" element={<CheckoutSuccessPage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/faq" element={<FAQPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/terms" element={<TermsPage />} />
+            <Route path="/privacy" element={<PrivacyPage />} />
+            <Route path="/shipping-returns" element={<ShippingReturnsPage />} />
+
+            <Route path="/admin/login" element={<AdminLoginPage />} />
+            <Route element={<AdminProtectedRoute />}>
+              <Route path="/admin" element={<AdminLayout />}>
+                <Route index element={<AdminDashboardPage />} />
+                <Route path="products" element={<AdminProductsPage />} />
+                <Route path="products/new" element={<AdminProductFormPage />} />
+                <Route path="products/:id/edit" element={<AdminProductFormPage />} />
+                <Route path="orders" element={<AdminOrdersPage />} />
+                <Route path="orders/:id" element={<AdminOrderDetailPage />} />
+              </Route>
+            </Route>
+          </Routes>
+        </Suspense>
+      </motion.div>
+    </AnimatePresence>
+  )
 }
 
 export default function App() {
   return (
     <BrowserRouter>
-      <CartProvider>
-        <AdminAuthProvider>
-          <Suspense fallback={<PageFallback />}>
-            <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/shop" element={<ShopAllPage />} />
-              <Route path="/products/:slug" element={<ProductDetailPage />} />
-              <Route path="/cart" element={<CartPage />} />
-              <Route path="/checkout" element={<CheckoutPage />} />
-              <Route path="/checkout/success" element={<CheckoutSuccessPage />} />
-              <Route path="/about" element={<AboutPage />} />
-              <Route path="/faq" element={<FAQPage />} />
-              <Route path="/contact" element={<ContactPage />} />
-              <Route path="/terms" element={<TermsPage />} />
-              <Route path="/privacy" element={<PrivacyPage />} />
-              <Route path="/shipping-returns" element={<ShippingReturnsPage />} />
-
-              <Route path="/admin/login" element={<AdminLoginPage />} />
-              <Route element={<AdminProtectedRoute />}>
-                <Route path="/admin" element={<AdminLayout />}>
-                  <Route index element={<AdminDashboardPage />} />
-                  <Route path="products" element={<AdminProductsPage />} />
-                  <Route path="products/new" element={<AdminProductFormPage />} />
-                  <Route path="products/:id/edit" element={<AdminProductFormPage />} />
-                  <Route path="orders" element={<AdminOrdersPage />} />
-                  <Route path="orders/:id" element={<AdminOrderDetailPage />} />
-                </Route>
-              </Route>
-            </Routes>
-          </Suspense>
-        </AdminAuthProvider>
-      </CartProvider>
+      <MotionConfig reducedMotion="user">
+        <SmoothScroll>
+          <CartProvider>
+            <AdminAuthProvider>
+              <AnimatedRoutes />
+              <Cursor />
+            </AdminAuthProvider>
+          </CartProvider>
+        </SmoothScroll>
+      </MotionConfig>
     </BrowserRouter>
   )
 }
