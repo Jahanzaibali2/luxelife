@@ -6,6 +6,7 @@ import { uploadProductImage } from './storage.js'
 import type { Currency, Order, OrderStatus, Product } from './types.js'
 import { slugify, HttpError } from './utils.js'
 import { createPaymentIntent, getPaymentIntent, mapZiinaStatus } from './payments/ziina.js'
+import { sendAdminNewOrderEmail, sendOrderReceivedEmail } from './email.js'
 
 export const publicRouter = Router()
 export const adminRouter = Router()
@@ -109,6 +110,15 @@ publicRouter.post('/orders', async (req, res) => {
       paymentMethod: body.paymentMethod,
       paymentProvider: body.paymentProvider,
     })
+
+    // Cash on delivery has no separate payment-confirmation step, so the
+    // customer's "order received" email goes out now. Ziina orders wait
+    // until the payment status endpoint confirms the payment below.
+    if (order.paymentProvider === 'cod') {
+      void sendOrderReceivedEmail(order)
+    }
+    void sendAdminNewOrderEmail(order)
+
     res.status(201).json(order)
   } catch (err) {
     handleError(res, err)
@@ -185,6 +195,11 @@ publicRouter.get('/payments/ziina/status/:orderId', async (req, res) => {
       status: paymentStatus === 'paid' ? 'processing' : order.status,
     })
     const result = updated ?? order
+
+    if (paymentStatus === 'paid' && order.paymentStatus !== 'paid') {
+      void sendOrderReceivedEmail(result)
+    }
+
     res.json({ orderNumber: result.orderNumber, paymentStatus: result.paymentStatus })
   } catch (err) {
     handleError(res, err)
