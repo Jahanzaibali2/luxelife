@@ -124,12 +124,12 @@ export default function CheckoutPage() {
       <CheckoutHeader />
       <main className="flex-grow w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-12 md:py-24">
         <div className="mb-12">
-          <h1 className="font-headline-lg-mobile text-headline-lg-mobile md:font-headline-lg md:text-headline-lg text-primary mb-2">Checkout</h1>
+          <h1 className="font-display-lg text-display-lg mb-4">Checkout</h1>
           <p className="font-body-lg text-body-lg text-secondary">Complete your order details below.</p>
         </div>
 
         {submitted ? (
-          <div className="bg-surface-container-low p-8 rounded-lg border border-outline/15 text-center max-w-lg mx-auto">
+          <div className="border-t border-ink pt-10 text-center max-w-lg mx-auto">
             <span className="material-symbols-outlined text-4xl text-primary mb-4">check_circle</span>
             <h2 className="font-headline-md text-headline-md text-primary mb-2">Order Placed</h2>
             <p className="font-body-md text-secondary mb-6">
@@ -143,7 +143,7 @@ export default function CheckoutPage() {
               <div className="lg:col-span-7 flex flex-col gap-12">
                 <section>
                   <h2 className="font-headline-md text-headline-md text-primary mb-6 flex items-center gap-3 border-b border-outline/15 pb-4">
-                    <span className="w-6 h-6 rounded-full bg-surface-container flex items-center justify-center font-label-caps text-[10px]">1</span>
+                    <span className="font-label-caps text-label-caps text-secondary tabular-nums">1</span>
                     Contact Information
                   </h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-x-gutter gap-y-8">
@@ -179,7 +179,7 @@ export default function CheckoutPage() {
 
                 <section>
                   <h2 className="font-headline-md text-headline-md text-primary mb-6 flex items-center gap-3 border-b border-outline/15 pb-4">
-                    <span className="w-6 h-6 rounded-full bg-surface-container flex items-center justify-center font-label-caps text-[10px]">2</span>
+                    <span className="font-label-caps text-label-caps text-secondary tabular-nums">2</span>
                     Shipping Address
                   </h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-x-gutter gap-y-8">
@@ -216,20 +216,20 @@ export default function CheckoutPage() {
 
                 <section>
                   <h2 className="font-headline-md text-headline-md text-primary mb-6 flex items-center gap-3 border-b border-outline/15 pb-4">
-                    <span className="w-6 h-6 rounded-full bg-surface-container flex items-center justify-center font-label-caps text-[10px]">3</span>
+                    <span className="font-label-caps text-label-caps text-secondary tabular-nums">3</span>
                     Delivery Instructions
                   </h2>
                   <div className="grid grid-cols-1 gap-y-8">
                     <div className="col-span-1">
                       <label className="block font-label-sm text-label-sm text-secondary mb-2" htmlFor="instructions">Additional notes for the courier (Optional)</label>
-                      <textarea className="w-full border border-outline-variant bg-transparent p-4 rounded font-body-md text-body-md text-on-surface focus:border-primary-container focus:ring-0 transition-colors" id="instructions" placeholder="e.g. Leave at reception, Call before delivery..." rows={3} {...register('instructions')} />
+                      <textarea className="w-full border border-hairline bg-transparent p-4 font-body-md text-body-md text-on-surface focus:border-primary-container focus:ring-0 transition-colors" id="instructions" placeholder="e.g. Leave at reception, Call before delivery..." rows={3} {...register('instructions')} />
                     </div>
                   </div>
                 </section>
               </div>
 
               <div className="lg:col-span-5 relative">
-                <div className="sticky top-32 bg-surface-container-low p-8 rounded-lg border border-outline/5 flex flex-col gap-8">
+                <div className="sticky top-28 border-t border-ink pt-8 flex flex-col gap-8">
                   <div>
                     <h3 className="font-headline-md text-headline-md text-primary mb-6">Order Summary</h3>
                     <div className="flex flex-col gap-6 mb-6">
@@ -269,10 +269,10 @@ export default function CheckoutPage() {
                     </div>
                   </div>
                   <div>
-                    <h4 className="font-label-caps text-label-caps text-secondary mb-4 tracking-[0.1em]">PAYMENT METHOD</h4>
+                    <h4 className="font-label-caps text-label-caps text-secondary mb-4">Payment method</h4>
                     <div className="flex flex-col gap-3 mb-8">
                       <label className={`flex items-center gap-3 p-4 border rounded cursor-pointer ${paymentMethod === 'cod' ? 'border-primary-container bg-surface' : 'border-outline/15'}`}>
-                        <input type="radio" name="paymentMethod" value="cod" checked={paymentMethod === 'cod'} onChange={() => setPaymentMethod('cod')} className="accent-primary" />
+                        <input type="radio" name="paymentMethod" value="cod" checked={paymentMethod === 'cod'} onChange={() => setPaymentMethod('cod')} className="text-ink focus:ring-ink" />
                         <span className="material-symbols-outlined text-primary">payments</span>
                         <div>
                           <p className="font-body-md text-body-md text-primary">Cash on Delivery</p>
@@ -280,7 +280,7 @@ export default function CheckoutPage() {
                         </div>
                       </label>
                       <label className={`flex items-center gap-3 p-4 border rounded cursor-pointer ${paymentMethod === 'ziina' ? 'border-primary-container bg-surface' : 'border-outline/15'}`}>
-                        <input type="radio" name="paymentMethod" value="ziina" checked={paymentMethod === 'ziina'} onChange={() => setPaymentMethod('ziina')} className="accent-primary" />
+                        <input type="radio" name="paymentMethod" value="ziina" checked={paymentMethod === 'ziina'} onChange={() => setPaymentMethod('ziina')} className="text-ink focus:ring-ink" />
                         <span className="material-symbols-outlined text-primary">credit_card</span>
                         <div>
                           <p className="font-body-md text-body-md text-primary">Pay with Card (Credit or Debit)</p>
@@ -289,8 +289,8 @@ export default function CheckoutPage() {
                       </label>
                     </div>
                     {submitError && <p className="text-error text-sm mb-4">{submitError}</p>}
-                    <button type="submit" disabled={submitting || items.length === 0} className="w-full bg-primary-container text-on-primary font-label-caps text-label-caps tracking-[0.1em] py-4 rounded hover:bg-tertiary btn-lift flex items-center justify-center gap-2 disabled:opacity-50">
-                      {submitting ? 'PLACING ORDER…' : 'PLACE ORDER'}
+                    <button type="submit" disabled={submitting || items.length === 0} className="btn-primary w-full">
+                      {submitting ? 'Placing order…' : 'Place order'}
                       <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
                     </button>
                     <p className="text-center font-label-sm text-label-sm text-secondary mt-4">

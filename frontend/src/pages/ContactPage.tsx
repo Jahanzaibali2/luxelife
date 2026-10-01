@@ -75,7 +75,7 @@ export default function ContactPage() {
                   <textarea className="w-full bg-transparent border-0 border-b border-outline/30 focus:border-primary px-0 py-2 font-body-md field-glow resize-none" id="message" placeholder="Type your message here..." rows={4} {...register('message')} />
                   {errors.message && <p className="text-error text-sm mt-1">{errors.message.message}</p>}
                 </div>
-                <button className="bg-primary text-on-primary font-label-caps text-label-caps px-8 py-4 rounded hover:bg-tertiary btn-lift w-full md:w-auto mt-4" type="submit">
+                <button className="btn-primary mt-4 w-full md:w-auto" type="submit">
                   Send Inquiry
                 </button>
               </form>
@@ -83,7 +83,7 @@ export default function ContactPage() {
 
             <div className="lg:col-span-5 flex flex-col justify-between">
               <div className="space-y-8 mb-12">
-                <div className="bg-surface p-8 rounded border border-outline/15 card-lift">
+                <div className="border-t border-ink pt-8">
                   <div className="flex items-center space-x-4 mb-4 text-primary">
                     <span className="material-symbols-outlined text-2xl" style={{ fontVariationSettings: "'FILL' 1" }}>call</span>
                     <h3 className="font-headline-md text-headline-md">Direct Line</h3>
@@ -91,7 +91,7 @@ export default function ContactPage() {
                   <p className="font-body-md text-secondary mb-2">Speak with a concierge specialist.</p>
                   <a className="font-body-lg text-body-lg text-primary font-medium hover:underline" href="tel:+971526572012">+971 52 657 2012</a>
                 </div>
-                <div className="bg-surface p-8 rounded border border-outline/15 card-lift">
+                <div className="border-t border-ink pt-8">
                   <div className="flex items-center space-x-4 mb-4 text-primary">
                     <span className="material-symbols-outlined text-2xl" style={{ fontVariationSettings: "'FILL' 1" }}>chat</span>
                     <h3 className="font-headline-md text-headline-md">WhatsApp</h3>

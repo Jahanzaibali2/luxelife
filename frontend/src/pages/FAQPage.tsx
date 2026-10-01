@@ -3,36 +3,63 @@ import { Link } from 'react-router-dom'
 import { Footer } from '../components/layout/Footer'
 import { Header } from '../components/layout/Header'
 
-const CATEGORIES = ['orders', 'delivery', 'payments', 'returns', 'products'] as const
-
+// ponytail: every answer must match checkout code + ShippingReturnsPage. Change policy there, change it here.
 const FAQ_DATA: Record<string, { question: string; answer: string }[]> = {
   orders: [
     {
-      question: 'How can I track my luxury order?',
-      answer: "Once your order has been dispatched, you will receive an email containing a tracking link. You can also monitor the status of your order by logging into your LuxeLife account and navigating to 'Order History'.",
+      question: 'How do I know my order went through?',
+      answer: "You'll see your order number on screen as soon as it's placed, and we email a confirmation to the address you gave at checkout. Card orders are confirmed once the payment goes through.",
     },
     {
-      question: 'Can I modify my order after placing it?',
-      answer: 'Due to our swift processing times designed to get your items to you quickly, we have a very limited window to amend orders. Please contact our concierge immediately if a change is needed.',
+      question: 'Do I need an account to order?',
+      answer: 'No. Checkout is guest-only. You just need your name, email, phone number and delivery address.',
+    },
+    {
+      question: 'Can I change or cancel my order?',
+      answer: 'Orders are usually processed within 1–2 business days, so contact us as soon as possible by phone or WhatsApp on +971 52 657 2012 with your order number.',
     },
   ],
   delivery: [
     {
-      question: 'Do you offer international shipping?',
-      answer: 'Yes, LuxeLife delivers globally. We partner with premium courier services to ensure your curated pieces arrive safely, no matter your location. International shipping rates and times vary by destination.',
+      question: 'How much is shipping?',
+      answer: 'Shipping within the UAE is free.',
     },
     {
-      question: 'Will I need to pay customs duties?',
-      answer: 'For many destinations, duties and taxes are calculated and collected at checkout. For others, you may be responsible for paying these fees upon delivery. Please check our detailed shipping policy for specific country regulations.',
+      question: 'Do you ship outside the UAE?',
+      answer: 'Yes, to select destinations, including Saudi Arabia, Qatar, Kuwait, Bahrain, Oman, the United States, the United Kingdom and India. Customs duties or import taxes on international orders are paid by the recipient.',
+    },
+    {
+      question: 'How do I track my order?',
+      answer: "Once your order is dispatched, we'll send you tracking details where available. You can also message us with your order number for an update.",
     },
   ],
   payments: [
     {
-      question: 'Which payment methods are accepted?',
-      answer: 'We accept all major credit cards (Visa, MasterCard, American Express, Discover), PayPal, and Apple Pay. For select high-value items, we also offer secure wire transfer options.',
+      question: 'Which payment methods do you accept?',
+      answer: 'Cash on Delivery (pay the courier when your order arrives) or credit/debit card. Card payments are handled on a secure Ziina payment page.',
+    },
+    {
+      question: 'What currency are prices in? Is VAT included?',
+      answer: 'All prices are in UAE Dirhams (AED) and include 5% VAT.',
+    },
+  ],
+  returns: [
+    {
+      question: 'What is your return policy?',
+      answer: 'You can return items within 14 days of delivery if they are unused, in their original condition, with all packaging and tags. Contact us with your order number to start a return. Return shipping is paid by the customer unless the item arrived damaged or incorrect.',
+    },
+    {
+      question: 'How are refunds paid?',
+      answer: 'Once we receive and inspect your return, we refund your original payment method within 5–7 business days. Cash on Delivery orders are refunded by bank transfer.',
+    },
+    {
+      question: 'My item arrived damaged or wrong. What do I do?',
+      answer: "Contact us within 48 hours of delivery with photos and we'll send a replacement or refund at no cost to you.",
     },
   ],
 }
+
+const CATEGORIES = Object.keys(FAQ_DATA)
 
 export default function FAQPage() {
   const [activeCategory, setActiveCategory] = useState<string>('orders')
@@ -109,7 +136,7 @@ export default function FAQPage() {
                 <h3 className="font-headline-md text-headline-md text-primary mb-2">Still need help?</h3>
                 <p className="font-body-md text-body-md text-secondary">Our dedicated concierge team is available to assist you.</p>
               </div>
-              <Link to="/contact" className="bg-primary text-on-primary font-label-caps text-label-caps tracking-[0.1em] px-8 py-4 rounded hover:bg-primary-container btn-lift whitespace-nowrap">
+              <Link to="/contact" className="btn-primary whitespace-nowrap">
                 CONTACT US
               </Link>
             </div>

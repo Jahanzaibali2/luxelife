@@ -58,7 +58,7 @@ export default function CheckoutSuccessPage() {
     <div className="bg-background text-on-background min-h-screen flex flex-col font-body-md text-body-md antialiased">
       <CheckoutHeader />
       <main className="flex-grow w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-12 md:py-24 flex items-center justify-center">
-        <div className="bg-surface-container-low p-8 rounded-lg border border-outline/15 text-center max-w-lg mx-auto">
+        <div className="border-t border-ink pt-10 text-center max-w-lg mx-auto">
           {error && (
             <>
               <span className="material-symbols-outlined text-4xl text-error mb-4">error</span>

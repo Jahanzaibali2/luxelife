@@ -4,7 +4,10 @@ import { Price } from '../components/Price'
 import { useCart } from '../context/CartContext'
 import { Footer } from '../components/layout/Footer'
 import { Header } from '../components/layout/Header'
-import { LazyImage } from '../components/LazyImage'
+import { AnimatePresence, motion } from 'motion/react'
+import { ProductCard } from '../components/ProductCard'
+import { Reveal } from '../components/motion/Reveal'
+import { EASE_EDITORIAL } from '../components/motion/ease'
 import { api } from '../lib/api'
 import type { Product } from '../types/api'
 
@@ -33,7 +36,7 @@ export default function ProductDetailPage() {
       .then((all) => {
         const others = all.filter((p) => p.slug !== product.slug)
         const sameCategory = others.filter((p) => p.category === product.category)
-        setRelatedProducts((sameCategory.length ? sameCategory : others).slice(0, 4))
+        setRelatedProducts((sameCategory.length ? sameCategory : others).slice(0, 3))
       })
       .catch(() => setRelatedProducts([]))
   }, [product])
@@ -42,8 +45,8 @@ export default function ProductDetailPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-brand-bg">
-        <p className="text-secondary">Loading product...</p>
+      <div className="flex min-h-screen items-center justify-center bg-white">
+        <p className="font-label-caps text-label-caps text-secondary">Loading</p>
       </div>
     )
   }
@@ -75,128 +78,127 @@ export default function ProductDetailPage() {
     navigate('/checkout')
   }
 
-  return (
-    <div className="font-body-md text-on-surface antialiased bg-brand-bg overflow-x-hidden">
-      <div className="flex flex-col lg:h-dvh">
-        <Header variant="product" activeNav="shop" />
-        <main className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop w-full flex-1 min-h-0 flex flex-col py-6 md:py-8 lg:overflow-hidden">
-          <nav className="font-label-caps text-label-caps text-secondary mb-4 md:mb-6 flex items-center gap-2 shrink-0">
-            <Link to="/shop" className="hover:text-primary transition-colors">Shop</Link>
-            <span className="material-symbols-outlined text-[16px]">chevron_right</span>
-            <Link to={`/shop?category=${product.category}`} className="hover:text-primary transition-colors capitalize">
-              {product.category.replace('-', ' ')}
-            </Link>
-            <span className="material-symbols-outlined text-[16px]">chevron_right</span>
-            <span className="text-primary">{product.name}</span>
-          </nav>
+  const category = product.category.replace('-', ' ')
 
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-gutter lg:min-h-0 lg:flex-1 lg:items-center">
-            <div className="md:col-span-7 flex flex-col-reverse md:flex-row gap-4 lg:h-full lg:max-h-[min(700px,calc(100dvh-12rem))] short:lg:max-h-[calc(100dvh-9rem)]">
-              <div className="flex md:flex-col gap-4 overflow-x-auto md:overflow-y-auto w-full md:w-24 shrink-0">
+  return (
+    <div className="flex min-h-screen flex-col bg-white font-body-md text-ink">
+      <Header variant="product" activeNav="shop" />
+      <main className="mx-auto w-full max-w-container-max px-margin-mobile pt-8 md:px-margin-desktop md:pt-10">
+        <nav className="mb-8 flex items-center gap-3 font-label-caps text-label-caps text-secondary" aria-label="Breadcrumb">
+          <Link to="/shop" className="link-underline hover:text-ink">Shop</Link>
+          <span aria-hidden>/</span>
+          <Link to={`/shop?category=${product.category}`} className="link-underline hover:text-ink">{category}</Link>
+        </nav>
+
+        <div className="grid grid-cols-1 gap-12 md:grid-cols-12 md:gap-6">
+          <div className="flex flex-col gap-4 md:col-span-7">
+            <div className="relative aspect-[4/5] overflow-hidden bg-backdrop">
+              <AnimatePresence initial={false}>
+                <motion.img
+                  key={gallery[selectedImage] ?? product.image}
+                  src={gallery[selectedImage] ?? product.image}
+                  alt={product.name}
+                  className="absolute inset-0 h-full w-full object-cover"
+                  initial={{ opacity: 0, scale: 1.02 }}
+                  animate={{ opacity: 1, scale: 1, transition: { duration: 0.7, ease: EASE_EDITORIAL } }}
+                  exit={{ opacity: 0, transition: { duration: 0.5 } }}
+                />
+              </AnimatePresence>
+            </div>
+            {gallery.length > 1 && (
+              <div className="flex gap-3 overflow-x-auto">
                 {gallery.map((img, i) => (
-                  <button key={img} type="button" onClick={() => setSelectedImage(i)} className={`w-20 h-24 md:w-24 md:h-28 bg-white border shrink-0 overflow-hidden focus:outline-none ${i === selectedImage ? 'border-primary/20' : 'border-outline-variant/30 opacity-60 hover:opacity-100 transition-opacity'}`}>
-                    <img className="w-full h-full object-cover" alt="" src={img} loading="lazy" decoding="async" />
+                  <button
+                    key={img}
+                    type="button"
+                    onClick={() => setSelectedImage(i)}
+                    aria-label={`View image ${i + 1} of ${gallery.length}`}
+                    aria-current={i === selectedImage}
+                    className={`h-24 w-20 shrink-0 overflow-hidden bg-backdrop transition-opacity duration-500 ${
+                      i === selectedImage ? 'opacity-100 outline outline-1 outline-offset-2 outline-ink' : 'opacity-50 hover:opacity-100'
+                    }`}
+                  >
+                    <img className="h-full w-full object-cover" alt="" src={img} loading="lazy" decoding="async" />
                   </button>
                 ))}
               </div>
-              <div className="w-full aspect-[4/5] md:aspect-auto md:h-full bg-white overflow-hidden relative cursor-zoom-in group border border-outline-variant/15">
-                <LazyImage eager className="w-full h-full object-cover gallery-main-image" alt={product.name} src={gallery[selectedImage] ?? product.image} />
-                {product.badge && (
-                  <div className="absolute top-4 right-4 bg-surface-bright/90 px-3 py-1 font-label-caps text-label-caps text-primary-container">
-                    {product.badge === 'Limited' ? 'Limited Edition' : product.badge}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div className="md:col-span-5 md:pl-8 flex flex-col justify-start lg:h-full lg:max-h-[min(700px,calc(100dvh-12rem))] short:lg:max-h-[calc(100dvh-9rem)] lg:overflow-y-auto lg:pr-2">
-              <div className="mb-6 border-b border-outline-variant/15 pb-6">
-                <h2 className="font-label-caps text-label-caps text-secondary mb-2 tracking-widest uppercase capitalize">
-                  {product.category.replace('-', ' ')}
-                </h2>
-                <h1 className="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-4">{product.name}</h1>
-                <div className="mb-2">
-                  <Price amount={product.price} variant="emphasis" />
-                </div>
-                <div className="font-label-sm text-label-sm text-[#452829] flex items-center gap-1">
-                  <span className="w-2 h-2 rounded-full bg-[#452829]" /> {product.inStock ? 'In Stock - Ready to Ship' : 'Out of Stock'}
-                </div>
-              </div>
-              <p className="font-body-md text-body-md text-on-surface-variant mb-8 leading-relaxed">
-                {product.description || product.subtitle}
-              </p>
-              <div className="mb-8">
-                <label className="font-label-caps text-label-caps text-primary block mb-3">Quantity</label>
-                <div className="flex items-center border border-outline-variant/30 w-32 h-12 bg-white">
-                  <button type="button" onClick={() => setQuantity(Math.max(1, quantity - 1))} className="w-10 h-full flex items-center justify-center text-secondary hover:text-primary transition-colors focus:outline-none">
-                    <span className="material-symbols-outlined">remove</span>
-                  </button>
-                  <input className="w-12 h-full text-center border-none focus:ring-0 font-body-md text-body-md p-0 bg-transparent text-primary" type="text" value={quantity} readOnly />
-                  <button type="button" onClick={() => setQuantity(quantity + 1)} className="w-10 h-full flex items-center justify-center text-secondary hover:text-primary transition-colors focus:outline-none">
-                    <span className="material-symbols-outlined">add</span>
-                  </button>
-                </div>
-              </div>
-              <div className="flex flex-col gap-4 mb-8">
-                <button type="button" onClick={handleAddToCart} disabled={!product.inStock} className="w-full h-14 bg-primary-container text-white font-label-caps text-label-caps hover:bg-tertiary btn-lift flex items-center justify-center gap-2 disabled:opacity-50">
-                  Add to Cart
-                </button>
-                <div className="flex gap-4">
-                  <button type="button" onClick={handleBuyNow} disabled={!product.inStock} className="flex-1 h-14 border border-primary/20 text-primary bg-transparent font-label-caps text-label-caps hover:bg-surface-bright btn-lift-secondary flex items-center justify-center disabled:opacity-50">
-                    Buy Now
-                  </button>
-                  <button type="button" aria-label="Add to Wishlist" className="w-14 h-14 border border-primary/20 text-primary bg-transparent hover:bg-surface-bright btn-lift-secondary flex items-center justify-center focus:outline-none">
-                    <span className="material-symbols-outlined">favorite_border</span>
-                  </button>
-                </div>
-              </div>
-              <div className="border-t border-outline-variant/15">
-                <details className="group py-4 border-b border-outline-variant/15" open>
-                  <summary className="font-label-caps text-label-caps text-primary cursor-pointer list-none flex justify-between items-center focus:outline-none">
-                    Description
-                    <span className="material-symbols-outlined group-open:rotate-180 transition-transform">expand_more</span>
-                  </summary>
-                  <div className="font-body-md text-body-md text-on-surface-variant pt-4 pb-2">
-                    {product.description || 'Premium curated product from the LuxeLife collection.'}
-                  </div>
-                </details>
-                <details className="group py-4 border-b border-outline-variant/15">
-                  <summary className="font-label-caps text-label-caps text-primary cursor-pointer list-none flex justify-between items-center focus:outline-none">
-                    Shipping & Returns
-                    <span className="material-symbols-outlined group-open:rotate-180 transition-transform">expand_more</span>
-                  </summary>
-                  <div className="font-body-md text-body-md text-on-surface-variant pt-4 pb-2">
-                    Complimentary next-day delivery within Dubai and Abu Dhabi. Returns accepted within 14 days of purchase in original packaging.
-                  </div>
-                </details>
-              </div>
-            </div>
+            )}
           </div>
-        </main>
-      </div>
+
+          <div className="md:col-span-4 md:col-start-9">
+            <Reveal className="md:sticky md:top-28">
+              <p className="mb-4 font-label-caps text-label-caps text-secondary">
+                {category}
+                {product.badge && <span className="text-accent"> · {product.badge === 'Limited' ? 'Limited edition' : product.badge}</span>}
+              </p>
+              <h1 className="font-serif text-[clamp(1.75rem,2.6vw,2.5rem)] leading-[1.1] tracking-[-0.01em]">{product.name}</h1>
+              {product.subtitle && <p className="mt-3 font-label-caps text-label-caps text-secondary">{product.subtitle}</p>}
+              <div className="mt-6 flex items-baseline justify-between border-b border-hairline pb-6">
+                <Price amount={product.price} variant="emphasis" />
+                <span className="font-label-caps text-label-caps text-secondary">
+                  {product.inStock ? 'In stock' : 'Sold out'}
+                </span>
+              </div>
+
+              <p className="mt-6 text-body-md leading-relaxed text-secondary">{product.description || product.subtitle}</p>
+
+              <div className="mt-8 flex items-center justify-between border-y border-hairline py-3">
+                <span className="font-label-caps text-label-caps">Quantity</span>
+                <div className="flex items-center gap-5">
+                  <button type="button" aria-label="Decrease quantity" onClick={() => setQuantity(Math.max(1, quantity - 1))} className="h-8 w-6 text-secondary hover:text-ink">−</button>
+                  <span className="w-6 text-center tabular-nums" aria-live="polite">{quantity}</span>
+                  <button type="button" aria-label="Increase quantity" onClick={() => setQuantity(quantity + 1)} className="h-8 w-6 text-secondary hover:text-ink">+</button>
+                </div>
+              </div>
+
+              <div className="mt-6 flex flex-col gap-3">
+                <button type="button" onClick={handleAddToCart} disabled={!product.inStock} className="btn-primary w-full">
+                  Add to cart
+                </button>
+                <button type="button" onClick={handleBuyNow} disabled={!product.inStock} className="btn-ghost w-full">
+                  Buy now
+                </button>
+              </div>
+
+              <div className="mt-10 border-t border-hairline">
+                <details className="group border-b border-hairline py-5" open>
+                  <summary className="flex cursor-pointer list-none items-center justify-between font-label-caps text-label-caps">
+                    Description
+                    <span className="text-lg leading-none transition-transform duration-500 group-open:rotate-45" aria-hidden>+</span>
+                  </summary>
+                  <p className="pt-4 text-body-md text-secondary">
+                    {product.description || 'Premium curated product from the LuxeLife collection.'}
+                  </p>
+                </details>
+                <details className="group border-b border-hairline py-5">
+                  <summary className="flex cursor-pointer list-none items-center justify-between font-label-caps text-label-caps">
+                    Shipping &amp; returns
+                    <span className="text-lg leading-none transition-transform duration-500 group-open:rotate-45" aria-hidden>+</span>
+                  </summary>
+                  <p className="pt-4 text-body-md text-secondary">
+                    Complimentary next-day delivery within Dubai and Abu Dhabi. Returns accepted within 14 days of purchase in original packaging.
+                  </p>
+                </details>
+              </div>
+            </Reveal>
+          </div>
+        </div>
+      </main>
 
       {relatedProducts.length > 0 && (
-        <main className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
-          <section className="border-t border-outline-variant/15 pt-24 mb-section-gap">
-            <h3 className="font-headline-md text-headline-md text-primary text-center mb-12">You May Also Like</h3>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-gutter">
-              {relatedProducts.map((item) => (
-                <Link
-                  key={item.slug}
-                  to={`/products/${item.slug}`}
-                  className="group bg-white p-4 border border-outline-variant/15 hover:border-primary/30 transition-all card-lift block"
-                >
-                  <div className="w-full h-80 bg-surface-container-low mb-4 overflow-hidden relative">
-                    <LazyImage className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt={item.name} src={item.image} />
-                  </div>
-                  <div className="font-label-caps text-label-caps text-secondary mb-1 capitalize">{item.category.replace('-', ' ')}</div>
-                  <div className="font-body-lg text-body-lg font-medium text-primary mb-2">{item.name}</div>
-                  <Price amount={item.price} variant="card" />
-                </Link>
-              ))}
-            </div>
-          </section>
-        </main>
+        <section className="mx-auto w-full max-w-container-max px-margin-mobile py-section-gap md:px-margin-desktop">
+          <Reveal className="mb-12 flex items-end justify-between border-b border-hairline pb-6">
+            <h2 className="font-headline-lg text-headline-lg">You may also like</h2>
+            <Link to={`/shop?category=${product.category}`} className="link-underline font-label-caps text-label-caps">View all</Link>
+          </Reveal>
+          <div className="grid grid-cols-1 gap-x-6 gap-y-16 sm:grid-cols-2 lg:grid-cols-3">
+            {relatedProducts.map((item, i) => (
+              <Reveal key={item.slug} delay={i * 0.08}>
+                <ProductCard product={item} />
+              </Reveal>
+            ))}
+          </div>
+        </section>
       )}
       <Footer variant="product" />
     </div>

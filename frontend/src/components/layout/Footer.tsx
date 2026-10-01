@@ -1,3 +1,4 @@
+import { useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { Logo } from '../brand/Logo'
 
@@ -12,212 +13,108 @@ export type FooterVariant =
   | 'contact'
 
 interface FooterProps {
+  /** Only 'checkout' differs (minimal); every other page shares one footer. */
   variant: FooterVariant
 }
 
+const COLUMNS: { title: string; links: { label: string; to: string }[] }[] = [
+  {
+    title: 'Shop',
+    links: [
+      { label: 'All pieces', to: '/shop' },
+      { label: 'Fashion', to: '/shop?category=fashion' },
+      { label: 'Home & lifestyle', to: '/shop?category=home-lifestyle' },
+      { label: 'Gifts', to: '/shop?category=gifts' },
+    ],
+  },
+  {
+    title: 'Help',
+    links: [
+      { label: 'Contact', to: '/contact' },
+      { label: 'FAQ', to: '/faq' },
+      { label: 'Shipping & returns', to: '/shipping-returns' },
+    ],
+  },
+  {
+    title: 'Company',
+    links: [
+      { label: 'About', to: '/about' },
+      { label: 'Terms', to: '/terms' },
+      { label: 'Privacy', to: '/privacy' },
+    ],
+  },
+]
+
+// ponytail: newsletter is UI-only (no email provider yet); wire to backend/src/email.ts when one is chosen.
+function Newsletter() {
+  const [done, setDone] = useState(false)
+  const onSubmit = (e: FormEvent) => {
+    e.preventDefault()
+    setDone(true)
+  }
+
+  if (done) return <p className="text-label-sm text-secondary" role="status">Thank you, you're on the list.</p>
+
+  return (
+    <form onSubmit={onSubmit} className="flex max-w-sm items-end gap-4 border-b border-ink/25 focus-within:border-ink">
+      <label className="flex-1">
+        <span className="sr-only">Email address</span>
+        <input
+          type="email"
+          required
+          autoComplete="email"
+          placeholder="Email address"
+          className="w-full border-0 bg-transparent px-0 py-3 text-label-sm placeholder:text-secondary focus:ring-0"
+        />
+      </label>
+      <button type="submit" className="link-underline mb-3 shrink-0 text-button">
+        Subscribe
+      </button>
+    </form>
+  )
+}
+
 export function Footer({ variant }: FooterProps) {
+  const year = new Date().getFullYear()
+
   if (variant === 'checkout') {
     return (
-      <footer className="w-full bg-surface-container-low border-t border-outline/10 py-8 px-margin-mobile md:px-margin-desktop flex flex-col items-center justify-center">
-        <Logo
-          textClassName="font-headline-md text-headline-md text-primary/40"
-          imageClassName="h-7 w-7 object-contain shrink-0 opacity-40"
-        />
-        <span className="font-label-sm text-label-sm text-secondary">© 2024 LuxeLife. Secure Checkout.</span>
+      <footer className="w-full border-t border-hairline py-8 text-center font-label-caps text-label-caps text-secondary">
+        © {year} LuxeLife · Secure checkout
       </footer>
     )
   }
 
-  if (variant === 'contact') {
-    return (
-      <footer className="bg-primary text-on-primary w-full mt-auto">
-        <div className="flex flex-col md:flex-row justify-between items-start px-margin-mobile md:px-margin-desktop py-16 w-full max-w-container-max mx-auto gap-12">
-          <div className="flex flex-col max-w-sm">
-            <Logo
-              textClassName="font-headline-md text-headline-md text-on-primary"
-              imageClassName="h-8 w-8 object-contain shrink-0"
-            />
-            <p className="font-body-md text-body-md text-on-primary/80 leading-relaxed mb-6">
-              Curated for the discerning lifestyle. Elevating the everyday with carefully selected pieces that embody quality and minimalist elegance.
-            </p>
-            <div className="font-label-caps text-label-caps text-on-primary/60">
-              © 2024 LuxeLife. All rights reserved.
-            </div>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-8 md:gap-16 font-body-md text-body-md">
-            <div className="flex flex-col space-y-4">
-              <Link to="/about" className="text-on-primary/80 hover:text-surface-bright transition-colors">About Us</Link>
-              <Link to="/contact" className="text-on-primary/80 hover:text-surface-bright transition-colors">Contact Us</Link>
-            </div>
-            <div className="flex flex-col space-y-4">
-              <Link to="/faq" className="text-on-primary/80 hover:text-surface-bright transition-colors">FAQ</Link>
-              <Link to="/shipping-returns" className="text-on-primary/80 hover:text-surface-bright transition-colors">Shipping & Returns</Link>
-            </div>
-            <div className="flex flex-col space-y-4 col-span-2 md:col-span-1">
-              <Link to="/privacy" className="text-on-primary/80 hover:text-surface-bright transition-colors">Privacy Policy</Link>
-              <Link to="/terms" className="text-on-primary/80 hover:text-surface-bright transition-colors">Terms of Service</Link>
-            </div>
-          </div>
-        </div>
-      </footer>
-    )
-  }
-
-  if (variant === 'cart' || variant === 'faq') {
-    return (
-      <footer className="bg-primary dark:bg-primary-container full-width px-margin-mobile md:px-margin-desktop py-section-gap w-full flex flex-col md:flex-row justify-between items-start gap-12 md:gap-0 mt-auto">
-        <div className="flex flex-col gap-6">
-          <Logo
-            textClassName="font-headline-md text-headline-md text-on-primary dark:text-on-primary-container"
-            imageClassName="h-8 w-8 object-contain shrink-0"
-          />
-          <p className="font-body-md text-body-md text-on-primary/80 max-w-sm">
-            © 2024 LuxeLife. All rights reserved. Curated for the discerning lifestyle.
-          </p>
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-x-12 gap-y-4 font-body-md text-body-md">
-          <Link to="/about" className="text-on-primary/80 hover:text-on-primary-container transition-colors">About Us</Link>
-          <Link to="/contact" className="text-on-primary/80 hover:text-on-primary-container transition-colors">Contact Us</Link>
-          <Link to="/faq" className={`text-on-primary/80 hover:text-on-primary-container transition-colors ${variant === 'faq' ? 'underline' : ''}`}>FAQ</Link>
-          <Link to="/privacy" className="text-on-primary/80 hover:text-on-primary-container transition-colors">Privacy Policy</Link>
-          <Link to="/terms" className="text-on-primary/80 hover:text-on-primary-container transition-colors">Terms of Service</Link>
-          <Link to="/shipping-returns" className="text-on-primary/80 hover:text-on-primary-container transition-colors">Shipping & Returns</Link>
-        </div>
-      </footer>
-    )
-  }
-
-  if (variant === 'about') {
-    return (
-      <footer className="bg-primary-container dark:bg-tertiary-container text-surface-container dark:text-surface-bright full-width mt-auto">
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-gutter px-margin-mobile md:px-margin-desktop py-section-gap max-w-container-max mx-auto">
-          <div className="md:col-span-2 flex flex-col gap-6">
-            <Logo
-              textClassName="font-display-lg text-headline-md text-surface-container"
-              imageClassName="h-8 w-8 object-contain shrink-0"
-            />
-            <p className="font-body-md text-body-md text-on-tertiary-container dark:text-on-tertiary-fixed-variant">
-              Elevating everyday living with curated, premium lifestyle essentials.
-            </p>
-            <p className="font-body-md text-body-md text-on-tertiary-container dark:text-on-tertiary-fixed-variant mt-auto pt-8">
-              © 2024 LuxeLife. All rights reserved.
-            </p>
-          </div>
-          <div className="flex flex-col gap-4">
-            <h4 className="font-label-caps text-label-caps text-surface-bright mb-2">Explore</h4>
-            <Link to="/shop" className="font-body-md text-body-md text-on-tertiary-container dark:text-on-tertiary-fixed-variant hover:text-surface-bright transition-colors duration-200">Shop</Link>
-            <Link to="/about" className="font-body-md text-body-md text-on-tertiary-container dark:text-on-tertiary-fixed-variant hover:text-surface-bright transition-colors duration-200">About</Link>
-          </div>
-          <div className="flex flex-col gap-4">
-            <h4 className="font-label-caps text-label-caps text-surface-bright mb-2">Support</h4>
-            <Link to="/contact" className="font-body-md text-body-md text-on-tertiary-container dark:text-on-tertiary-fixed-variant hover:text-surface-bright transition-colors duration-200">Customer Care</Link>
-            <Link to="/contact" className="font-body-md text-body-md text-on-tertiary-container dark:text-on-tertiary-fixed-variant hover:text-surface-bright transition-colors duration-200">Contact</Link>
-          </div>
-          <div className="flex flex-col gap-4">
-            <h4 className="font-label-caps text-label-caps text-surface-bright mb-2">Connect</h4>
-            <a href="#" className="font-body-md text-body-md text-on-tertiary-container dark:text-on-tertiary-fixed-variant hover:text-surface-bright transition-colors duration-200">Newsletter</a>
-          </div>
-        </div>
-      </footer>
-    )
-  }
-
-  if (variant === 'product') {
-    return (
-      <footer className="bg-primary-container dark:bg-tertiary-container w-full">
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-gutter px-margin-mobile md:px-margin-desktop py-16 md:py-section-gap max-w-container-max mx-auto">
-          <div className="md:col-span-1 mb-8 md:mb-0">
-            <Logo
-              className="mb-4"
-              textClassName="font-display-lg text-headline-md text-surface-container"
-              imageClassName="h-8 w-8 object-contain shrink-0"
-            />
-            <div className="font-body-md text-body-md text-surface-container-high text-sm">© 2024 LuxeLife. All rights reserved.</div>
-          </div>
-          <div className="flex flex-col gap-4 font-label-caps text-label-caps">
-            <Link to="/shop" className="text-on-tertiary-container dark:text-on-tertiary-fixed-variant hover:text-surface-bright transition-colors duration-200">Shop</Link>
-            <Link to="/contact" className="text-on-tertiary-container dark:text-on-tertiary-fixed-variant hover:text-surface-bright transition-colors duration-200">Customer Care</Link>
-          </div>
-          <div className="flex flex-col gap-4 font-label-caps text-label-caps">
-            <Link to="/about" className="text-on-tertiary-container dark:text-on-tertiary-fixed-variant hover:text-surface-bright transition-colors duration-200">About</Link>
-            <Link to="/contact" className="text-on-tertiary-container dark:text-on-tertiary-fixed-variant hover:text-surface-bright transition-colors duration-200">Contact</Link>
-          </div>
-          <div className="flex flex-col gap-4 font-label-caps text-label-caps">
-            <a href="#" className="text-on-tertiary-container dark:text-on-tertiary-fixed-variant hover:text-surface-bright transition-colors duration-200">Newsletter</a>
-          </div>
-        </div>
-      </footer>
-    )
-  }
-
-  if (variant === 'shop') {
-    return (
-      <footer className="bg-primary-container dark:bg-tertiary-container w-full">
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-gutter px-margin-mobile md:px-margin-desktop py-12 md:py-section-gap max-w-container-max mx-auto">
-          <div className="md:col-span-2 mb-8 md:mb-0">
-            <Logo
-              className="mb-4"
-              textClassName="font-display-lg text-headline-md text-surface-container"
-              imageClassName="h-8 w-8 object-contain shrink-0"
-            />
-            <p className="text-on-tertiary-container dark:text-on-tertiary-fixed-variant font-body-md text-body-md max-w-xs">
-              Curating the finest in modern minimalism. Elevate your everyday with our exclusive collections.
-            </p>
-          </div>
-          <div className="flex flex-col gap-4">
-            <Link to="/shop" className="text-surface-bright font-bold font-label-caps text-label-caps hover:text-surface-bright transition-colors duration-200">Shop</Link>
-            <Link to="/contact" className="text-on-tertiary-container dark:text-on-tertiary-fixed-variant hover:text-surface-bright transition-colors duration-200 font-label-caps text-label-caps">Customer Care</Link>
-            <Link to="/about" className="text-on-tertiary-container dark:text-on-tertiary-fixed-variant hover:text-surface-bright transition-colors duration-200 font-label-caps text-label-caps">About</Link>
-            <Link to="/contact" className="text-on-tertiary-container dark:text-on-tertiary-fixed-variant hover:text-surface-bright transition-colors duration-200 font-label-caps text-label-caps">Contact</Link>
-            <a href="#" className="text-on-tertiary-container dark:text-on-tertiary-fixed-variant hover:text-surface-bright transition-colors duration-200 font-label-caps text-label-caps">Newsletter</a>
-          </div>
-          <div className="md:col-span-2 flex items-end justify-start md:justify-end mt-8 md:mt-0">
-            <p className="text-on-tertiary-container dark:text-on-tertiary-fixed-variant font-body-md text-sm">
-              © 2024 LuxeLife. All rights reserved.
-            </p>
-          </div>
-        </div>
-      </footer>
-    )
-  }
-
-  // home
   return (
-    <footer className="bg-primary-container dark:bg-tertiary-container w-full mt-section-gap">
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-gutter px-margin-mobile md:px-margin-desktop py-16 max-w-container-max mx-auto">
-        <div className="md:col-span-2 flex flex-col gap-4 pr-8">
+    <footer className="mt-auto w-full border-t border-hairline bg-white">
+      <div className="mx-auto grid max-w-container-max grid-cols-2 gap-x-6 gap-y-14 px-margin-mobile py-20 md:grid-cols-12 md:px-margin-desktop md:py-28">
+        <div className="col-span-2 flex flex-col gap-8 md:col-span-5">
           <Logo
-            textClassName="font-display-lg text-headline-md text-surface-container"
-            imageClassName="h-8 w-8 object-contain shrink-0"
+            imageClassName="h-6 w-6 object-contain shrink-0"
+            textClassName="font-serif text-[1.65rem] leading-none tracking-tight"
           />
-          <p className="font-body-md text-body-md text-on-tertiary-container dark:text-on-tertiary-fixed-variant mt-2 max-w-sm">
-            Curated products designed to add style, convenience and character to everyday life.
+          <p className="max-w-xs text-body-md text-secondary">
+            Considered objects for the home, the wardrobe and the everyday. Delivered across the UAE.
           </p>
+          <div>
+            <p className="mb-1 font-label-caps text-label-caps">Newsletter</p>
+            <Newsletter />
+          </div>
         </div>
-        <div className="flex flex-col gap-4">
-          <span className="font-label-caps text-label-caps text-surface-container opacity-50 mb-2">Shop</span>
-          <Link to="/shop" className="font-body-md text-body-md text-on-tertiary-container dark:text-on-tertiary-fixed-variant hover:text-surface-bright transition-colors duration-200">New Arrivals</Link>
-          <Link to="/shop" className="font-body-md text-body-md text-on-tertiary-container dark:text-on-tertiary-fixed-variant hover:text-surface-bright transition-colors duration-200">Best Sellers</Link>
-          <Link to="/shop" className="font-body-md text-body-md text-on-tertiary-container dark:text-on-tertiary-fixed-variant hover:text-surface-bright transition-colors duration-200">Categories</Link>
-        </div>
-        <div className="flex flex-col gap-4">
-          <span className="font-label-caps text-label-caps text-surface-container opacity-50 mb-2">Support</span>
-          <Link to="/contact" className="font-body-md text-body-md text-on-tertiary-container dark:text-on-tertiary-fixed-variant hover:text-surface-bright transition-colors duration-200">Customer Care</Link>
-          <Link to="/contact" className="font-body-md text-body-md text-on-tertiary-container dark:text-on-tertiary-fixed-variant hover:text-surface-bright transition-colors duration-200">Contact Us</Link>
-          <Link to="/faq" className="font-body-md text-body-md text-on-tertiary-container dark:text-on-tertiary-fixed-variant hover:text-surface-bright transition-colors duration-200">FAQ</Link>
-        </div>
-        <div className="flex flex-col gap-4">
-          <span className="font-label-caps text-label-caps text-surface-container opacity-50 mb-2">Company</span>
-          <Link to="/about" className="font-body-md text-body-md text-on-tertiary-container dark:text-on-tertiary-fixed-variant hover:text-surface-bright transition-colors duration-200">About</Link>
-          <Link to="/terms" className="font-body-md text-body-md text-on-tertiary-container dark:text-on-tertiary-fixed-variant hover:text-surface-bright transition-colors duration-200">Terms</Link>
-          <Link to="/privacy" className="font-body-md text-body-md text-on-tertiary-container dark:text-on-tertiary-fixed-variant hover:text-surface-bright transition-colors duration-200">Privacy</Link>
-        </div>
+        {COLUMNS.map((col) => (
+          <nav key={col.title} className="flex flex-col gap-3 md:col-span-2" aria-label={col.title}>
+            <p className="mb-2 font-label-caps text-label-caps text-secondary">{col.title}</p>
+            {col.links.map((l) => (
+              <Link key={l.label} to={l.to} className="link-underline w-fit text-label-sm">
+                {l.label}
+              </Link>
+            ))}
+          </nav>
+        ))}
       </div>
-      <div className="border-t border-on-tertiary-container/20 px-margin-mobile md:px-margin-desktop py-6 max-w-container-max mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
-        <span className="font-body-md text-body-md text-on-tertiary-container text-sm">© 2024 LuxeLife. All rights reserved.</span>
-        <div className="flex gap-4">
-          <span className="material-symbols-outlined text-on-tertiary-container hover:text-surface-bright cursor-pointer transition-colors">language</span>
-        </div>
+      <div className="mx-auto flex max-w-container-max justify-between border-t border-hairline px-margin-mobile py-6 font-label-caps text-label-caps text-secondary md:px-margin-desktop">
+        <span>© {year} LuxeLife</span>
+        <span>All rights reserved</span>
       </div>
     </footer>
   )

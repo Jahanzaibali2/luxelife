@@ -29,7 +29,7 @@ export default function AboutPage() {
                 Our collections are thoughtfully assembled to seamlessly integrate into a modern, sophisticated life. We reject the clutter of endless choices in favor of a curated selection where every item holds purpose and beauty. We source from artisans and designers who share our commitment to craftsmanship and timeless aesthetic.
               </p>
             </div>
-            <div className="col-span-1 md:col-span-7 h-96 md:h-auto bg-surface-container rounded overflow-hidden relative">
+            <div className="col-span-1 md:col-span-7 h-96 md:h-auto md:min-h-[520px] bg-surface-container overflow-hidden relative">
               <img className="w-full h-full object-cover absolute inset-0" alt="Philosophy" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBe1Fr41wSYwUqW8w7wEbebBc8y-EdJMn6DExiIvE4QkZXin_8eprnKRvkHjkgiMmXFEa78GpzSVx1cvmFmDEy-SIZZ0ePkZ3MMYFYLvFavYqEzf0eQwHbHDV9fvnnmiMhBzX4tuWlyV7qwSWbFOhqxdiy7yiskoARzJgjO_JykSzjI3e74mSL2XjZxVf4H0tguVzg1_Qod9usizoKyGmkeUApn3QUgZXQlKVBHWHG6NjegqtyCam4tKw" loading="lazy" decoding="async" />
             </div>
           </div>
@@ -45,8 +45,8 @@ export default function AboutPage() {
               <p className="font-body-md text-body-md text-secondary leading-relaxed mb-8">
                 We believe that true value lies in longevity. Our rigorous selection process ensures that every piece meets the highest standards of durability and design. By partnering directly with creators and focusing on essential materials, we bring you uncompromised quality that enriches your daily routines without unnecessary markups.
               </p>
-              <Link to="/shop" className="inline-flex items-center gap-2 font-label-caps text-label-caps text-primary border-b border-primary pb-1 w-fit hover:text-surface-tint hover:border-surface-tint transition-colors">
-                Explore Our Collections <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+              <Link to="/shop" className="link-underline is-drawn inline-flex w-fit text-button">
+                Explore the collection
               </Link>
             </div>
           </div>
@@ -54,7 +54,6 @@ export default function AboutPage() {
 
         <section className="w-full bg-surface py-section-gap px-margin-mobile md:px-margin-desktop border-t border-outline-variant/15">
           <div className="max-w-4xl mx-auto text-center">
-            <span className="material-symbols-outlined text-4xl text-on-tertiary-container mb-6 block">format_quote</span>
             <h3 className="font-headline-lg text-headline-lg md:text-display-lg font-display-lg text-primary leading-tight">
               &quot;Your lifestyle deserves better choices.&quot;
             </h3>
