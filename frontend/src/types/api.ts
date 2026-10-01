@@ -1,12 +1,17 @@
 export type Currency = 'AED'
 
-export type ProductCategory =
-  | 'fashion'
-  | 'home-lifestyle'
-  | 'accessories'
-  | 'jewelry'
-  | 'gadgets'
-  | 'gifts'
+/** Category slug, see public.categories. */
+export type ProductCategory = string
+
+export interface Category {
+  slug: string
+  name: string
+  tagline: string
+  intro: string
+  heroImage?: string
+  sortOrder: number
+  visible: boolean
+}
 
 export type ProductBadge = 'New Arrival' | 'Limited'
 
@@ -24,6 +29,8 @@ export interface Product {
   badge?: ProductBadge
   inStock: boolean
   preorder?: boolean
+  /** In the curated Gifts edit (/gifts). */
+  isGift?: boolean
   createdAt?: string
   updatedAt?: string
 }

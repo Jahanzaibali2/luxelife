@@ -1,5 +1,5 @@
 import { getSupabase } from './supabase'
-import type { AdminStats, Currency, Order, OrderStatus, PaymentStatus, Product } from '../types/api'
+import type { AdminStats, Category, Currency, Order, OrderStatus, PaymentStatus, Product } from '../types/api'
 
 type ProductRow = {
   id: string
@@ -15,8 +15,43 @@ type ProductRow = {
   badge: Product['badge'] | null
   in_stock: boolean
   preorder: boolean
+  is_gift?: boolean
   created_at: string
   updated_at: string
+}
+
+type CategoryRow = {
+  slug: string
+  name: string
+  tagline: string
+  intro: string
+  hero_image: string | null
+  sort_order: number
+  visible: boolean
+}
+
+function mapCategory(row: CategoryRow): Category {
+  return {
+    slug: row.slug,
+    name: row.name,
+    tagline: row.tagline,
+    intro: row.intro,
+    heroImage: row.hero_image ?? undefined,
+    sortOrder: row.sort_order,
+    visible: row.visible,
+  }
+}
+
+function categoryRow(input: Partial<Category>) {
+  return {
+    ...(input.slug !== undefined && { slug: input.slug.trim() }),
+    ...(input.name !== undefined && { name: input.name.trim() }),
+    ...(input.tagline !== undefined && { tagline: input.tagline }),
+    ...(input.intro !== undefined && { intro: input.intro }),
+    ...(input.heroImage !== undefined && { hero_image: input.heroImage || null }),
+    ...(input.sortOrder !== undefined && { sort_order: Number(input.sortOrder) }),
+    ...(input.visible !== undefined && { visible: input.visible }),
+  }
 }
 
 type OrderRow = {
@@ -50,6 +85,7 @@ function mapProduct(row: ProductRow): Product {
     badge: row.badge ?? undefined,
     inStock: row.in_stock,
     preorder: row.preorder,
+    isGift: row.is_gift,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   }
@@ -112,6 +148,16 @@ export const api = {
       .order('created_at', { ascending: false })
     throwIfError(error)
     return (data ?? []).map(mapProduct)
+  },
+
+  async getCategories(): Promise<Category[]> {
+    const { data, error } = await getSupabase()
+      .from('categories')
+      .select('*')
+      .eq('visible', true)
+      .order('sort_order')
+    throwIfError(error)
+    return (data ?? []).map(mapCategory)
   },
 
   async getProduct(slug: string): Promise<Product> {
@@ -203,6 +249,7 @@ export const adminApi = {
         badge: input.badge ?? null,
         in_stock: input.inStock ?? true,
         preorder: input.preorder ?? false,
+        ...(input.isGift !== undefined && { is_gift: input.isGift }),
         created_at: now,
         updated_at: now,
       })
@@ -236,6 +283,7 @@ export const adminApi = {
         badge: merged.badge ?? null,
         in_stock: merged.inStock,
         preorder: merged.preorder ?? false,
+        ...(merged.isGift !== undefined && { is_gift: merged.isGift }),
         updated_at: merged.updatedAt,
       })
       .eq('id', id)
@@ -292,6 +340,44 @@ export const adminApi = {
       .single()
     throwIfError(error)
     return mapOrder(data)
+  },
+
+  async getCategories(): Promise<Category[]> {
+    const { data, error } = await getSupabase().from('categories').select('*').order('sort_order')
+    throwIfError(error)
+    return (data ?? []).map(mapCategory)
+  },
+
+  async getCategory(slug: string): Promise<Category> {
+    const { data, error } = await getSupabase().from('categories').select('*').eq('slug', slug).maybeSingle()
+    throwIfError(error)
+    if (!data) throw new Error('Category not found')
+    return mapCategory(data)
+  },
+
+  async createCategory(input: Partial<Category>): Promise<Category> {
+    if (!input.name?.trim() || !input.slug?.trim()) throw new Error('Name and slug are required')
+    const { data, error } = await getSupabase().from('categories').insert(categoryRow(input)).select('*').single()
+    throwIfError(error)
+    return mapCategory(data)
+  },
+
+  async updateCategory(slug: string, updates: Partial<Category>): Promise<Category> {
+    const { data, error } = await getSupabase()
+      .from('categories')
+      .update({ ...categoryRow(updates), updated_at: new Date().toISOString() })
+      .eq('slug', slug)
+      .select('*')
+      .single()
+    throwIfError(error)
+    return mapCategory(data)
+  },
+
+  async deleteCategory(slug: string): Promise<void> {
+    const { error } = await getSupabase().from('categories').delete().eq('slug', slug)
+    // Postgres FK violation: products still use this category.
+    if (error?.code === '23503') throw new Error('Move or delete the products in this category first.')
+    throwIfError(error)
   },
 
   async getStats(): Promise<AdminStats> {

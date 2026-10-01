@@ -1,10 +1,4 @@
-export type ProductCategory =
-  | 'fashion'
-  | 'home-lifestyle'
-  | 'accessories'
-  | 'jewelry'
-  | 'gadgets'
-  | 'gifts'
+export type ProductCategory = string
 
 export interface Product {
   slug: string
@@ -40,7 +34,7 @@ export const PRODUCTS: Product[] = [
     currency: 'AED',
     image:
       'https://lh3.googleusercontent.com/aida-public/AB6AXuC5DNAomMZzZatazAofTdRg-3H8StTnLWfILcszgKRAmqiP2GxEwFBZXnTgLkgQhzWhAjy-SfMYeIvIX1Ve40mvhAsZoxGNWAUJL7mcD_wkacjW3hUo2_6u3qxlYmlgQPWcXekEwPSvobgT3fVTtl32jpIa1Xq-T1cnyiYfYDRA3g-H0fSAndX5SvAtMtrKypMqg3K6_O7SAHaXUkVnaEd4quLj0avK9PdVuPwXB496zeUOU1Usk0EGzg',
-    category: 'home-lifestyle',
+    category: 'home-living',
     inStock: true,
   },
   {
@@ -51,7 +45,7 @@ export const PRODUCTS: Product[] = [
     currency: 'AED',
     image:
       'https://lh3.googleusercontent.com/aida-public/AB6AXuBnxUcgr_BPfyrwZiuJeAcZB-9p76xYbdR0TvmCgdolrLvka7szl0hLdUfEwZFyqECiF5zdANYlj53ttPq54PAUGnRFULhS_VYApG5Bm02nB45g3iJIy0UHJSTtla-aL2O9PBFaW9a27ilgVyv8NA6LXU0k-o0wHGt3g1fvVSHEs2roXSEHo8DJ-z2X5LkYXub74wp1wADsXSmo10_nlG0FMBBwJFDA4kmn3-6NDvnx3Nxz-v-JxthHFw',
-    category: 'gadgets',
+    category: 'jewellery-watches',
     badge: 'Limited',
     inStock: true,
   },
@@ -63,7 +57,7 @@ export const PRODUCTS: Product[] = [
     currency: 'AED',
     image:
       'https://lh3.googleusercontent.com/aida-public/AB6AXuCypdVnGDnlZunY4n_TAsPULRXKataQy8UF-k_aHRfF_GVAJhv8TNJfED3GkavpjT3CiqU8U7j3ELR6a4yYrp1Qk1Gqr_31pi2l2VJHoCJ_scH-S90JHYrPGd1OWvfl_XOWJdhNmHK7mDE__UEUjhlHpxrB5H-sqw3aXBPfd5-MD4nui5ou2uMT9KDuiTQXvtnv-P2SwL300zT-VW4oN8t2JFV-AXCDX4CpR08yW4CwfUp_pyOqKLal1A',
-    category: 'home-lifestyle',
+    category: 'home-living',
     inStock: true,
   },
   {
@@ -74,7 +68,7 @@ export const PRODUCTS: Product[] = [
     currency: 'AED',
     image:
       'https://lh3.googleusercontent.com/aida-public/AB6AXuClTakEGPZiqD6X9oqarb9sKhZeUs7ox3PY0vOmjhjj-7_Pb1BG3ZEE4xAdGeGi4wrKMJ2secsJaFaLTm2EP-wMCBLzGeI7gg8BOb8gTmc_2IBWtY78bWitlJVcg3DJzttVdHLcSjN0AO7fOmfz9TdY_-z-jfvgw1Aqb0XPYS6DnwStLmL14J1W-33x5xK7rIhDt7dubI5ae3isrKsxcoSNman7C9ZtS-XnP_qDdJMCWrBkMLT6DlPTuw',
-    category: 'jewelry',
+    category: 'jewellery-watches',
     inStock: true,
   },
   {
@@ -114,7 +108,7 @@ export function getProductBySlug(slug: string): Product | undefined {
       price: AURA_CERAMIC_VASE.price,
       currency: AURA_CERAMIC_VASE.currency,
       image: AURA_CERAMIC_VASE.image,
-      category: 'home-lifestyle',
+      category: 'home-living',
       badge: 'Limited',
       inStock: true,
     }
