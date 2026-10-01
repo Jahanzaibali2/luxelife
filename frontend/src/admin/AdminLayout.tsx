@@ -6,11 +6,15 @@ import { useAdminAuth } from '../context/AdminAuthContext'
 const NAV = [
   { to: '/admin', label: 'Dashboard', icon: 'dashboard', end: true },
   { to: '/admin/products', label: 'Products', icon: 'inventory_2' },
+  { to: '/admin/categories', label: 'Categories', icon: 'category' },
   { to: '/admin/orders', label: 'Orders', icon: 'receipt_long' },
 ]
 
 function usePageTitle(): string {
   const { pathname } = useLocation()
+  if (pathname.includes('/categories/new')) return 'Add Category'
+  if (pathname.startsWith('/admin/categories') && pathname.includes('/edit')) return 'Edit Category'
+  if (pathname.startsWith('/admin/categories')) return 'Categories'
   if (pathname.includes('/products/new')) return 'Add Product'
   if (pathname.includes('/edit')) return 'Edit Product'
   if (pathname.startsWith('/admin/products')) return 'Products'

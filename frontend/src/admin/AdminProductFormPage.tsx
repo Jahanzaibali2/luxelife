@@ -1,9 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { adminApi } from '../lib/api'
-import type { Product, ProductCategory } from '../types/api'
-
-const CATEGORIES: ProductCategory[] = ['fashion', 'home-lifestyle', 'accessories', 'jewelry', 'gadgets', 'gifts']
+import { FALLBACK_CATEGORIES } from '../data/categories'
+import type { Category, Product, ProductCategory } from '../types/api'
 
 const emptyForm = {
   name: '',
@@ -15,6 +14,7 @@ const emptyForm = {
   category: 'fashion' as ProductCategory,
   badge: '' as '' | 'New Arrival' | 'Limited',
   inStock: true,
+  isGift: false,
 }
 
 function slugFromName(name: string): string {
@@ -36,6 +36,11 @@ export default function AdminProductFormPage() {
   const [uploading, setUploading] = useState(false)
   const [uploadingGallery, setUploadingGallery] = useState(false)
   const [error, setError] = useState('')
+  const [categories, setCategories] = useState<Category[]>([])
+
+  useEffect(() => {
+    adminApi.getCategories().then(setCategories).catch(() => setCategories(FALLBACK_CATEGORIES))
+  }, [])
 
   useEffect(() => {
     if (!id) return
@@ -50,6 +55,7 @@ export default function AdminProductFormPage() {
         category: p.category,
         badge: p.badge ?? '',
         inStock: p.inStock,
+        isGift: p.isGift ?? false,
       })
     }).finally(() => setLoading(false))
   }, [id])
@@ -117,6 +123,7 @@ export default function AdminProductFormPage() {
         category: form.category,
         badge: form.badge || undefined,
         inStock: form.inStock,
+        isGift: form.isGift,
       }
       if (isEdit && id) {
         await adminApi.updateProduct(id, payload)
@@ -241,8 +248,14 @@ export default function AdminProductFormPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Field label="Category">
             <select className="admin-input" value={form.category} onChange={(e) => update('category', e.target.value)}>
-              {CATEGORIES.map((c) => (
-                <option key={c} value={c}>{c.replace('-', ' ')}</option>
+              {/* Keep the current value selectable even if its category was hidden or renamed. */}
+              {!categories.some((c) => c.slug === form.category) && (
+                <option value={form.category}>{form.category.replace(/-/g, ' ')}</option>
+              )}
+              {categories.map((c) => (
+                <option key={c.slug} value={c.slug}>
+                  {c.name}{c.visible ? '' : ' (hidden)'}
+                </option>
               ))}
             </select>
           </Field>
@@ -257,6 +270,11 @@ export default function AdminProductFormPage() {
         <label className="flex items-center gap-3 cursor-pointer">
           <input type="checkbox" checked={form.inStock} onChange={(e) => update('inStock', e.target.checked)} className="form-checkbox text-deep-cocoa rounded-sm" />
           <span className="text-primary">In Stock</span>
+        </label>
+        <label className="flex items-center gap-3 cursor-pointer">
+          <input type="checkbox" checked={form.isGift} onChange={(e) => update('isGift', e.target.checked)} className="form-checkbox text-deep-cocoa rounded-sm" />
+          <span className="text-primary">Include in the Gifts edit</span>
+          <Link to="/gifts" target="_blank" className="text-secondary text-sm underline">view</Link>
         </label>
         {error && <p className="text-error text-sm">{error}</p>}
         <button

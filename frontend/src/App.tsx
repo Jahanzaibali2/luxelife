@@ -32,6 +32,8 @@ const AdminDashboardPage = lazy(() => import('./admin/AdminDashboardPage'))
 const AdminProductsPage = lazy(() => import('./admin/AdminProductsPage'))
 const AdminProductFormPage = lazy(() => import('./admin/AdminProductFormPage'))
 const AdminOrdersPage = lazy(() => import('./admin/AdminOrdersPage'))
+const AdminCategoriesPage = lazy(() => import('./admin/AdminCategoriesPage'))
+const AdminCategoryFormPage = lazy(() => import('./admin/AdminCategoryFormPage'))
 const AdminOrderDetailPage = lazy(() => import('./admin/AdminOrderDetailPage'))
 
 function PageFallback() {
@@ -82,6 +84,9 @@ function AnimatedRoutes() {
                 <Route path="products" element={<AdminProductsPage />} />
                 <Route path="products/new" element={<AdminProductFormPage />} />
                 <Route path="products/:id/edit" element={<AdminProductFormPage />} />
+                <Route path="categories" element={<AdminCategoriesPage />} />
+                <Route path="categories/new" element={<AdminCategoryFormPage />} />
+                <Route path="categories/:slug/edit" element={<AdminCategoryFormPage />} />
                 <Route path="orders" element={<AdminOrdersPage />} />
                 <Route path="orders/:id" element={<AdminOrderDetailPage />} />
               </Route>
