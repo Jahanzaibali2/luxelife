@@ -77,6 +77,8 @@ export default function FAQPage() {
 
   return (
     <div className="bg-surface text-on-surface font-body-md antialiased min-h-screen flex flex-col">
+      <title>FAQ | LuxeLife</title>
+      <meta name="description" content="Answers about LuxeLife orders, delivery across the UAE, payment and returns." />
       <Header variant="faq" />
       <main className="flex-grow w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-16 md:py-24">
         <div className="text-center mb-16 md:mb-24 max-w-3xl mx-auto">

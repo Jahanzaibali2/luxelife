@@ -57,6 +57,8 @@ export default function CheckoutSuccessPage() {
 
   return (
     <div className="bg-background text-on-background min-h-screen flex flex-col font-body-md text-body-md antialiased">
+      <title>Order confirmation | LuxeLife</title>
+      <meta name="robots" content="noindex" />
       <CheckoutHeader />
       <main className="flex-grow w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-12 md:py-24 flex items-center justify-center">
         <div className="border-t border-ink pt-10 text-center max-w-lg mx-auto">

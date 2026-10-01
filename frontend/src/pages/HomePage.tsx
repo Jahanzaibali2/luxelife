@@ -1,107 +1,31 @@
-import { useEffect, useRef, useState } from 'react'
+import { useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, useScroll, useTransform } from 'motion/react'
+import { ArrowRight } from 'lucide-react'
 import { AnnouncementBar } from '../components/layout/AnnouncementBar'
 import { Footer } from '../components/layout/Footer'
 import { Header } from '../components/layout/Header'
+import { CategoryCard } from '../components/CategoryCard'
 import { LazyImage } from '../components/LazyImage'
+import { PageHero } from '../components/PageHero'
 import { ProductCard, ProductCardSkeleton } from '../components/ProductCard'
 import { Reveal } from '../components/motion/Reveal'
-import { EASE_EDITORIAL } from '../components/motion/ease'
-import { api } from '../lib/api'
-import { PRODUCTS as FALLBACK_PRODUCTS } from '../data/products'
-import type { Product } from '../types/api'
+import { useCatalog } from '../lib/useCatalog'
+import { FALLBACK_CATEGORIES, GIFTS_EDIT } from '../data/categories'
 
 const HERO_IMAGE = '/images/hero.jpg'
+const imageOf = (slug: string) => FALLBACK_CATEGORIES.find((c) => c.slug === slug)?.heroImage ?? ''
+// Portrait crop only: the source image has UI chrome on its left edge, so it can't be a full-bleed hero.
+const FASHION_EDITORIAL =
+  'https://lh3.googleusercontent.com/aida-public/AB6AXuDuLcu-YoGMpPa-kPAlcK3vcKFCJZTKVfg1EqvcR2B_6Lo_hUiXftBZIjCR7iYvZimqtx_JqSu98y9JtN2ajHUPVz1rmG0M2LMtyJK_Bz2p3OzOijL77qOMfwOp0D8QAZBgLA-CRQcqpapqCj4ZlJsMwjV3-iaAOz9uL54z_eRxV7tjf8-1ZNTIonBcVo_VV33G6IzvG_cSDJnfc5pjt6hCcO0_cLWWEyhwk0AdLAcaeFADBmYlV6QdHQ'
 
-const IMG = {
-  fashion:
-    'https://lh3.googleusercontent.com/aida-public/AB6AXuDuLcu-YoGMpPa-kPAlcK3vcKFCJZTKVfg1EqvcR2B_6Lo_hUiXftBZIjCR7iYvZimqtx_JqSu98y9JtN2ajHUPVz1rmG0M2LMtyJK_Bz2p3OzOijL77qOMfwOp0D8QAZBgLA-CRQcqpapqCj4ZlJsMwjV3-iaAOz9uL54z_eRxV7tjf8-1ZNTIonBcVo_VV33G6IzvG_cSDJnfc5pjt6hCcO0_cLWWEyhwk0AdLAcaeFADBmYlV6QdHQ',
-  home: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDbl1As4q9r7ZAhle_SbZyNgOa-ylZ9KQVuOHKltEShprjpY63G3MGb4gm8xecfp-jM9iC7Wy_FhDI_TShvGVM-lmOO1iX33VXGPG8-oSy47UA7wmHSq-ekzITiGzV7dfHE1aV2ZIUNV5Jsy043ATPQzYEchaFw-uuXk8O8rohRg3FsH2waacEIogeNhwJoeZhKu9Y6aDPg6vsv5TAx1pT1a9EiESwK5NHzXrBg_Xz0DuRbJBFM3UtGHA',
-  gadgets:
-    'https://lh3.googleusercontent.com/aida-public/AB6AXuDkQNHzabu2onH-OgL5lYjXoSlQF330ufKOB982WG3pmxWoytH1U1PLtr47yG3-AIr-UP657DCZPvc5cTPG9y4NkdOvwe4KmaLwf-nDFiemHOvetksZsrXXhFp9gAevEMPolISmApFymo4p5z4sQb4ZKR3K_c5vHxk9mAD-QkkI38rEQdN53lQlTub5g2xB3k0PoU7iOsgIjC2EOvidFuVhbW40GJX_iWzSEPAxaDlt7fEaJpmo2v3NiQ',
-  gifts:
-    'https://lh3.googleusercontent.com/aida-public/AB6AXuBUJe3tMcp9Wtpd6uVACkOs9mM1ZDq-zhfbMod4RCHzY-KTsfkHBlyRZVKxDpqAQuc2ZpbLcbW0yTpzINF4_rHap4hv5lDcHuLlaAll1C-4mJY8khjnHLxxhQJ0jrwMPeEO8etqzvUb0NwgHzGhJcE64mgfW3XpEQRqrRmv5rEikic_saeL62n5CuKIFiNuSh0wDxowKpaF3Fp-jJ27dVuLQM3vhQGN8rZuYu_7nH7oCXzVa8Ofu79c1Q',
-}
-
-const HERO_LINES = ['Curated for', 'the way you live.']
-
-function Hero() {
-  const ref = useRef<HTMLElement>(null)
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] })
-  const imageY = useTransform(scrollYProgress, [0, 1], ['0%', '18%'])
-  const textOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0])
-
-  return (
-    <section ref={ref} className="relative -mt-16 h-[100svh] min-h-[560px] overflow-hidden bg-ink md:-mt-20">
-      <motion.div className="absolute inset-0" style={{ y: imageY }}>
-        <motion.div
-          className="h-full w-full"
-          initial={{ scale: 1.08 }}
-          animate={{ scale: 1 }}
-          transition={{ duration: 2.2, ease: EASE_EDITORIAL }}
-        >
-          <LazyImage eager src={HERO_IMAGE} alt="" width={1600} height={1412} className="h-full w-full object-cover object-[50%_60%]" />
-        </motion.div>
-      </motion.div>
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-black/35 to-transparent" />
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-
-      <motion.div
-        style={{ opacity: textOpacity }}
-        className="absolute inset-x-0 bottom-0 mx-auto flex max-w-container-max flex-col gap-8 px-margin-mobile pb-14 text-white md:flex-row md:items-end md:justify-between md:px-margin-desktop md:pb-20"
-      >
-        <h1 className="font-display-lg text-display-lg">
-          {HERO_LINES.map((line, i) => (
-            <span key={line} className="block overflow-hidden pb-[0.08em]">
-              <motion.span
-                className="block"
-                initial={{ y: '105%' }}
-                animate={{ y: 0 }}
-                transition={{ duration: 1.1, ease: EASE_EDITORIAL, delay: 0.35 + i * 0.12 }}
-              >
-                {line}
-              </motion.span>
-            </span>
-          ))}
-        </h1>
-        <motion.div
-          className="flex max-w-xs flex-col gap-6"
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, ease: EASE_EDITORIAL, delay: 0.8 }}
-        >
-          <p className="text-body-md text-white/85">
-            Thoughtfully selected objects for the home, the wardrobe and the everyday.
-          </p>
-          <Link to="/shop" className="link-underline is-drawn w-fit text-button">
-            Shop the collection
-          </Link>
-        </motion.div>
-      </motion.div>
-    </section>
-  )
-}
-
-function EditorialImage({
-  src,
-  alt,
-  to,
-  className,
-  ratio,
-}: {
-  src: string
-  alt: string
-  to: string
-  className?: string
-  ratio: string
-}) {
+function EditorialImage({ src, alt, to, ratio }: { src: string; alt: string; to: string; ratio: string }) {
   const ref = useRef<HTMLAnchorElement>(null)
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] })
   const y = useTransform(scrollYProgress, [0, 1], ['-6%', '6%'])
 
   return (
-    <Link ref={ref} to={to} data-cursor="view" className={`group relative block overflow-hidden bg-backdrop ${ratio} ${className ?? ''}`}>
+    <Link ref={ref} to={to} data-cursor="view" className={`group relative block overflow-hidden bg-backdrop ${ratio}`}>
       <motion.div className="absolute -inset-y-[8%] inset-x-0" style={{ y }}>
         <LazyImage src={src} alt={alt} className="img-hover h-full w-full object-cover" />
       </motion.div>
@@ -114,10 +38,10 @@ function Editorial() {
     <section className="mx-auto max-w-container-max px-margin-mobile py-section-gap md:px-margin-desktop">
       <div className="grid grid-cols-1 gap-y-16 md:grid-cols-12 md:gap-x-6">
         <Reveal className="md:col-span-7">
-          <EditorialImage src={IMG.home} alt="Home and lifestyle objects" to="/shop?category=home-lifestyle" ratio="aspect-[4/5]" />
+          <EditorialImage src={imageOf('home-living')} alt="Home and living objects" to="/collections/home-living" ratio="aspect-[4/5]" />
           <div className="mt-5 flex items-baseline justify-between gap-6">
-            <p className="font-serif text-headline-md">Home &amp; lifestyle</p>
-            <Link to="/shop?category=home-lifestyle" className="link-underline font-label-caps text-label-caps">
+            <p className="font-serif text-headline-md">Home &amp; Living</p>
+            <Link to="/collections/home-living" className="link-underline font-label-caps text-label-caps">
               Explore
             </Link>
           </div>
@@ -136,10 +60,10 @@ function Editorial() {
             </Link>
           </Reveal>
           <Reveal delay={0.15}>
-            <EditorialImage src={IMG.fashion} alt="Fashion accessories" to="/shop?category=fashion" ratio="aspect-[3/4]" />
+            <EditorialImage src={FASHION_EDITORIAL} alt="Fashion" to="/collections/fashion" ratio="aspect-[3/4]" />
             <div className="mt-5 flex items-baseline justify-between gap-6">
               <p className="font-serif text-headline-md">Fashion</p>
-              <Link to="/shop?category=fashion" className="link-underline font-label-caps text-label-caps">
+              <Link to="/collections/fashion" className="link-underline font-label-caps text-label-caps">
                 Explore
               </Link>
             </div>
@@ -151,14 +75,7 @@ function Editorial() {
 }
 
 function SelectedPieces() {
-  const [products, setProducts] = useState<Product[] | null>(null)
-
-  useEffect(() => {
-    api
-      .getProducts()
-      .then((all) => setProducts(all.slice(0, 6)))
-      .catch(() => setProducts((FALLBACK_PRODUCTS as Product[]).slice(0, 6)))
-  }, [])
+  const { loading, products } = useCatalog()
 
   return (
     <section className="mx-auto max-w-container-max px-margin-mobile pb-section-gap md:px-margin-desktop">
@@ -169,9 +86,9 @@ function SelectedPieces() {
         </Link>
       </Reveal>
       <div className="grid grid-cols-1 gap-x-6 gap-y-16 sm:grid-cols-2 lg:grid-cols-3">
-        {products === null
+        {loading
           ? Array.from({ length: 3 }, (_, i) => <ProductCardSkeleton key={i} />)
-          : products.map((product, i) => (
+          : products.slice(0, 6).map((product, i) => (
               <Reveal key={product.slug} delay={(i % 3) * 0.08}>
                 <ProductCard product={product} />
               </Reveal>
@@ -181,24 +98,48 @@ function SelectedPieces() {
   )
 }
 
-function CategoryPair() {
-  const items = [
-    { label: 'Gadgets', to: '/shop?category=gadgets', src: IMG.gadgets },
-    { label: 'Gifts', to: '/shop?category=gifts', src: IMG.gifts },
-  ]
+function ShopByCategory() {
+  const { categories, countIn, heroFor } = useCatalog()
+  if (!categories.length) return null
+
   return (
-    <section className="mx-auto grid max-w-container-max grid-cols-1 gap-6 px-margin-mobile pb-section-gap sm:grid-cols-2 md:px-margin-desktop">
-      {items.map((item, i) => (
-        <Reveal key={item.label} delay={i * 0.1} className={i === 1 ? 'sm:mt-32' : ''}>
-          <EditorialImage src={item.src} alt={item.label} to={item.to} ratio="aspect-[4/5]" />
-          <div className="mt-5 flex items-baseline justify-between">
-            <p className="font-serif text-headline-md">{item.label}</p>
-            <Link to={item.to} className="link-underline font-label-caps text-label-caps">
-              Explore
-            </Link>
+    <section className="mx-auto max-w-container-max px-margin-mobile pb-section-gap md:px-margin-desktop">
+      <Reveal className="mb-12 flex items-end justify-between gap-6 border-b border-hairline pb-6">
+        <h2 className="font-headline-lg text-headline-lg">Shop by category</h2>
+        <Link to="/collections" className="link-underline shrink-0 font-label-caps text-label-caps">
+          All collections
+        </Link>
+      </Reveal>
+      <div className="grid grid-cols-2 gap-x-6 gap-y-12 lg:grid-cols-4">
+        {categories.map((c, i) => (
+          <Reveal key={c.slug} delay={i * 0.08} className={i % 2 === 1 ? 'lg:mt-16' : ''}>
+            <CategoryCard category={c} image={heroFor(c)} count={countIn(c.slug)} size="sm" />
+          </Reveal>
+        ))}
+      </div>
+    </section>
+  )
+}
+
+function GiftsBanner() {
+  return (
+    <section className="mx-auto max-w-container-max px-margin-mobile pb-section-gap md:px-margin-desktop">
+      <Reveal>
+        <Link to="/gifts" data-cursor="view" className="group relative block h-[70svh] min-h-[420px] overflow-hidden bg-ink">
+          <LazyImage src={GIFTS_EDIT.heroImage} alt="" className="img-hover absolute inset-0 h-full w-full object-cover opacity-90" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
+          <div className="absolute inset-x-0 bottom-0 flex flex-col gap-6 p-8 text-white md:flex-row md:items-end md:justify-between md:p-14">
+            <div>
+              <p className="mb-4 font-label-caps text-label-caps text-white/80">The edit</p>
+              <p className="font-display-lg text-display-lg">{GIFTS_EDIT.name.replace('The ', '')}</p>
+            </div>
+            <span className="inline-flex items-center gap-2 text-button">
+              <span className="link-underline is-drawn">{GIFTS_EDIT.tagline}</span>
+              <ArrowRight strokeWidth={1.25} className="h-4 w-4 transition-transform duration-500 ease-editorial group-hover:translate-x-1" />
+            </span>
           </div>
-        </Reveal>
-      ))}
+        </Link>
+      </Reveal>
     </section>
   )
 }
@@ -219,13 +160,32 @@ function Promise() {
 export default function HomePage() {
   return (
     <div className="overflow-x-clip bg-white font-body-md text-ink">
+      <title>LuxeLife | Curated lifestyle objects, delivered across the UAE</title>
+      <meta
+        name="description"
+        content="Thoughtfully selected fashion, beauty, home and jewellery pieces. Complimentary delivery across the UAE."
+      />
       <AnnouncementBar />
       <Header variant="home" activeNav="home" />
       <main>
-        <Hero />
+        <PageHero
+          image={HERO_IMAGE}
+          lines={['Curated for', 'the way you live.']}
+          aside={
+            <>
+              <p className="text-body-md text-white/85">
+                Thoughtfully selected objects for the home, the wardrobe and the everyday.
+              </p>
+              <Link to="/shop" className="link-underline is-drawn w-fit text-button">
+                Shop the collection
+              </Link>
+            </>
+          }
+        />
         <Editorial />
         <SelectedPieces />
-        <CategoryPair />
+        <ShopByCategory />
+        <GiftsBanner />
         <Promise />
       </main>
       <Footer variant="home" />

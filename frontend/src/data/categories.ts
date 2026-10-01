@@ -8,8 +8,6 @@ export const FALLBACK_CATEGORIES: Category[] = [
     name: 'Fashion',
     tagline: 'Pieces that wear well, for years.',
     intro: 'Tailoring, bags and everyday layers chosen for their cut, their cloth and how long they last.',
-    heroImage:
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuDuLcu-YoGMpPa-kPAlcK3vcKFCJZTKVfg1EqvcR2B_6Lo_hUiXftBZIjCR7iYvZimqtx_JqSu98y9JtN2ajHUPVz1rmG0M2LMtyJK_Bz2p3OzOijL77qOMfwOp0D8QAZBgLA-CRQcqpapqCj4ZlJsMwjV3-iaAOz9uL54z_eRxV7tjf8-1ZNTIonBcVo_VV33G6IzvG_cSDJnfc5pjt6hCcO0_cLWWEyhwk0AdLAcaeFADBmYlV6QdHQ',
     sortOrder: 10,
     visible: true,
   },

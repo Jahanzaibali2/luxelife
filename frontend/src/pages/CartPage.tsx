@@ -11,6 +11,8 @@ export default function CartPage() {
 
   return (
     <div className="flex min-h-screen flex-col bg-white font-body-md text-ink">
+      <title>Cart | LuxeLife</title>
+      <meta name="robots" content="noindex" />
       <Header variant="cart" />
       <main className="mx-auto w-full max-w-container-max flex-grow px-margin-mobile pb-section-gap md:px-margin-desktop">
         <Reveal className="border-b border-hairline pb-10 pt-16 md:pt-28">

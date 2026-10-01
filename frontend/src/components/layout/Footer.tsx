@@ -22,9 +22,9 @@ const COLUMNS: { title: string; links: { label: string; to: string }[] }[] = [
     title: 'Shop',
     links: [
       { label: 'All pieces', to: '/shop' },
-      { label: 'Fashion', to: '/shop?category=fashion' },
-      { label: 'Home & lifestyle', to: '/shop?category=home-lifestyle' },
-      { label: 'Gifts', to: '/shop?category=gifts' },
+      { label: 'Collections', to: '/collections' },
+      { label: 'The gifts edit', to: '/gifts' },
+      { label: 'Wishlist', to: '/wishlist' },
     ],
   },
   {

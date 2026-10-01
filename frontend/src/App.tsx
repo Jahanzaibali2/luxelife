@@ -4,6 +4,7 @@ import { AnimatePresence, MotionConfig, motion } from 'motion/react'
 import { useLenis } from 'lenis/react'
 import { CartProvider } from './context/CartContext'
 import { AdminAuthProvider } from './context/AdminAuthContext'
+import { WishlistProvider } from './context/WishlistContext'
 import { CartDrawer } from './components/CartDrawer'
 import { Cursor } from './components/Cursor'
 import { EASE_EDITORIAL } from './components/motion/ease'
@@ -11,6 +12,9 @@ import { SmoothScroll } from './components/motion/SmoothScroll'
 import HomePage from './pages/HomePage'
 
 const ShopAllPage = lazy(() => import('./pages/ShopAllPage'))
+const CollectionsPage = lazy(() => import('./pages/CollectionsPage'))
+const CategoryPage = lazy(() => import('./pages/CategoryPage'))
+const WishlistPage = lazy(() => import('./pages/WishlistPage'))
 const ProductDetailPage = lazy(() => import('./pages/ProductDetailPage'))
 const CartPage = lazy(() => import('./pages/CartPage'))
 const CheckoutPage = lazy(() => import('./pages/CheckoutPage'))
@@ -56,6 +60,10 @@ function AnimatedRoutes() {
           <Routes location={location}>
             <Route path="/" element={<HomePage />} />
             <Route path="/shop" element={<ShopAllPage />} />
+            <Route path="/collections" element={<CollectionsPage />} />
+            <Route path="/collections/:slug" element={<CategoryPage />} />
+            <Route path="/gifts" element={<CategoryPage edit="gifts" />} />
+            <Route path="/wishlist" element={<WishlistPage />} />
             <Route path="/products/:slug" element={<ProductDetailPage />} />
             <Route path="/cart" element={<CartPage />} />
             <Route path="/checkout" element={<CheckoutPage />} />
@@ -91,11 +99,13 @@ export default function App() {
       <MotionConfig reducedMotion="user">
         <SmoothScroll>
           <CartProvider>
-            <AdminAuthProvider>
-              <AnimatedRoutes />
-              <CartDrawer />
-              <Cursor />
-            </AdminAuthProvider>
+            <WishlistProvider>
+              <AdminAuthProvider>
+                <AnimatedRoutes />
+                <CartDrawer />
+                <Cursor />
+              </AdminAuthProvider>
+            </WishlistProvider>
           </CartProvider>
         </SmoothScroll>
       </MotionConfig>

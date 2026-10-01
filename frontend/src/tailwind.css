@@ -137,6 +137,28 @@
     background-position: 100% 100%;
   }
 
+  /* Product card quick add: slides up on hover/focus; compact icon button on touch */
+  @media (hover: hover) {
+    .quick-add {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    .group:hover .quick-add,
+    .quick-add:focus-visible {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @media (hover: none) {
+    .quick-add {
+      left: auto;
+      width: 2.75rem;
+    }
+    .quick-add-label {
+      display: none;
+    }
+  }
+
   /* ---- Legacy classes, redefined to the calm editorial behaviour ---- */
 
   .product-card,

@@ -28,6 +28,8 @@ export default function ContactPage() {
 
   return (
     <div className="text-primary font-body-md min-h-screen flex flex-col bg-warm-ivory">
+      <title>Contact | LuxeLife</title>
+      <meta name="description" content="Get in touch with LuxeLife about an order, a product or a partnership." />
       <Header variant="contact" />
       <main className="flex-grow w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-section-gap">
         <section className="text-center mb-section-gap">

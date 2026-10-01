@@ -122,6 +122,8 @@ export default function CheckoutPage() {
 
   return (
     <div className="bg-background text-on-background min-h-screen flex flex-col font-body-md text-body-md antialiased">
+      <title>Checkout | LuxeLife</title>
+      <meta name="robots" content="noindex" />
       <CheckoutHeader />
       <main className="flex-grow w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-12 md:py-24">
         <div className="mb-12">

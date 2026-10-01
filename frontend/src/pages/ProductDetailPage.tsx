@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { Minus, Plus, ShoppingBag } from 'lucide-react'
+import { useEffect, useMemo, useState } from 'react'
+import { Heart, Minus, Plus, ShoppingBag } from 'lucide-react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { Price } from '../components/Price'
 import { useCart } from '../context/CartContext'
@@ -10,6 +10,8 @@ import { ProductCard } from '../components/ProductCard'
 import { Reveal } from '../components/motion/Reveal'
 import { EASE_EDITORIAL } from '../components/motion/ease'
 import { api } from '../lib/api'
+import { useCatalog } from '../lib/useCatalog'
+import { useWishlist } from '../context/WishlistContext'
 import type { Product } from '../types/api'
 
 export default function ProductDetailPage() {
@@ -20,7 +22,8 @@ export default function ProductDetailPage() {
   const [loading, setLoading] = useState(true)
   const [selectedImage, setSelectedImage] = useState(0)
   const [quantity, setQuantity] = useState(1)
-  const [relatedProducts, setRelatedProducts] = useState<Product[]>([])
+  const catalog = useCatalog()
+  const wishlist = useWishlist()
 
   useEffect(() => {
     if (!slug) return
@@ -31,16 +34,12 @@ export default function ProductDetailPage() {
       .finally(() => setLoading(false))
   }, [slug])
 
-  useEffect(() => {
-    if (!product) return
-    api.getProducts()
-      .then((all) => {
-        const others = all.filter((p) => p.slug !== product.slug)
-        const sameCategory = others.filter((p) => p.category === product.category)
-        setRelatedProducts((sameCategory.length ? sameCategory : others).slice(0, 3))
-      })
-      .catch(() => setRelatedProducts([]))
-  }, [product])
+  const relatedProducts = useMemo(() => {
+    if (!product) return []
+    const others = catalog.products.filter((p) => p.slug !== product.slug)
+    const sameCategory = others.filter((p) => p.category === product.category)
+    return (sameCategory.length ? sameCategory : others).slice(0, 3)
+  }, [catalog.products, product])
 
   const gallery = product?.gallery?.length ? product.gallery : product ? [product.image] : []
 
@@ -79,27 +78,35 @@ export default function ProductDetailPage() {
     navigate('/checkout')
   }
 
-  const category = product.category.replace('-', ' ')
+  const category = catalog.nameOf(product.category)
+  const saved = wishlist.has(product.slug)
 
   return (
     <div className="flex min-h-screen flex-col bg-white font-body-md text-ink">
+      <title>{`${product.name} | LuxeLife`}</title>
+      <meta name="description" content={(product.description || product.subtitle || product.name).slice(0, 155)} />
       <Header variant="product" activeNav="shop" />
       <main className="mx-auto w-full max-w-container-max px-margin-mobile pt-8 md:px-margin-desktop md:pt-10">
         <nav className="mb-8 flex items-center gap-3 font-label-caps text-label-caps text-secondary" aria-label="Breadcrumb">
           <Link to="/shop" className="link-underline hover:text-ink">Shop</Link>
           <span aria-hidden>/</span>
-          <Link to={`/shop?category=${product.category}`} className="link-underline hover:text-ink">{category}</Link>
+          <Link to={`/collections/${product.category}`} className="link-underline hover:text-ink">{category}</Link>
         </nav>
 
         <div className="grid grid-cols-1 gap-12 md:grid-cols-12 md:gap-6">
           <div className="flex flex-col gap-4 md:col-span-7">
-            <div className="relative aspect-[4/5] overflow-hidden bg-backdrop">
+            {/* Desktop: fit the viewport below header + breadcrumb (and thumbnails, when shown) instead of a tall 4:5 crop. */}
+            <div
+              className={`relative aspect-[4/5] overflow-hidden bg-backdrop md:aspect-auto ${
+                gallery.length > 1 ? 'md:h-[calc(100svh-19rem)]' : 'md:h-[calc(100svh-12rem)]'
+              } md:min-h-[24rem]`}
+            >
               <AnimatePresence initial={false}>
                 <motion.img
                   key={gallery[selectedImage] ?? product.image}
                   src={gallery[selectedImage] ?? product.image}
                   alt={product.name}
-                  className="absolute inset-0 h-full w-full object-cover"
+                  className="absolute inset-0 h-full w-full object-cover md:object-contain"
                   initial={{ opacity: 0, scale: 1.02 }}
                   animate={{ opacity: 1, scale: 1, transition: { duration: 0.7, ease: EASE_EDITORIAL } }}
                   exit={{ opacity: 0, transition: { duration: 0.5 } }}
@@ -132,7 +139,7 @@ export default function ProductDetailPage() {
                 {category}
                 {product.badge && <span className="text-accent"> · {product.badge === 'Limited' ? 'Limited edition' : product.badge}</span>}
               </p>
-              <h1 className="font-serif text-[clamp(1.75rem,2.6vw,2.5rem)] leading-[1.1] tracking-[-0.01em]">{product.name}</h1>
+              <h1 className="font-serif text-[clamp(1.5rem,1.9vw,2rem)] leading-[1.1] tracking-[-0.01em]">{product.name}</h1>
               {product.subtitle && <p className="mt-3 font-label-caps text-label-caps text-secondary">{product.subtitle}</p>}
               <div className="mt-6 flex items-baseline justify-between border-b border-hairline pb-6">
                 <Price amount={product.price} variant="emphasis" />
@@ -161,9 +168,20 @@ export default function ProductDetailPage() {
                   Add to cart
                   <ShoppingBag strokeWidth={1.25} className="h-4 w-4" />
                 </button>
-                <button type="button" onClick={handleBuyNow} disabled={!product.inStock} className="btn-ghost w-full">
-                  Buy now
-                </button>
+                <div className="flex gap-3">
+                  <button type="button" onClick={handleBuyNow} disabled={!product.inStock} className="btn-ghost flex-1">
+                    Buy now
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => wishlist.toggle(product.slug)}
+                    aria-pressed={saved}
+                    aria-label={saved ? 'Remove from wishlist' : 'Save to wishlist'}
+                    className="btn-ghost w-[3.25rem] shrink-0 px-0"
+                  >
+                    <Heart strokeWidth={1.25} className={`h-5 w-5 transition-transform duration-500 ease-editorial ${saved ? 'scale-110 fill-ink' : ''}`} />
+                  </button>
+                </div>
               </div>
 
               <div className="mt-10 border-t border-hairline">
@@ -195,7 +213,7 @@ export default function ProductDetailPage() {
         <section className="mx-auto w-full max-w-container-max px-margin-mobile py-section-gap md:px-margin-desktop">
           <Reveal className="mb-12 flex items-end justify-between border-b border-hairline pb-6">
             <h2 className="font-headline-lg text-headline-lg">You may also like</h2>
-            <Link to={`/shop?category=${product.category}`} className="link-underline font-label-caps text-label-caps">View all</Link>
+            <Link to={`/collections/${product.category}`} className="link-underline font-label-caps text-label-caps">View all</Link>
           </Reveal>
           <div className="grid grid-cols-1 gap-x-6 gap-y-16 sm:grid-cols-2 lg:grid-cols-3">
             {relatedProducts.map((item, i) => (

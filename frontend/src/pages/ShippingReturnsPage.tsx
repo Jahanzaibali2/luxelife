@@ -17,6 +17,8 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 export default function ShippingReturnsPage() {
   return (
     <div className="text-on-surface font-body-md min-h-screen flex flex-col bg-warm-ivory">
+      <title>Shipping & returns | LuxeLife</title>
+      <meta name="description" content="Complimentary delivery across the UAE and 14-day returns on LuxeLife orders." />
       <Header variant="about" />
       <main className="flex-grow w-full max-w-3xl mx-auto px-margin-mobile md:px-margin-desktop pt-24 pb-section-gap">
         <h1 className="font-display-lg text-display-lg text-primary mb-4">Shipping &amp; Returns</h1>

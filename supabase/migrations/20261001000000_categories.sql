@@ -49,8 +49,7 @@ create policy "Sample admin can delete categories"
 insert into public.categories (slug, name, tagline, intro, hero_image, sort_order) values
   ('fashion', 'Fashion', 'Pieces that wear well, for years.',
    'Tailoring, bags and everyday layers chosen for their cut, their cloth and how long they last.',
-   'https://lh3.googleusercontent.com/aida-public/AB6AXuDuLcu-YoGMpPa-kPAlcK3vcKFCJZTKVfg1EqvcR2B_6Lo_hUiXftBZIjCR7iYvZimqtx_JqSu98y9JtN2ajHUPVz1rmG0M2LMtyJK_Bz2p3OzOijL77qOMfwOp0D8QAZBgLA-CRQcqpapqCj4ZlJsMwjV3-iaAOz9uL54z_eRxV7tjf8-1ZNTIonBcVo_VV33G6IzvG_cSDJnfc5pjt6hCcO0_cLWWEyhwk0AdLAcaeFADBmYlV6QdHQ',
-   10),
+   null, 10),
   ('beauty', 'Beauty', 'Tools for the daily ritual.',
    'Styling tools and care, selected for performance and kindness to hair and skin.',
    null, 20),
