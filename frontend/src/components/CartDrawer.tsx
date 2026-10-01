@@ -1,6 +1,7 @@
 import { useEffect, useRef, type KeyboardEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { AnimatePresence, motion } from 'motion/react'
+import { ArrowRight, Minus, Plus, ShoppingBag, Trash2, X } from 'lucide-react'
 import { useCart } from '../context/CartContext'
 import { Price } from './Price'
 import { EASE_EDITORIAL } from './motion/ease'
@@ -68,17 +69,22 @@ export function CartDrawer() {
             exit={{ x: '100%', transition: { duration: 0.35, ease: [0.4, 0, 1, 1] } }}
           >
             <div className="flex items-center justify-between border-b border-hairline px-6 py-5 md:px-8">
-              <h2 className="font-label-caps text-label-caps">Cart ({itemCount})</h2>
-              <button type="button" onClick={closeCart} className="link-underline text-label-sm text-secondary hover:text-ink">
-                Close
+              <h2 className="flex items-center gap-3 font-label-caps text-label-caps">
+                <ShoppingBag strokeWidth={1.25} className="h-4 w-4" />
+                Your cart <span className="text-secondary tabular-nums">{itemCount}</span>
+              </h2>
+              <button type="button" onClick={closeCart} aria-label="Close cart" className="-mr-2 flex h-10 w-10 items-center justify-center text-secondary transition-[color,transform] duration-500 ease-editorial hover:rotate-90 hover:text-ink">
+                <X strokeWidth={1.25} className="h-5 w-5" />
               </button>
             </div>
 
             {items.length === 0 ? (
               <div className="flex flex-1 flex-col items-center justify-center gap-6 px-8 text-center">
+                <ShoppingBag strokeWidth={1} className="h-10 w-10 text-secondary" />
                 <p className="font-serif text-headline-md">Your cart is empty.</p>
-                <Link to="/shop" onClick={closeCart} className="link-underline is-drawn text-button">
-                  Browse the collection
+                <Link to="/shop" onClick={closeCart} className="group inline-flex items-center gap-2 text-button">
+                  <span className="link-underline is-drawn">Browse the collection</span>
+                  <ArrowRight strokeWidth={1.25} className="h-4 w-4 transition-transform duration-500 ease-editorial group-hover:translate-x-1" />
                 </Link>
               </div>
             ) : (
@@ -105,17 +111,17 @@ export function CartDrawer() {
                           <Price amount={item.price * item.quantity} variant="line" />
                         </div>
                         <div className="mt-auto flex items-center justify-between pt-4">
-                          <div className="flex items-center gap-4 text-label-sm">
-                            <button type="button" aria-label={`Decrease quantity of ${item.name}`} onClick={() => updateQuantity(item.id, item.quantity - 1)} className="h-8 w-6 text-secondary hover:text-ink">
-                              −
+                          <div className="flex items-center gap-3 text-label-sm">
+                            <button type="button" aria-label={`Decrease quantity of ${item.name}`} onClick={() => updateQuantity(item.id, item.quantity - 1)} className="flex h-8 w-8 items-center justify-center border border-hairline text-secondary transition-colors hover:border-ink hover:text-ink">
+                              <Minus strokeWidth={1.25} className="h-3.5 w-3.5" />
                             </button>
-                            <span className="tabular-nums" aria-live="polite">{item.quantity}</span>
-                            <button type="button" aria-label={`Increase quantity of ${item.name}`} onClick={() => updateQuantity(item.id, item.quantity + 1)} className="h-8 w-6 text-secondary hover:text-ink">
-                              +
+                            <span className="w-5 text-center tabular-nums" aria-live="polite">{item.quantity}</span>
+                            <button type="button" aria-label={`Increase quantity of ${item.name}`} onClick={() => updateQuantity(item.id, item.quantity + 1)} className="flex h-8 w-8 items-center justify-center border border-hairline text-secondary transition-colors hover:border-ink hover:text-ink">
+                              <Plus strokeWidth={1.25} className="h-3.5 w-3.5" />
                             </button>
                           </div>
-                          <button type="button" onClick={() => removeItem(item.id)} className="link-underline text-label-sm text-secondary hover:text-ink">
-                            Remove
+                          <button type="button" onClick={() => removeItem(item.id)} aria-label={`Remove ${item.name}`} className="-mr-2 flex h-9 w-9 items-center justify-center text-secondary transition-colors hover:text-ink">
+                            <Trash2 strokeWidth={1.25} className="h-4 w-4" />
                           </button>
                         </div>
                       </div>
@@ -128,8 +134,9 @@ export function CartDrawer() {
                     <Price amount={subtotal} variant="emphasis" />
                   </div>
                   <p className="mb-6 text-label-sm text-secondary">Complimentary delivery across the UAE.</p>
-                  <Link to="/checkout" onClick={closeCart} className="btn-primary w-full">
+                  <Link to="/checkout" onClick={closeCart} className="btn-primary group w-full">
                     Checkout
+                    <ArrowRight strokeWidth={1.25} className="h-4 w-4 transition-transform duration-500 ease-editorial group-hover:translate-x-1" />
                   </Link>
                   <Link to="/cart" onClick={closeCart} className="link-underline mx-auto mt-4 block w-fit text-label-sm text-secondary hover:text-ink">
                     View cart

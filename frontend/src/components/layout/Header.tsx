@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Link, useLocation } from 'react-router-dom'
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from 'motion/react'
+import { Lock, Menu, ShoppingBag, X } from 'lucide-react'
 import { Logo } from '../brand/Logo'
 import { NAV_ITEMS, type NavKey } from '../../data/constants'
 import { useCart } from '../../context/CartContext'
@@ -79,10 +80,10 @@ export function Header({ variant, activeNav }: HeaderProps) {
             type="button"
             aria-label={menuOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={menuOpen}
-            className="font-label-caps text-label-caps justify-self-start lg:hidden"
+            className="-m-2 flex h-11 w-11 items-center justify-center justify-self-start lg:hidden"
             onClick={() => setMenuOpen((o) => !o)}
           >
-            {menuOpen ? 'Close' : 'Menu'}
+            {menuOpen ? <X strokeWidth={1.25} className="h-[22px] w-[22px]" /> : <Menu strokeWidth={1.25} className="h-[22px] w-[22px]" />}
           </button>
 
           <Logo
@@ -103,8 +104,32 @@ export function Header({ variant, activeNav }: HeaderProps) {
                 {item.label}
               </Link>
             ))}
-            <button type="button" onClick={openCart} className="link-underline font-label-caps text-label-caps">
-              Cart <span className="tabular-nums">({itemCount})</span>
+            <button
+              type="button"
+              onClick={openCart}
+              aria-label={`Open cart, ${itemCount} ${itemCount === 1 ? 'item' : 'items'}`}
+              className="group relative -m-2 flex h-11 w-11 items-center justify-center"
+            >
+              <ShoppingBag
+                strokeWidth={1.25}
+                className="h-[22px] w-[22px] transition-transform duration-500 ease-editorial group-hover:-translate-y-0.5"
+              />
+              <AnimatePresence>
+                {itemCount > 0 && (
+                  <motion.span
+                    key={itemCount}
+                    initial={{ scale: 0.4, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0.4, opacity: 0 }}
+                    transition={{ duration: 0.4, ease: EASE_EDITORIAL }}
+                    className={`absolute right-0.5 top-1 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[10px] font-medium tabular-nums leading-none ${
+                      overHero ? 'bg-white text-ink' : 'bg-ink text-white'
+                    }`}
+                  >
+                    {itemCount}
+                  </motion.span>
+                )}
+              </AnimatePresence>
             </button>
           </div>
         </div>
@@ -154,7 +179,8 @@ export function CheckoutHeader() {
           imageClassName="h-6 w-6 object-contain shrink-0"
           textClassName="font-serif text-[1.65rem] leading-none tracking-tight text-ink"
         />
-        <span className="absolute right-margin-mobile hidden font-label-caps text-label-caps text-secondary sm:block md:right-margin-desktop">
+        <span className="absolute right-margin-mobile hidden items-center gap-2 font-label-caps text-label-caps text-secondary sm:flex md:right-margin-desktop">
+          <Lock strokeWidth={1.25} className="h-3.5 w-3.5" />
           Secure checkout
         </span>
       </div>

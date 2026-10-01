@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { CircleAlert, CircleCheck, CircleX, Hourglass, LoaderCircle } from 'lucide-react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { CheckoutHeader } from '../components/layout/Header'
 import { Footer } from '../components/layout/Footer'
@@ -61,35 +62,35 @@ export default function CheckoutSuccessPage() {
         <div className="border-t border-ink pt-10 text-center max-w-lg mx-auto">
           {error && (
             <>
-              <span className="material-symbols-outlined text-4xl text-error mb-4">error</span>
+              <CircleAlert strokeWidth={1} className="mx-auto mb-4 h-9 w-9 text-error" />
               <h2 className="font-headline-md text-headline-md text-primary mb-2">Something went wrong</h2>
               <p className="font-body-md text-secondary mb-6">{error}</p>
             </>
           )}
           {!error && !order && (
             <>
-              <span className="material-symbols-outlined text-4xl text-primary mb-4 animate-spin">progress_activity</span>
+              <LoaderCircle strokeWidth={1} className="mx-auto mb-4 h-9 w-9 animate-spin text-ink" />
               <h2 className="font-headline-md text-headline-md text-primary mb-2">Confirming payment…</h2>
               <p className="font-body-md text-secondary mb-6">This only takes a moment.</p>
             </>
           )}
           {!error && order && order.paymentStatus === 'paid' && (
             <>
-              <span className="material-symbols-outlined text-4xl text-primary mb-4">check_circle</span>
+              <CircleCheck strokeWidth={1} className="mx-auto mb-4 h-9 w-9 text-ink" />
               <h2 className="font-headline-md text-headline-md text-primary mb-2">Payment Successful</h2>
               <p className="font-body-md text-secondary mb-6">Thank you. Your order {order.orderNumber} is confirmed.</p>
             </>
           )}
           {!error && order && order.paymentStatus === 'failed' && (
             <>
-              <span className="material-symbols-outlined text-4xl text-error mb-4">cancel</span>
+              <CircleX strokeWidth={1} className="mx-auto mb-4 h-9 w-9 text-error" />
               <h2 className="font-headline-md text-headline-md text-primary mb-2">Payment Failed</h2>
               <p className="font-body-md text-secondary mb-6">Your order wasn't charged. You can try again from your cart.</p>
             </>
           )}
           {!error && order && order.paymentStatus === 'unpaid' && (
             <>
-              <span className="material-symbols-outlined text-4xl text-primary mb-4">hourglass_top</span>
+              <Hourglass strokeWidth={1} className="mx-auto mb-4 h-9 w-9 text-ink" />
               <h2 className="font-headline-md text-headline-md text-primary mb-2">Still Processing</h2>
               <p className="font-body-md text-secondary mb-6">We haven't confirmed this payment yet. Refresh this page in a minute, or check your email for confirmation.</p>
             </>

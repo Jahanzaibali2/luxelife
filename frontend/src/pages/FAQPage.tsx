@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Plus } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { Footer } from '../components/layout/Footer'
 import { Header } from '../components/layout/Header'
@@ -119,7 +120,7 @@ export default function FAQPage() {
                           className={`accordion-button w-full flex justify-between items-center text-left py-4 hover:opacity-80 transition-opacity ${isOpen ? 'active' : ''}`}
                         >
                           <span className="font-body-lg text-body-lg text-primary">{item.question}</span>
-                          <span className={`material-symbols-outlined accordion-icon text-secondary ${isOpen ? 'rotate-180' : ''}`}>expand_more</span>
+                          <Plus strokeWidth={1.25} aria-hidden className={`accordion-icon h-4 w-4 shrink-0 text-secondary ${isOpen ? 'rotate-45' : ''}`} />
                         </button>
                         <div className={`accordion-content ${isOpen ? 'open' : ''}`}>
                           <p className="text-secondary font-body-md text-body-md pb-4 pt-2">{item.answer}</p>

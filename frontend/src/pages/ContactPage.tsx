@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Mail, MessageCircle, Phone } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -38,7 +39,7 @@ export default function ContactPage() {
 
         {submitted ? (
           <div className="bg-surface p-8 rounded border border-outline/15 text-center max-w-lg mx-auto">
-            <span className="material-symbols-outlined text-4xl text-primary mb-4">mail</span>
+            <Mail strokeWidth={1} className="mx-auto mb-4 h-9 w-9 text-ink" />
             <h2 className="font-headline-md text-headline-md text-primary mb-2">Message Sent</h2>
             <p className="font-body-md text-secondary">Thank you for reaching out. We&apos;ll respond within 24 hours.</p>
           </div>
@@ -85,7 +86,7 @@ export default function ContactPage() {
               <div className="space-y-8 mb-12">
                 <div className="border-t border-ink pt-8">
                   <div className="flex items-center space-x-4 mb-4 text-primary">
-                    <span className="material-symbols-outlined text-2xl" style={{ fontVariationSettings: "'FILL' 1" }}>call</span>
+                    <Phone strokeWidth={1.25} className="h-6 w-6" />
                     <h3 className="font-headline-md text-headline-md">Direct Line</h3>
                   </div>
                   <p className="font-body-md text-secondary mb-2">Speak with a concierge specialist.</p>
@@ -93,7 +94,7 @@ export default function ContactPage() {
                 </div>
                 <div className="border-t border-ink pt-8">
                   <div className="flex items-center space-x-4 mb-4 text-primary">
-                    <span className="material-symbols-outlined text-2xl" style={{ fontVariationSettings: "'FILL' 1" }}>chat</span>
+                    <MessageCircle strokeWidth={1.25} className="h-6 w-6" />
                     <h3 className="font-headline-md text-headline-md">WhatsApp</h3>
                   </div>
                   <p className="font-body-md text-secondary mb-2">Instant messaging for quick queries.</p>

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { ArrowRight, Banknote, CircleCheck, CreditCard } from 'lucide-react'
 import { Link, Navigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -130,7 +131,7 @@ export default function CheckoutPage() {
 
         {submitted ? (
           <div className="border-t border-ink pt-10 text-center max-w-lg mx-auto">
-            <span className="material-symbols-outlined text-4xl text-primary mb-4">check_circle</span>
+            <CircleCheck strokeWidth={1} className="mx-auto mb-4 h-9 w-9 text-ink" />
             <h2 className="font-headline-md text-headline-md text-primary mb-2">Order Placed</h2>
             <p className="font-body-md text-secondary mb-6">
               Thank you. Your cash-on-delivery order{orderNumber ? ` ${orderNumber}` : ''} is confirmed. Pay the courier when it arrives.
@@ -273,7 +274,7 @@ export default function CheckoutPage() {
                     <div className="flex flex-col gap-3 mb-8">
                       <label className={`flex items-center gap-3 p-4 border rounded cursor-pointer ${paymentMethod === 'cod' ? 'border-primary-container bg-surface' : 'border-outline/15'}`}>
                         <input type="radio" name="paymentMethod" value="cod" checked={paymentMethod === 'cod'} onChange={() => setPaymentMethod('cod')} className="text-ink focus:ring-ink" />
-                        <span className="material-symbols-outlined text-primary">payments</span>
+                        <Banknote strokeWidth={1.25} className="h-5 w-5 shrink-0 text-ink" />
                         <div>
                           <p className="font-body-md text-body-md text-primary">Cash on Delivery</p>
                           <p className="font-label-sm text-label-sm text-secondary">Pay the courier when your order arrives.</p>
@@ -281,7 +282,7 @@ export default function CheckoutPage() {
                       </label>
                       <label className={`flex items-center gap-3 p-4 border rounded cursor-pointer ${paymentMethod === 'ziina' ? 'border-primary-container bg-surface' : 'border-outline/15'}`}>
                         <input type="radio" name="paymentMethod" value="ziina" checked={paymentMethod === 'ziina'} onChange={() => setPaymentMethod('ziina')} className="text-ink focus:ring-ink" />
-                        <span className="material-symbols-outlined text-primary">credit_card</span>
+                        <CreditCard strokeWidth={1.25} className="h-5 w-5 shrink-0 text-ink" />
                         <div>
                           <p className="font-body-md text-body-md text-primary">Pay with Card (Credit or Debit)</p>
                           <p className="font-label-sm text-label-sm text-secondary">You'll be redirected to a secure page to complete payment.</p>
@@ -291,7 +292,7 @@ export default function CheckoutPage() {
                     {submitError && <p className="text-error text-sm mb-4">{submitError}</p>}
                     <button type="submit" disabled={submitting || items.length === 0} className="btn-primary w-full">
                       {submitting ? 'Placing order…' : 'Place order'}
-                      <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+                      <ArrowRight strokeWidth={1.25} className="h-4 w-4" />
                     </button>
                     <p className="text-center font-label-sm text-label-sm text-secondary mt-4">
                       By placing your order, you agree to our <Link className="underline hover:text-primary" to="/terms">Terms & Conditions</Link>.

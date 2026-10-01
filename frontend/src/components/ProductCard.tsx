@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { Heart } from 'lucide-react'
 import { LazyImage } from './LazyImage'
 import { Price } from './Price'
 import type { Product } from '../types/api'
@@ -48,7 +49,7 @@ export function ProductCard({ product, wishlisted = false, onWishlist, eager }: 
             wishlisted ? 'opacity-100' : 'opacity-0 focus-visible:opacity-100 group-hover:opacity-100'
           }`}
         >
-          <span className={`material-symbols-outlined text-[20px] ${wishlisted ? 'icon-fill' : ''}`}>favorite</span>
+          <Heart strokeWidth={1.25} className={`h-5 w-5 transition-transform duration-500 ease-editorial hover:scale-110 ${wishlisted ? 'fill-ink' : ''}`} />
         </button>
       )}
 

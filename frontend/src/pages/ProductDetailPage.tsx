@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Minus, Plus, ShoppingBag } from 'lucide-react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { Price } from '../components/Price'
 import { useCart } from '../context/CartContext'
@@ -144,16 +145,21 @@ export default function ProductDetailPage() {
 
               <div className="mt-8 flex items-center justify-between border-y border-hairline py-3">
                 <span className="font-label-caps text-label-caps">Quantity</span>
-                <div className="flex items-center gap-5">
-                  <button type="button" aria-label="Decrease quantity" onClick={() => setQuantity(Math.max(1, quantity - 1))} className="h-8 w-6 text-secondary hover:text-ink">−</button>
+                <div className="flex items-center gap-3">
+                  <button type="button" aria-label="Decrease quantity" onClick={() => setQuantity(Math.max(1, quantity - 1))} className="flex h-8 w-8 items-center justify-center border border-hairline text-secondary transition-colors hover:border-ink hover:text-ink">
+                    <Minus strokeWidth={1.25} className="h-3.5 w-3.5" />
+                  </button>
                   <span className="w-6 text-center tabular-nums" aria-live="polite">{quantity}</span>
-                  <button type="button" aria-label="Increase quantity" onClick={() => setQuantity(quantity + 1)} className="h-8 w-6 text-secondary hover:text-ink">+</button>
+                  <button type="button" aria-label="Increase quantity" onClick={() => setQuantity(quantity + 1)} className="flex h-8 w-8 items-center justify-center border border-hairline text-secondary transition-colors hover:border-ink hover:text-ink">
+                    <Plus strokeWidth={1.25} className="h-3.5 w-3.5" />
+                  </button>
                 </div>
               </div>
 
               <div className="mt-6 flex flex-col gap-3">
                 <button type="button" onClick={handleAddToCart} disabled={!product.inStock} className="btn-primary w-full">
                   Add to cart
+                  <ShoppingBag strokeWidth={1.25} className="h-4 w-4" />
                 </button>
                 <button type="button" onClick={handleBuyNow} disabled={!product.inStock} className="btn-ghost w-full">
                   Buy now
@@ -164,7 +170,7 @@ export default function ProductDetailPage() {
                 <details className="group border-b border-hairline py-5" open>
                   <summary className="flex cursor-pointer list-none items-center justify-between font-label-caps text-label-caps">
                     Description
-                    <span className="text-lg leading-none transition-transform duration-500 group-open:rotate-45" aria-hidden>+</span>
+                    <Plus strokeWidth={1.25} aria-hidden className="h-4 w-4 transition-transform duration-500 ease-editorial group-open:rotate-45" />
                   </summary>
                   <p className="pt-4 text-body-md text-secondary">
                     {product.description || 'Premium curated product from the LuxeLife collection.'}
@@ -173,7 +179,7 @@ export default function ProductDetailPage() {
                 <details className="group border-b border-hairline py-5">
                   <summary className="flex cursor-pointer list-none items-center justify-between font-label-caps text-label-caps">
                     Shipping &amp; returns
-                    <span className="text-lg leading-none transition-transform duration-500 group-open:rotate-45" aria-hidden>+</span>
+                    <Plus strokeWidth={1.25} aria-hidden className="h-4 w-4 transition-transform duration-500 ease-editorial group-open:rotate-45" />
                   </summary>
                   <p className="pt-4 text-body-md text-secondary">
                     Complimentary next-day delivery within Dubai and Abu Dhabi. Returns accepted within 14 days of purchase in original packaging.

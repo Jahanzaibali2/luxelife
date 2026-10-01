@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { ArrowLeft, ArrowRight, Minus, Plus, ShoppingBag, Trash2 } from 'lucide-react'
 import { Price } from '../components/Price'
 import { useCart } from '../context/CartContext'
 import { Footer } from '../components/layout/Footer'
@@ -19,6 +20,7 @@ export default function CartPage() {
 
         {items.length === 0 ? (
           <div className="flex flex-col items-center gap-6 py-32 text-center">
+            <ShoppingBag strokeWidth={1} className="h-10 w-10 text-secondary" />
             <p className="font-serif text-headline-md">Your cart is empty.</p>
             <Link to="/shop" className="link-underline is-drawn text-button">
               Browse the collection
@@ -41,16 +43,17 @@ export default function CartPage() {
                       <Price amount={item.price * item.quantity} variant="line" className="shrink-0" />
                     </div>
                     <div className="mt-auto flex items-center justify-between pt-6">
-                      <div className="flex items-center gap-5 text-label-sm">
-                        <button type="button" aria-label={`Decrease quantity of ${item.name}`} onClick={() => updateQuantity(item.id, item.quantity - 1)} className="h-8 w-6 text-secondary hover:text-ink">
-                          −
+                      <div className="flex items-center gap-3 text-label-sm">
+                        <button type="button" aria-label={`Decrease quantity of ${item.name}`} onClick={() => updateQuantity(item.id, item.quantity - 1)} className="flex h-8 w-8 items-center justify-center border border-hairline text-secondary transition-colors hover:border-ink hover:text-ink">
+                          <Minus strokeWidth={1.25} className="h-3.5 w-3.5" />
                         </button>
-                        <span className="tabular-nums" aria-live="polite">{item.quantity}</span>
-                        <button type="button" aria-label={`Increase quantity of ${item.name}`} onClick={() => updateQuantity(item.id, item.quantity + 1)} className="h-8 w-6 text-secondary hover:text-ink">
-                          +
+                        <span className="w-5 text-center tabular-nums" aria-live="polite">{item.quantity}</span>
+                        <button type="button" aria-label={`Increase quantity of ${item.name}`} onClick={() => updateQuantity(item.id, item.quantity + 1)} className="flex h-8 w-8 items-center justify-center border border-hairline text-secondary transition-colors hover:border-ink hover:text-ink">
+                          <Plus strokeWidth={1.25} className="h-3.5 w-3.5" />
                         </button>
                       </div>
-                      <button type="button" onClick={() => removeItem(item.id)} className="link-underline text-label-sm text-secondary hover:text-ink">
+                      <button type="button" onClick={() => removeItem(item.id)} className="flex items-center gap-2 text-label-sm text-secondary transition-colors hover:text-ink">
+                        <Trash2 strokeWidth={1.25} className="h-4 w-4" />
                         Remove
                       </button>
                     </div>
@@ -76,10 +79,12 @@ export default function CartPage() {
                   <span className="font-label-caps text-label-caps">Total</span>
                   <Price amount={subtotal} variant="emphasis" />
                 </div>
-                <Link to="/checkout" className="btn-primary w-full">
+                <Link to="/checkout" className="btn-primary group w-full">
                   Checkout
+                  <ArrowRight strokeWidth={1.25} className="h-4 w-4 transition-transform duration-500 ease-editorial group-hover:translate-x-1" />
                 </Link>
-                <Link to="/shop" className="link-underline mx-auto mt-5 block w-fit text-label-sm text-secondary hover:text-ink">
+                <Link to="/shop" className="mx-auto mt-5 flex w-fit items-center gap-2 text-label-sm text-secondary transition-colors hover:text-ink">
+                  <ArrowLeft strokeWidth={1.25} className="h-4 w-4" />
                   Continue shopping
                 </Link>
               </div>
