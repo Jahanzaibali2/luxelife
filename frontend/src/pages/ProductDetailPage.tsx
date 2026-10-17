@@ -127,7 +127,7 @@ export default function ProductDetailPage() {
                   key={gallery[selectedImage] ?? product.image}
                   src={gallery[selectedImage] ?? product.image}
                   alt={product.name}
-                  className="absolute inset-0 h-full w-full object-cover md:object-contain"
+                  className="absolute inset-0 h-full w-full object-contain mix-blend-multiply"
                   custom={direction}
                   variants={GALLERY_SLIDE}
                   initial="enter"
@@ -150,7 +150,7 @@ export default function ProductDetailPage() {
                           i === selectedImage ? 'opacity-100 outline outline-1 outline-offset-1 outline-ink' : 'opacity-60 hover:opacity-100'
                         }`}
                       >
-                        <img className="h-full w-full object-cover" alt="" src={img} loading="lazy" decoding="async" />
+                        <img className="h-full w-full object-contain mix-blend-multiply" alt="" src={img} loading="lazy" decoding="async" />
                       </button>
                     ))}
                   </div>
@@ -181,7 +181,7 @@ export default function ProductDetailPage() {
                       i === selectedImage ? 'opacity-100 outline outline-1 outline-offset-2 outline-ink' : 'opacity-50 hover:opacity-100'
                     }`}
                   >
-                    <img className="h-full w-full object-cover" alt="" src={img} loading="lazy" decoding="async" />
+                    <img className="h-full w-full object-contain mix-blend-multiply" alt="" src={img} loading="lazy" decoding="async" />
                   </button>
                 ))}
               </div>
