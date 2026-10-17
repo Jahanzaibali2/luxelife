@@ -159,6 +159,11 @@
     }
   }
 
+  /* Product listing grid: 2 cols mobile, 3 tablet, 4 desktop. */
+  .product-grid {
+    @apply grid grid-cols-2 gap-x-4 gap-y-12 md:gap-x-6 md:gap-y-16 lg:grid-cols-3 xl:grid-cols-4;
+  }
+
   /* ---- Legacy classes, redefined to the calm editorial behaviour ---- */
 
   .product-card,

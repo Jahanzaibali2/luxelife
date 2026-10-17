@@ -170,12 +170,12 @@ export default function ShopAllPage() {
               </label>
             </div>
 
-            <div className="grid grid-cols-1 gap-x-6 gap-y-16 sm:grid-cols-2 xl:grid-cols-3">
+            <div className="product-grid xl:grid-cols-3">
               {loading
                 ? Array.from({ length: 6 }, (_, i) => <ProductCardSkeleton key={i} />)
                 : pageItems.map((product, i) => (
-                    <Reveal key={product.slug} delay={(i % 3) * 0.08}>
-                      <ProductCard product={product} eager={i < 3} />
+                    <Reveal key={product.slug} delay={(i % 3) * 0.06}>
+                      <ProductCard product={product} eager={i < 4} />
                     </Reveal>
                   ))}
             </div>

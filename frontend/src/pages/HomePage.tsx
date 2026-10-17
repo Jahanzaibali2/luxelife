@@ -87,11 +87,11 @@ function SelectedPieces() {
           View all
         </Link>
       </Reveal>
-      <div className="grid grid-cols-1 gap-x-6 gap-y-16 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="product-grid">
         {loading
-          ? Array.from({ length: 3 }, (_, i) => <ProductCardSkeleton key={i} />)
-          : products.slice(0, 6).map((product, i) => (
-              <Reveal key={product.slug} delay={(i % 3) * 0.08}>
+          ? Array.from({ length: 4 }, (_, i) => <ProductCardSkeleton key={i} />)
+          : products.slice(0, 8).map((product, i) => (
+              <Reveal key={product.slug} delay={(i % 4) * 0.06}>
                 <ProductCard product={product} />
               </Reveal>
             ))}

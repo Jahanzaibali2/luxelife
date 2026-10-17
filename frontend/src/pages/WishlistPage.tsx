@@ -25,7 +25,7 @@ export default function WishlistPage() {
         </Reveal>
 
         {loading && slugs.length > 0 ? (
-          <div className="grid grid-cols-1 gap-x-6 gap-y-16 pt-12 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="product-grid pt-12">
             {slugs.slice(0, 3).map((s) => <ProductCardSkeleton key={s} />)}
           </div>
         ) : saved.length === 0 ? (
@@ -38,9 +38,9 @@ export default function WishlistPage() {
             </Link>
           </div>
         ) : (
-          <div className="grid grid-cols-1 gap-x-6 gap-y-16 pt-12 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="product-grid pt-12">
             {saved.map((product, i) => (
-              <Reveal key={product.slug} delay={(i % 3) * 0.08}>
+              <Reveal key={product.slug} delay={(i % 4) * 0.06}>
                 <ProductCard product={product} />
               </Reveal>
             ))}

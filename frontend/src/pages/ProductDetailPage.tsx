@@ -49,7 +49,7 @@ export default function ProductDetailPage() {
     if (!product) return []
     const others = catalog.products.filter((p) => p.slug !== product.slug)
     const sameCategory = others.filter((p) => p.category === product.category)
-    return (sameCategory.length ? sameCategory : others).slice(0, 3)
+    return (sameCategory.length ? sameCategory : others).slice(0, 4)
   }, [catalog.products, product])
 
   // Cover image always leads; gallery extras follow without repeating it.
@@ -256,9 +256,9 @@ export default function ProductDetailPage() {
             <h2 className="font-headline-lg text-headline-lg">You may also like</h2>
             <Link to={`/collections/${product.category}`} className="link-underline font-label-caps text-label-caps">View all</Link>
           </Reveal>
-          <div className="grid grid-cols-1 gap-x-6 gap-y-16 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="product-grid">
             {relatedProducts.map((item, i) => (
-              <Reveal key={item.slug} delay={i * 0.08}>
+              <Reveal key={item.slug} delay={(i % 4) * 0.06}>
                 <ProductCard product={item} />
               </Reveal>
             ))}
