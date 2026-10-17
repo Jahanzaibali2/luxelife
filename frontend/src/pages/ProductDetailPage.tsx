@@ -185,6 +185,17 @@ export default function ProductDetailPage() {
                 </span>
               </div>
 
+              <div className="mt-6">
+                <p className={`text-body-md leading-relaxed text-secondary ${longDescription && !expanded ? 'line-clamp-5' : ''}`}>
+                  {description}
+                </p>
+                {longDescription && (
+                  <button type="button" onClick={() => setExpanded(!expanded)} aria-expanded={expanded} className="link-underline mt-3 font-label-caps text-label-caps">
+                    {expanded ? 'Read less' : 'Read more'}
+                  </button>
+                )}
+              </div>
+
               <div className="mt-6 flex items-center justify-between border-y border-hairline py-3">
                 <span className="font-label-caps text-label-caps">Quantity</span>
                 <div className="flex items-center gap-3">
@@ -217,32 +228,6 @@ export default function ProductDetailPage() {
                     <Heart strokeWidth={1.25} className={`h-5 w-5 transition-transform duration-500 ease-editorial ${saved ? 'scale-110 fill-ink' : ''}`} />
                   </button>
                 </div>
-              </div>
-
-              <div className="mt-10 border-t border-hairline">
-                <details className="group border-b border-hairline py-5" open>
-                  <summary className="flex cursor-pointer list-none items-center justify-between font-label-caps text-label-caps">
-                    Description
-                    <Plus strokeWidth={1.25} aria-hidden className="h-4 w-4 transition-transform duration-500 ease-editorial group-open:rotate-45" />
-                  </summary>
-                  <p className={`pt-4 text-body-md text-secondary ${longDescription && !expanded ? 'line-clamp-5' : ''}`}>
-                    {description}
-                  </p>
-                  {longDescription && (
-                    <button type="button" onClick={() => setExpanded(!expanded)} aria-expanded={expanded} className="link-underline mt-3 font-label-caps text-label-caps">
-                      {expanded ? 'Read less' : 'Read more'}
-                    </button>
-                  )}
-                </details>
-                <details className="group border-b border-hairline py-5">
-                  <summary className="flex cursor-pointer list-none items-center justify-between font-label-caps text-label-caps">
-                    Shipping &amp; returns
-                    <Plus strokeWidth={1.25} aria-hidden className="h-4 w-4 transition-transform duration-500 ease-editorial group-open:rotate-45" />
-                  </summary>
-                  <p className="pt-4 text-body-md text-secondary">
-                    Complimentary next-day delivery within Dubai and Abu Dhabi. Returns accepted within 14 days of purchase in original packaging.
-                  </p>
-                </details>
               </div>
             </Reveal>
           </div>
