@@ -39,3 +39,8 @@ Thumbs.db
 *.sw?
 
 .superpowers/
+
+# Local tooling: MCP servers and Supabase CLI config (migrations stay tracked)
+.mcp.json
+supabase/config.toml
+supabase/.gitignore
