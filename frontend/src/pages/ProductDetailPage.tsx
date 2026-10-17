@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Heart, Minus, Plus, ShoppingBag } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Heart, Minus, Plus, ShoppingBag } from 'lucide-react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { Price } from '../components/Price'
 import { useCart } from '../context/CartContext'
@@ -22,12 +22,15 @@ export default function ProductDetailPage() {
   const [loading, setLoading] = useState(true)
   const [selectedImage, setSelectedImage] = useState(0)
   const [quantity, setQuantity] = useState(1)
+  const [expanded, setExpanded] = useState(false)
   const catalog = useCatalog()
   const wishlist = useWishlist()
 
   useEffect(() => {
     if (!slug) return
     setLoading(true)
+    setSelectedImage(0)
+    setExpanded(false)
     api.getProduct(slug)
       .then(setProduct)
       .catch(() => setProduct(null))
@@ -80,6 +83,10 @@ export default function ProductDetailPage() {
 
   const category = catalog.nameOf(product.category)
   const saved = wishlist.has(product.slug)
+  const description = product.description || 'Premium curated product from the LuxeLife collection.'
+  // ponytail: char count approximates "longer than 5 lines"; measure with a ref if short copy ever shows a stray toggle.
+  const longDescription = description.length > 320
+  const step = (dir: number) => setSelectedImage((i) => (i + dir + gallery.length) % gallery.length)
 
   return (
     <div className="flex min-h-screen flex-col bg-white font-body-md text-ink">
@@ -91,16 +98,14 @@ export default function ProductDetailPage() {
           <Link to="/shop" className="link-underline hover:text-ink">Shop</Link>
           <span aria-hidden>/</span>
           <Link to={`/collections/${product.category}`} className="link-underline hover:text-ink">{category}</Link>
+          <span aria-hidden>/</span>
+          <span aria-current="page" className="truncate text-ink">{product.name}</span>
         </nav>
 
         <div className="grid grid-cols-1 gap-12 md:grid-cols-12 md:gap-6">
-          <div className="flex flex-col gap-4 md:col-span-7">
-            {/* Desktop: fit the viewport below header + breadcrumb (and thumbnails, when shown) instead of a tall 4:5 crop. */}
-            <div
-              className={`relative aspect-[4/5] overflow-hidden bg-backdrop md:aspect-auto ${
-                gallery.length > 1 ? 'md:h-[calc(100svh-19rem)]' : 'md:h-[calc(100svh-12rem)]'
-              } md:min-h-[24rem]`}
-            >
+          <div className="flex flex-col gap-4 md:col-span-6">
+            {/* Desktop: fit the viewport below header + breadcrumb instead of a tall 4:5 crop. */}
+            <div className="relative aspect-[4/5] overflow-hidden bg-backdrop md:aspect-auto md:h-[calc(100svh-12rem)] md:min-h-[24rem]">
               <AnimatePresence initial={false}>
                 <motion.img
                   key={gallery[selectedImage] ?? product.image}
@@ -112,9 +117,41 @@ export default function ProductDetailPage() {
                   exit={{ opacity: 0, transition: { duration: 0.5 } }}
                 />
               </AnimatePresence>
+              {gallery.length > 1 && (
+                <>
+                  {/* Desktop: thumbnails float over the image's top-left corner. */}
+                  <div className="absolute left-4 top-4 z-10 hidden max-h-[calc(100%-2rem)] flex-col gap-2 overflow-y-auto md:flex">
+                    {gallery.map((img, i) => (
+                      <button
+                        key={img}
+                        type="button"
+                        onClick={() => setSelectedImage(i)}
+                        aria-label={`View image ${i + 1} of ${gallery.length}`}
+                        aria-current={i === selectedImage}
+                        className={`h-14 w-12 shrink-0 overflow-hidden bg-backdrop transition-opacity duration-500 ${
+                          i === selectedImage ? 'opacity-100 outline outline-1 outline-offset-1 outline-ink' : 'opacity-60 hover:opacity-100'
+                        }`}
+                      >
+                        <img className="h-full w-full object-cover" alt="" src={img} loading="lazy" decoding="async" />
+                      </button>
+                    ))}
+                  </div>
+                  <button type="button" onClick={() => step(-1)} aria-label="Previous image" className="absolute left-3 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center text-ink transition-opacity hover:opacity-60 md:left-20">
+                    <ChevronLeft strokeWidth={1.25} className="h-6 w-6" />
+                  </button>
+                  <button type="button" onClick={() => step(1)} aria-label="Next image" className="absolute right-3 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center text-ink transition-opacity hover:opacity-60">
+                    <ChevronRight strokeWidth={1.25} className="h-6 w-6" />
+                  </button>
+                  <div className="absolute bottom-4 left-1/2 z-10 flex -translate-x-1/2 gap-1.5" aria-hidden>
+                    {gallery.map((img, i) => (
+                      <span key={img} className={`h-px w-6 transition-colors duration-500 ${i === selectedImage ? 'bg-ink' : 'bg-ink/25'}`} />
+                    ))}
+                  </div>
+                </>
+              )}
             </div>
             {gallery.length > 1 && (
-              <div className="flex gap-3 overflow-x-auto">
+              <div className="flex gap-3 overflow-x-auto md:hidden">
                 {gallery.map((img, i) => (
                   <button
                     key={img}
@@ -133,14 +170,14 @@ export default function ProductDetailPage() {
             )}
           </div>
 
-          <div className="md:col-span-4 md:col-start-9">
-            <Reveal className="md:sticky md:top-28">
+          <div className="md:col-span-5 md:col-start-8 md:self-center">
+            <Reveal>
               <p className="mb-4 font-label-caps text-label-caps text-secondary">
                 {category}
                 {product.badge && <span className="text-accent"> · {product.badge === 'Limited' ? 'Limited edition' : product.badge}</span>}
               </p>
               <h1 className="font-serif text-[clamp(1.5rem,1.9vw,2rem)] leading-[1.1] tracking-[-0.01em]">{product.name}</h1>
-              {product.subtitle && <p className="mt-3 font-label-caps text-label-caps text-secondary">{product.subtitle}</p>}
+              {product.subtitle && <p className="mt-3 font-label-sm text-label-sm text-secondary first-letter:uppercase">{product.subtitle.toLowerCase()}</p>}
               <div className="mt-6 flex items-baseline justify-between border-b border-hairline pb-6">
                 <Price amount={product.price} variant="emphasis" />
                 <span className="font-label-caps text-label-caps text-secondary">
@@ -148,9 +185,7 @@ export default function ProductDetailPage() {
                 </span>
               </div>
 
-              <p className="mt-6 text-body-md leading-relaxed text-secondary">{product.description || product.subtitle}</p>
-
-              <div className="mt-8 flex items-center justify-between border-y border-hairline py-3">
+              <div className="mt-6 flex items-center justify-between border-y border-hairline py-3">
                 <span className="font-label-caps text-label-caps">Quantity</span>
                 <div className="flex items-center gap-3">
                   <button type="button" aria-label="Decrease quantity" onClick={() => setQuantity(Math.max(1, quantity - 1))} className="flex h-8 w-8 items-center justify-center border border-hairline text-secondary transition-colors hover:border-ink hover:text-ink">
@@ -190,9 +225,14 @@ export default function ProductDetailPage() {
                     Description
                     <Plus strokeWidth={1.25} aria-hidden className="h-4 w-4 transition-transform duration-500 ease-editorial group-open:rotate-45" />
                   </summary>
-                  <p className="pt-4 text-body-md text-secondary">
-                    {product.description || 'Premium curated product from the LuxeLife collection.'}
+                  <p className={`pt-4 text-body-md text-secondary ${longDescription && !expanded ? 'line-clamp-5' : ''}`}>
+                    {description}
                   </p>
+                  {longDescription && (
+                    <button type="button" onClick={() => setExpanded(!expanded)} aria-expanded={expanded} className="link-underline mt-3 font-label-caps text-label-caps">
+                      {expanded ? 'Read less' : 'Read more'}
+                    </button>
+                  )}
                 </details>
                 <details className="group border-b border-hairline py-5">
                   <summary className="flex cursor-pointer list-none items-center justify-between font-label-caps text-label-caps">
