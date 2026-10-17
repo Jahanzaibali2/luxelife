@@ -261,10 +261,6 @@ export default function CheckoutPage() {
                         <span className="font-body-md text-body-md text-secondary">Shipping</span>
                         <span className="font-body-md text-body-md text-primary">Complimentary</span>
                       </div>
-                      <div className="flex justify-between items-center">
-                        <span className="font-body-md text-body-md text-secondary">VAT (5%)</span>
-                        <span className="font-body-md text-body-md text-primary">Included</span>
-                      </div>
                     </div>
                     <div className="border-t border-outline/15 pt-6 mb-8 flex justify-between items-center">
                       <span className="font-headline-md text-headline-md text-primary">Total</span>

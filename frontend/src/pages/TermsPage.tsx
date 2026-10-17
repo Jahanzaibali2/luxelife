@@ -32,7 +32,7 @@ export default function TermsPage() {
 
         <Section title="2. Products &amp; Pricing">
           <p>
-            All prices are listed in AED and are inclusive of 5% UAE VAT unless stated otherwise. We reserve the
+            All prices are listed in AED. We reserve the
             right to correct pricing errors and to change prices at any time without prior notice. Product images
             are for illustrative purposes; actual items may vary slightly in colour or finish.
           </p>

@@ -40,8 +40,8 @@ const FAQ_DATA: Record<string, { question: string; answer: string }[]> = {
       answer: 'Cash on Delivery (pay the courier when your order arrives) or credit/debit card. Card payments are handled on a secure Ziina payment page.',
     },
     {
-      question: 'What currency are prices in? Is VAT included?',
-      answer: 'All prices are in UAE Dirhams (AED) and include 5% VAT.',
+      question: 'What currency are prices in?',
+      answer: 'All prices are in UAE Dirhams (AED).',
     },
   ],
   returns: [
