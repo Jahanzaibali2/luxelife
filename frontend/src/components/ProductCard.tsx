@@ -35,14 +35,14 @@ export function ProductCard({ product, eager }: { product: Product; eager?: bool
             eager={eager}
             alt={product.name}
             src={product.image}
-            className={`img-hover absolute inset-0 h-full w-full object-contain p-[8%] mix-blend-multiply transition-opacity duration-700 ease-editorial ${alt ? 'group-hover:opacity-0' : ''} ${product.inStock ? '' : 'opacity-60'}`}
+            className={`img-hover absolute inset-0 h-full w-full object-contain p-[8%] mix-blend-multiply transition-[opacity,transform] duration-700 ease-editorial ${alt ? 'group-hover:opacity-0' : ''} ${product.inStock ? '' : 'opacity-60'}`}
           />
           {alt && (
             <LazyImage
               alt=""
               aria-hidden
               src={alt}
-              className={`img-hover absolute inset-0 h-full w-full object-contain p-[8%] mix-blend-multiply opacity-0 transition-opacity duration-700 ease-editorial ${product.inStock ? 'group-hover:opacity-100' : 'group-hover:opacity-60'}`}
+              className={`img-hover absolute inset-0 h-full w-full object-contain p-[8%] mix-blend-multiply opacity-0 transition-[opacity,transform] duration-700 ease-editorial ${product.inStock ? 'group-hover:opacity-100' : 'group-hover:opacity-60'}`}
             />
           )}
         </Link>
@@ -72,7 +72,7 @@ export function ProductCard({ product, eager }: { product: Product; eager?: bool
           onClick={() => wishlist.toggle(product.slug)}
           aria-label={saved ? `Remove ${product.name} from wishlist` : `Save ${product.name} to wishlist`}
           aria-pressed={saved}
-          className={`absolute right-2 top-2 flex h-10 w-10 items-center justify-center text-ink transition-opacity duration-500 ${
+          className={`absolute right-1.5 top-1.5 flex h-11 w-11 items-center justify-center text-ink transition-opacity duration-500 ${
             saved ? 'opacity-100' : 'opacity-0 focus-visible:opacity-100 group-hover:opacity-100 [@media(hover:none)]:opacity-100'
           }`}
         >
@@ -85,7 +85,7 @@ export function ProductCard({ product, eager }: { product: Product; eager?: bool
 
       <div className="mt-4">
         <Link to={href}>
-          <h3 className="line-clamp-2 min-h-[2lh] font-serif text-base leading-snug text-ink md:text-[1.2rem]">{product.name}</h3>
+          <h3 className="line-clamp-2 min-h-[2.75em] font-serif text-base leading-snug text-ink md:text-[1.2rem]">{product.name}</h3>
         </Link>
         <p className="mt-1 line-clamp-1 text-label-sm text-secondary" title={caption}>
           {caption}
@@ -102,10 +102,16 @@ export function ProductCardSkeleton() {
   return (
     <div aria-hidden>
       <div className="aspect-[4/5] animate-pulse bg-backdrop" />
-      <div className="mt-4 h-4 w-5/6 animate-pulse bg-backdrop" />
-      <div className="mt-2 h-4 w-2/3 animate-pulse bg-backdrop" />
-      <div className="mt-2 h-3 w-1/2 animate-pulse bg-backdrop" />
-      <div className="mt-3 h-3 w-1/4 animate-pulse bg-backdrop" />
+      <div className="mt-4 flex min-h-[2.75em] flex-col gap-[0.375em] text-base leading-snug md:text-[1.2rem]">
+        <div className="h-[1em] w-5/6 animate-pulse bg-backdrop" />
+        <div className="h-[1em] w-2/3 animate-pulse bg-backdrop" />
+      </div>
+      <div className="mt-1 flex h-[1.1375rem] items-center">
+        <div className="h-3 w-1/2 animate-pulse bg-backdrop" />
+      </div>
+      <div className="mt-2 flex h-[1.5rem] items-center">
+        <div className="h-3 w-1/4 animate-pulse bg-backdrop" />
+      </div>
     </div>
   )
 }

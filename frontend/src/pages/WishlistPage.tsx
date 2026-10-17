@@ -26,7 +26,7 @@ export default function WishlistPage() {
 
         {loading && slugs.length > 0 ? (
           <div className="product-grid pt-12">
-            {slugs.slice(0, 3).map((s) => <ProductCardSkeleton key={s} />)}
+            {slugs.slice(0, 4).map((s) => <ProductCardSkeleton key={s} />)}
           </div>
         ) : saved.length === 0 ? (
           <div className="flex flex-col items-center gap-6 py-32 text-center">
