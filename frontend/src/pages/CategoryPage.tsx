@@ -22,7 +22,7 @@ export default function CategoryPage({ edit }: { edit?: 'gifts' }) {
   const page = edit
     ? { name: GIFTS_EDIT.name, tagline: GIFTS_EDIT.tagline, intro: GIFTS_EDIT.intro, hero: GIFTS_EDIT.heroImage, heroPosition: GIFTS_EDIT.heroPosition, eyebrow: 'The edit' }
     : category
-      ? { name: category.name, tagline: category.tagline, intro: category.intro, hero: heroFor(category), eyebrow: 'Collection' }
+      ? { name: category.name, tagline: category.tagline, intro: category.intro, hero: heroFor(category), mobileHero: category.cardImage, eyebrow: 'Collection' }
       : null
 
   const items = useMemo(() => {
@@ -66,6 +66,7 @@ export default function CategoryPage({ edit }: { edit?: 'gifts' }) {
           <PageHero
             image={page.hero}
             imagePosition={'heroPosition' in page ? page.heroPosition : undefined}
+            mobileImage={'mobileHero' in page ? page.mobileHero : undefined}
             eyebrow={page.eyebrow}
             lines={[page.name]}
             aside={<p className="text-body-md text-white/85">{page.tagline}</p>}
