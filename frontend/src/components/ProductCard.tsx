@@ -6,7 +6,7 @@ import { useCart } from '../context/CartContext'
 import { useWishlist } from '../context/WishlistContext'
 import type { Product } from '../types/api'
 
-/** Image-first card: gray backdrop, slow scale + crossfade to the second gallery image, quick add, wishlist. */
+/** Image-first card: contained packshot on a backdrop (multiply-blended), badge chip, crossfade to the second gallery image, quick add, wishlist; title, subtitle and price stacked below. */
 export function ProductCard({ product, eager }: { product: Product; eager?: boolean }) {
   const { addItem, openCart } = useCart()
   const wishlist = useWishlist()
@@ -35,17 +35,23 @@ export function ProductCard({ product, eager }: { product: Product; eager?: bool
             eager={eager}
             alt={product.name}
             src={product.image}
-            className={`img-hover absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ease-editorial ${alt ? 'group-hover:opacity-0' : ''}`}
+            className={`img-hover absolute inset-0 h-full w-full object-contain p-[8%] mix-blend-multiply transition-opacity duration-700 ease-editorial ${alt ? 'group-hover:opacity-0' : ''} ${product.inStock ? '' : 'opacity-60'}`}
           />
           {alt && (
             <LazyImage
               alt=""
               aria-hidden
               src={alt}
-              className="img-hover absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-700 ease-editorial group-hover:opacity-100"
+              className={`img-hover absolute inset-0 h-full w-full object-contain p-[8%] mix-blend-multiply opacity-0 transition-opacity duration-700 ease-editorial ${product.inStock ? 'group-hover:opacity-100' : 'group-hover:opacity-60'}`}
             />
           )}
         </Link>
+
+        {product.badge && (
+          <span className="pointer-events-none absolute left-3 top-3 bg-white/90 px-2 py-1 font-label-caps text-label-caps text-ink">
+            {product.badge === 'New Arrival' ? 'New' : product.badge}
+          </span>
+        )}
 
         {product.inStock ? (
           <button
@@ -77,17 +83,16 @@ export function ProductCard({ product, eager }: { product: Product; eager?: bool
         </button>
       </div>
 
-      <div className="mt-4 flex items-start justify-between gap-6">
-        <div className="min-w-0">
-          <Link to={href}>
-            <h3 className="line-clamp-2 font-serif text-[1.3rem] leading-snug text-ink">{product.name}</h3>
-          </Link>
-          <p className="mt-1.5 font-label-caps text-label-caps text-secondary">
-            {caption}
-            {product.badge && <span className="text-accent"> · {product.badge === 'New Arrival' ? 'New' : product.badge}</span>}
-          </p>
+      <div className="mt-4">
+        <Link to={href}>
+          <h3 className="line-clamp-2 min-h-[2lh] font-serif text-base leading-snug text-ink md:text-[1.2rem]">{product.name}</h3>
+        </Link>
+        <p className="mt-1 line-clamp-1 text-label-sm text-secondary" title={caption}>
+          {caption}
+        </p>
+        <div className="mt-2">
+          <Price amount={product.price} variant="card" />
         </div>
-        <Price amount={product.price} variant="card" className="shrink-0 pt-1" />
       </div>
     </article>
   )
@@ -97,8 +102,10 @@ export function ProductCardSkeleton() {
   return (
     <div aria-hidden>
       <div className="aspect-[4/5] animate-pulse bg-backdrop" />
-      <div className="mt-4 h-5 w-2/3 animate-pulse bg-backdrop" />
-      <div className="mt-2 h-3 w-1/3 animate-pulse bg-backdrop" />
+      <div className="mt-4 h-4 w-5/6 animate-pulse bg-backdrop" />
+      <div className="mt-2 h-4 w-2/3 animate-pulse bg-backdrop" />
+      <div className="mt-2 h-3 w-1/2 animate-pulse bg-backdrop" />
+      <div className="mt-3 h-3 w-1/4 animate-pulse bg-backdrop" />
     </div>
   )
 }
