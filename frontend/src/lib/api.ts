@@ -123,6 +123,29 @@ function throwIfError(error: { message: string } | null) {
   if (error) throw new Error(error.message)
 }
 
+/**
+ * Shrink an upload to at most 2400px on its long edge and re-encode as WebP (alpha kept).
+ * A 19 MB camera JPEG lands around 300–500 KB. GIFs pass through to keep animation;
+ * if the browser can't decode the file or the result isn't smaller, the original is used.
+ */
+async function compressImage(file: File, maxEdge = 2400, quality = 0.82): Promise<File> {
+  if (file.type === 'image/gif') return file
+  try {
+    const bitmap = await createImageBitmap(file)
+    const scale = Math.min(1, maxEdge / Math.max(bitmap.width, bitmap.height))
+    const canvas = document.createElement('canvas')
+    canvas.width = Math.round(bitmap.width * scale)
+    canvas.height = Math.round(bitmap.height * scale)
+    canvas.getContext('2d')?.drawImage(bitmap, 0, 0, canvas.width, canvas.height)
+    bitmap.close()
+    const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/webp', quality))
+    if (!blob || blob.type !== 'image/webp' || blob.size >= file.size) return file
+    return new File([blob], file.name.replace(/\.[^.]+$/, '') + '.webp', { type: 'image/webp' })
+  } catch {
+    return file
+  }
+}
+
 function apiUrl(path: string): string {
   const base = import.meta.env.VITE_API_URL
   if (!base) {
@@ -306,6 +329,7 @@ export const adminApi = {
     if (file.size > 30 * 1024 * 1024) {
       throw new Error(`${file.name} is ${(file.size / 1024 / 1024).toFixed(1)} MB. Images must be 30 MB or smaller.`)
     }
+    file = await compressImage(file)
     const folder = slug?.trim() || `upload-${Date.now()}`
     const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg'
     const path = `${folder}/${filename}.${ext}`
