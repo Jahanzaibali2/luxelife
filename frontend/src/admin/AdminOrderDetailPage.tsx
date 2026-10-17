@@ -31,113 +31,111 @@ export default function AdminOrderDetailPage() {
 
   if (loading) {
     return (
-      <div className="max-w-4xl w-full space-y-6">
-        <div className="animate-pulse bg-outline/10 rounded h-4 w-24" />
-        <div className="space-y-2">
-          <div className="animate-pulse bg-outline/10 rounded h-8 w-48" />
-          <div className="animate-pulse bg-outline/10 rounded h-3 w-36" />
-        </div>
+      <div className="max-w-4xl w-full space-y-5">
+        <div className="admin-skeleton h-4 w-24" />
+        <div className="admin-skeleton h-8 w-48" />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="animate-pulse bg-surface rounded-lg border border-outline/15 h-36" />
-          <div className="animate-pulse bg-surface rounded-lg border border-outline/15 h-36" />
+          <div className="admin-skeleton h-36" />
+          <div className="admin-skeleton h-36" />
         </div>
-        <div className="animate-pulse bg-surface rounded-lg border border-outline/15 h-64" />
+        <div className="admin-skeleton h-64" />
       </div>
     )
   }
-  if (!order) return <p className="text-error">Order not found.</p>
+  if (!order) return <p className="text-admin-red-ink">Order not found.</p>
 
   return (
-    <div className="max-w-4xl w-full space-y-4 sm:space-y-6">
-      <Link to="/admin/orders" className="text-secondary hover:text-primary font-label-sm text-label-sm flex items-center gap-1">
-        <span className="material-symbols-outlined text-[16px]">arrow_back</span>
-        Back to Orders
+    <div className="max-w-4xl w-full space-y-5">
+      <Link to="/admin/orders" className="inline-flex items-center gap-1 text-[13px] font-medium text-admin-muted hover:text-admin-ink">
+        <span className="material-symbols-outlined text-[18px]">arrow_back</span>
+        Back to orders
       </Link>
 
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h2 className="font-headline-md text-headline-md text-primary">{order.orderNumber}</h2>
-          <p className="text-secondary text-sm">{new Date(order.createdAt).toLocaleString()}</p>
+          <h2 className="admin-title">{order.orderNumber}</h2>
+          <p className="admin-hint">Placed {new Date(order.createdAt).toLocaleString()}</p>
         </div>
         <StatusBadge status={order.status} />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-gutter">
-        <div className="bg-surface p-4 sm:p-6 rounded-lg border border-outline/15">
-          <h3 className="font-label-caps text-label-caps text-secondary mb-4 tracking-wider text-[10px]">CUSTOMER</h3>
-          <p className="text-primary font-medium">{order.customer.firstName} {order.customer.lastName}</p>
-          <p className="text-secondary text-sm mt-1">{order.customer.email}</p>
-          <p className="text-secondary text-sm">{order.customer.phone}</p>
-        </div>
-        <div className="bg-surface p-4 sm:p-6 rounded-lg border border-outline/15">
-          <h3 className="font-label-caps text-label-caps text-secondary mb-4 tracking-wider text-[10px]">SHIPPING</h3>
-          <p className="text-primary">{order.customer.street}</p>
-          <p className="text-secondary text-sm">{order.customer.area}, {order.customer.state}, {order.customer.country}</p>
-          {order.customer.apartment && <p className="text-secondary text-sm">{order.customer.apartment}</p>}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <section className="admin-card p-4 sm:p-5">
+          <h3 className="admin-card-title flex items-center gap-2 mb-3">
+            <span className="material-symbols-outlined text-[18px] text-admin-gold">person</span>
+            Customer
+          </h3>
+          <p className="font-semibold">
+            {order.customer.firstName} {order.customer.lastName}
+          </p>
+          <p className="text-admin-muted text-[13px] mt-1">{order.customer.email}</p>
+          <p className="text-admin-muted text-[13px]">{order.customer.phone}</p>
+        </section>
+        <section className="admin-card p-4 sm:p-5">
+          <h3 className="admin-card-title flex items-center gap-2 mb-3">
+            <span className="material-symbols-outlined text-[18px] text-admin-gold">local_shipping</span>
+            Shipping
+          </h3>
+          <p>{order.customer.street}</p>
+          <p className="text-admin-muted text-[13px]">
+            {order.customer.area}, {order.customer.state}, {order.customer.country}
+          </p>
+          {order.customer.apartment && <p className="text-admin-muted text-[13px]">{order.customer.apartment}</p>}
           {order.customer.instructions && (
-            <p className="text-secondary text-sm mt-2 italic">Note: {order.customer.instructions}</p>
+            <p className="text-[13px] mt-3 bg-admin-gold-tint text-admin-gold-ink rounded-[10px] px-3 py-2">Note: {order.customer.instructions}</p>
           )}
-        </div>
+        </section>
       </div>
 
-      <div className="bg-surface rounded-lg border border-outline/15 overflow-hidden">
-        <div className="px-4 sm:px-6 py-4 border-b border-outline/15">
-          <h3 className="font-label-caps text-label-caps text-secondary tracking-wider text-[10px]">ITEMS</h3>
-        </div>
-        {order.items.map((item, i) => (
-          <div
-            key={i}
-            className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 px-4 sm:px-6 py-4 border-b border-outline/10"
-          >
-            <div className="flex items-center gap-3 flex-1 min-w-0">
-              <img
-                src={item.image}
-                alt=""
-                className="w-14 h-14 sm:w-16 sm:h-16 object-cover rounded shrink-0"
-                loading="lazy"
-                decoding="async"
-              />
-              <div className="min-w-0">
-                <p className="text-primary font-medium truncate">{item.name}</p>
-                <p className="text-sm text-secondary truncate">{item.variant}</p>
+      <section className="admin-card overflow-hidden">
+        <h3 className="admin-card-title px-4 sm:px-5 py-4 border-b border-admin-border">Items</h3>
+        <div className="divide-y divide-admin-border">
+          {order.items.map((item, i) => (
+            <div key={i} className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 px-4 sm:px-5 py-3.5">
+              <div className="flex items-center gap-3 flex-1 min-w-0">
+                <img src={item.image} alt="" className="w-14 h-14 object-cover rounded-[10px] shrink-0" loading="lazy" decoding="async" />
+                <div className="min-w-0">
+                  <p className="font-semibold truncate">{item.name}</p>
+                  <p className="text-[13px] text-admin-muted truncate">{item.variant}</p>
+                </div>
+              </div>
+              <div className="flex items-center justify-between sm:justify-end gap-4 sm:gap-6 pl-[4.25rem] sm:pl-0">
+                <p className="text-admin-muted text-[13px]">Qty {item.quantity}</p>
+                <Price amount={item.price * item.quantity} variant="line" className="whitespace-nowrap shrink-0" />
               </div>
             </div>
-            <div className="flex items-center justify-between sm:justify-end gap-4 sm:gap-6 pl-[4.25rem] sm:pl-0">
-              <p className="text-secondary text-sm">Qty: {item.quantity}</p>
-              <Price amount={item.price * item.quantity} variant="line" className="whitespace-nowrap shrink-0" />
-            </div>
-          </div>
-        ))}
-        <div className="px-4 sm:px-6 py-4 flex justify-between items-center bg-surface-container-low">
-          <span className="font-headline-md text-headline-md text-primary">Total</span>
+          ))}
+        </div>
+        <div className="px-4 sm:px-5 py-4 flex justify-between items-center bg-admin-canvas/70 border-t border-admin-border">
+          <span className="font-semibold">Total</span>
           <Price amount={order.subtotal} variant="emphasis" />
         </div>
-      </div>
+      </section>
 
-      <div className="bg-surface p-4 sm:p-6 rounded-lg border border-outline/15">
-        <h3 className="font-label-caps text-label-caps text-secondary mb-4 tracking-wider text-[10px]">UPDATE STATUS</h3>
+      <section className="admin-card p-4 sm:p-5">
+        <h3 className="admin-card-title mb-3">Update status</h3>
         <div className="flex gap-2 flex-wrap">
           {STATUSES.map((s) => (
             <button
               key={s}
               type="button"
               disabled={updating || order.status === s}
+              data-active={order.status === s}
               onClick={() => updateStatus(s)}
-              className={`px-4 py-1.5 rounded-full font-label-caps text-label-caps text-[10px] tracking-wider uppercase transition-colors disabled:opacity-40 cursor-pointer disabled:cursor-default ${
-                order.status === s ? 'bg-primary text-on-primary' : 'border border-outline/20 text-secondary hover:text-primary hover:border-outline/40'
-              }`}
+              className="admin-chip disabled:cursor-default data-[active=false]:disabled:opacity-50"
             >
+              {order.status === s && <span className="material-symbols-outlined text-[16px]">check</span>}
               {s}
             </button>
           ))}
         </div>
-        <div className="text-sm text-secondary mt-3 flex items-center gap-2 flex-wrap">
+        <div className="text-[13px] text-admin-muted mt-4 pt-4 border-t border-admin-border flex items-center gap-2 flex-wrap">
           <span>Payment: {order.paymentMethod}</span>
           <PaymentBadge status={order.paymentStatus} />
           {order.paymentProvider === 'cod' && <span>— collect cash on delivery.</span>}
-          {order.paymentReference && <span className="text-xs">Ref: {order.paymentReference}</span>}
+          {order.paymentReference && <span className="text-[12px]">Ref: {order.paymentReference}</span>}
         </div>
-      </div>
+      </section>
     </div>
   )
 }
