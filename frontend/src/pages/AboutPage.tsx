@@ -20,7 +20,7 @@ export default function AboutPage() {
 
         <section className="w-full px-margin-mobile md:px-margin-desktop pb-section-gap">
           <Reveal className="group w-full max-w-container-max mx-auto h-[60vh] md:h-[80vh] relative overflow-hidden bg-surface-container rounded">
-            <img className="img-hover w-full h-full object-cover" alt="Brand story" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAlYkX0IYDE2eIMroREgz3pG2NYEuyAiggxb0aXaO73j5S1AwJe1L9Bipudj6Li-V2Ubo9CsR4YkvUNHu75yebe2ZJXhuOOp7l-skZT3qt7vp-LyH7e5XJ_zvp026lOVzV0Tf6LmyDmflfLlmMXuOPKrNCvNSKKCcioQZbe3cEeUNg5677a9lO4WVq8-qLT_2FOsgMM9PUHHCzJkn_25cG_plyFVBfi_oLrB8t1LUYjozev5v5p8CM5Fg" loading="eager" decoding="async" fetchPriority="high" />
+            <img className="img-hover w-full h-full object-cover" alt="A bright, minimal living room with a white sofa and black pendant lamp" src="/images/about.jpg" loading="eager" decoding="async" fetchPriority="high" />
           </Reveal>
         </section>
 
@@ -33,7 +33,7 @@ export default function AboutPage() {
               </p>
             </Reveal>
             <Reveal delay={0.1} className="group col-span-1 md:col-span-7 h-96 md:h-auto md:min-h-[520px] bg-surface-container overflow-hidden relative">
-              <img className="img-hover w-full h-full object-cover absolute inset-0" alt="Philosophy" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBe1Fr41wSYwUqW8w7wEbebBc8y-EdJMn6DExiIvE4QkZXin_8eprnKRvkHjkgiMmXFEa78GpzSVx1cvmFmDEy-SIZZ0ePkZ3MMYFYLvFavYqEzf0eQwHbHDV9fvnnmiMhBzX4tuWlyV7qwSWbFOhqxdiy7yiskoARzJgjO_JykSzjI3e74mSL2XjZxVf4H0tguVzg1_Qod9usizoKyGmkeUApn3QUgZXQlKVBHWHG6NjegqtyCam4tKw" loading="lazy" decoding="async" />
+              <img className="img-hover w-full h-full object-cover absolute inset-0" alt="Gloved hands presenting a luxury watch at a boutique display" src="/images/about-philosophy.jpg" loading="lazy" decoding="async" />
             </Reveal>
           </div>
         </section>
@@ -41,7 +41,7 @@ export default function AboutPage() {
         <section className="w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop pb-section-gap">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-gutter">
             <Reveal className="group col-span-1 md:col-span-6 h-96 md:h-[600px] bg-surface-container rounded overflow-hidden relative order-2 md:order-1 mt-12 md:mt-0">
-              <img className="img-hover w-full h-full object-cover absolute inset-0" alt="Quality" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCV25bWzMw8aGMxX0tld1p1k4gBPESI1Ptx-l2OiBcmfi_R4pVpxUAV1NruMycedhb9svSHbAVQ8sI0NO9fVQ3DRagxKyOnrSVq_TjjOFqO-0ANFElTZoMHuH-ptE0M1IorQa9EntrZJkDhRrIrcdKTgzPkokFPFEaFy_UXR_DxWuteBy4RWTDhZILrJHtCDfueF_Ofg9lby7hCrLhJnrJD7dvVJ-UPa4MegQTaA_jchwzT5nJWshurbg" loading="lazy" decoding="async" />
+              <img className="img-hover w-full h-full object-cover object-[50%_65%] absolute inset-0" alt="A tailored jacket with leather bracelets, a gold watch and a leather wallet" src="/images/about-quality.jpg" loading="lazy" decoding="async" />
             </Reveal>
             <Reveal delay={0.1} className="col-span-1 md:col-span-5 md:col-start-8 flex flex-col justify-center order-1 md:order-2">
               <h2 className="font-headline-lg text-headline-lg text-primary mb-6">Quality & Value</h2>

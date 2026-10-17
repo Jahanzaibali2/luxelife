@@ -54,6 +54,7 @@ export const GIFTS_EDIT = {
   name: 'The Gifts Edit',
   tagline: 'Chosen to be given.',
   intro: 'A short list of pieces we would happily wrap: considered, useful and made to be kept.',
-  heroImage:
-    'https://lh3.googleusercontent.com/aida-public/AB6AXuBUJe3tMcp9Wtpd6uVACkOs9mM1ZDq-zhfbMod4RCHzY-KTsfkHBlyRZVKxDpqAQuc2ZpbLcbW0yTpzINF4_rHap4hv5lDcHuLlaAll1C-4mJY8khjnHLxxhQJ0jrwMPeEO8etqzvUb0NwgHzGhJcE64mgfW3XpEQRqrRmv5rEikic_saeL62n5CuKIFiNuSh0wDxowKpaF3Fp-jJ27dVuLQM3vhQGN8rZuYu_7nH7oCXzVa8Ofu79c1Q',
+  heroImage: '/images/about-philosophy.jpg',
+  // Anchor to the top of the photo; the watch sits ~33% from the left, so narrow screens crop around it.
+  heroPosition: 'object-[33%_top]',
 }

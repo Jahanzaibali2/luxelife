@@ -9,10 +9,12 @@ interface PageHeroProps {
   lines: string[]
   eyebrow?: string
   aside?: ReactNode
+  /** Tailwind object-position class for the image crop. */
+  imagePosition?: string
 }
 
 /** Full-bleed image hero that sits under the transparent header: slow zoom-in, parallax, masked line reveal. */
-export function PageHero({ image, lines, eyebrow, aside }: PageHeroProps) {
+export function PageHero({ image, lines, eyebrow, aside, imagePosition = 'object-[50%_60%]' }: PageHeroProps) {
   const ref = useRef<HTMLElement>(null)
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] })
   const imageY = useTransform(scrollYProgress, [0, 1], ['0%', '18%'])
@@ -30,7 +32,7 @@ export function PageHero({ image, lines, eyebrow, aside }: PageHeroProps) {
           animate={{ scale: 1 }}
           transition={{ duration: 2.2, ease: EASE_EDITORIAL }}
         >
-          {image && <LazyImage eager src={image} alt="" className="h-full w-full object-cover object-[50%_60%]" />}
+          {image && <LazyImage eager src={image} alt="" className={`h-full w-full object-cover ${imagePosition}`} />}
         </motion.div>
       </motion.div>
       <div className="pointer-events-none absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-black/35 to-transparent" />

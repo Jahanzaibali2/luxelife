@@ -123,7 +123,8 @@ export function Header({ variant, activeNav }: HeaderProps) {
       <motion.header
         onMouseLeave={() => setShopOpen(false)}
         className={`sticky top-0 z-50 w-full transition-colors duration-500 ease-editorial ${
-          overHero ? 'border-b border-white/0 bg-transparent text-white' : 'border-b border-hairline bg-white/95 text-ink backdrop-blur-sm'
+          // Divider is a shadow, not a border: a border adds 1px the hero's -mt doesn't cover (white line on top).
+          overHero ? 'bg-transparent text-white' : 'shadow-[0_1px_0_#E4E4E1] bg-white/95 text-ink backdrop-blur-sm'
         }`}
         animate={{ y: hidden && !menuOpen && !shopOpen ? '-100%' : '0%' }}
         transition={{ duration: 0.5, ease: EASE_EDITORIAL }}
