@@ -140,14 +140,13 @@ export default function AdminProductFormPage() {
 
   if (loading) {
     return (
-      <div className="max-w-2xl w-full space-y-6">
-        <div className="animate-pulse bg-outline/10 rounded h-4 w-24" />
-        <div className="animate-pulse bg-outline/10 rounded h-8 w-40" />
-        <div className="bg-surface rounded-lg border border-outline/15 p-8 space-y-6">
+      <div className="max-w-2xl w-full space-y-5">
+        <div className="admin-skeleton h-4 w-32" />
+        <div className="admin-card p-6 space-y-5">
           {[...Array(5)].map((_, i) => (
             <div key={i} className="space-y-2">
-              <div className="animate-pulse bg-outline/10 rounded h-3 w-24" />
-              <div className="animate-pulse bg-outline/10 rounded h-8 w-full" />
+              <div className="admin-skeleton h-3 w-24" />
+              <div className="admin-skeleton h-10 w-full" />
             </div>
           ))}
         </div>
@@ -157,17 +156,12 @@ export default function AdminProductFormPage() {
 
   return (
     <div className="max-w-2xl w-full">
-      <div className="mb-4 sm:mb-6">
-        <Link to="/admin/products" className="text-secondary hover:text-primary font-label-sm text-label-sm flex items-center gap-1 mb-4">
-          <span className="material-symbols-outlined text-[16px]">arrow_back</span>
-          Back to Products
-        </Link>
-        <h2 className="font-headline-md text-headline-md text-primary">
-          {isEdit ? 'Edit Product' : 'Add Product'}
-        </h2>
-      </div>
+      <Link to="/admin/products" className="inline-flex items-center gap-1 text-[13px] font-medium text-admin-muted hover:text-admin-ink mb-4">
+        <span className="material-symbols-outlined text-[18px]">arrow_back</span>
+        Back to products
+      </Link>
 
-      <form onSubmit={handleSubmit} className="bg-surface p-4 sm:p-8 rounded-lg border border-outline/15 space-y-5 sm:space-y-6">
+      <form onSubmit={handleSubmit} className="admin-card p-4 sm:p-6 space-y-5">
         <Field label="Product Name" required>
           <input className="admin-input" value={form.name} onChange={(e) => update('name', e.target.value)} required />
         </Field>
@@ -188,16 +182,16 @@ export default function AdminProductFormPage() {
               ref={fileInputRef}
               type="file"
               accept="image/jpeg,image/png,image/webp,image/gif"
-              className="admin-input file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:bg-primary file:text-on-primary file:font-label-caps file:text-label-caps file:cursor-pointer"
+              className="admin-input file:mr-4 file:py-1.5 file:px-3.5 file:rounded-[8px] file:border-0 file:bg-admin-ink file:text-white file:text-[13px] file:font-semibold file:cursor-pointer"
               onChange={(e) => {
                 const file = e.target.files?.[0]
                 if (file) void handleImageUpload(file)
               }}
               disabled={uploading}
             />
-            {uploading && <p className="text-secondary text-sm animate-pulse">Uploading...</p>}
+            {uploading && <p className="admin-hint animate-pulse">Uploading…</p>}
             {form.image && (
-              <img src={form.image} alt="Cover preview" className="w-28 h-28 object-cover rounded-lg border border-outline/15" loading="lazy" decoding="async" />
+              <img src={form.image} alt="Cover preview" className="w-28 h-28 object-cover rounded-[12px] border border-admin-border" loading="lazy" decoding="async" />
             )}
           </div>
         </Field>
@@ -205,20 +199,20 @@ export default function AdminProductFormPage() {
         {/* Gallery */}
         <Field label="Gallery Images">
           <div className="space-y-3">
-            <p className="text-secondary text-xs -mt-1">Additional photos shown in the product image carousel.</p>
+            <p className="admin-hint -mt-1">Additional photos shown in the product image carousel. Max 30 MB each.</p>
             <input
               ref={galleryInputRef}
               type="file"
               multiple
               accept="image/jpeg,image/png,image/webp,image/gif"
-              className="admin-input file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:bg-surface-variant file:text-primary file:font-label-caps file:text-label-caps file:cursor-pointer"
+              className="admin-input file:mr-4 file:py-1.5 file:px-3.5 file:rounded-[8px] file:border-0 file:bg-admin-gold-tint file:text-admin-gold-ink file:text-[13px] file:font-semibold file:cursor-pointer"
               onChange={(e) => {
                 const files = e.target.files
                 if (files && files.length > 0) void handleGalleryUpload(files)
               }}
               disabled={uploadingGallery}
             />
-            {uploadingGallery && <p className="text-secondary text-sm animate-pulse">Uploading...</p>}
+            {uploadingGallery && <p className="admin-hint animate-pulse">Uploading…</p>}
             {form.gallery.length > 0 && (
               <div className="flex flex-wrap gap-3">
                 {form.gallery.map((url, i) => (
@@ -226,7 +220,7 @@ export default function AdminProductFormPage() {
                     <img
                       src={url}
                       alt={`Gallery ${i + 1}`}
-                      className="w-24 h-24 object-cover rounded-lg border border-outline/15"
+                      className="w-24 h-24 object-cover rounded-[12px] border border-admin-border"
                       loading="lazy"
                       decoding="async"
                     />
@@ -234,7 +228,7 @@ export default function AdminProductFormPage() {
                       type="button"
                       onClick={() => removeGalleryImage(i)}
                       aria-label="Remove image"
-                      className="absolute -top-2 -right-2 w-6 h-6 bg-primary text-on-primary rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                      className="absolute -top-2 -right-2 w-7 h-7 bg-admin-ink text-white rounded-full flex items-center justify-center shadow-md opacity-100 sm:opacity-0 sm:group-hover:opacity-100 focus-visible:opacity-100 transition-opacity cursor-pointer"
                     >
                       <span className="material-symbols-outlined text-[14px]">close</span>
                     </button>
@@ -268,21 +262,21 @@ export default function AdminProductFormPage() {
           </Field>
         </div>
         <label className="flex items-center gap-3 cursor-pointer">
-          <input type="checkbox" checked={form.inStock} onChange={(e) => update('inStock', e.target.checked)} className="form-checkbox text-deep-cocoa rounded-sm" />
-          <span className="text-primary">In Stock</span>
+          <input type="checkbox" checked={form.inStock} onChange={(e) => update('inStock', e.target.checked)} className="admin-checkbox" />
+          <span>In stock</span>
         </label>
         <label className="flex items-center gap-3 cursor-pointer">
-          <input type="checkbox" checked={form.isGift} onChange={(e) => update('isGift', e.target.checked)} className="form-checkbox text-deep-cocoa rounded-sm" />
-          <span className="text-primary">Include in the Gifts edit</span>
-          <Link to="/gifts" target="_blank" className="text-secondary text-sm underline">view</Link>
+          <input type="checkbox" checked={form.isGift} onChange={(e) => update('isGift', e.target.checked)} className="admin-checkbox" />
+          <span>Include in the Gifts edit</span>
+          <Link to="/gifts" target="_blank" className="text-[13px] font-medium text-admin-gold-ink hover:underline">view</Link>
         </label>
-        {error && <p className="text-error text-sm">{error}</p>}
+        {error && <p className="text-[13px] bg-admin-red-tint text-admin-red-ink px-4 py-3 rounded-[10px]">{error}</p>}
         <button
           type="submit"
           disabled={saving || uploading || uploadingGallery}
-          className="w-full sm:w-auto bg-primary text-on-primary font-label-caps text-label-caps px-8 py-3 rounded hover:opacity-90 disabled:opacity-50 cursor-pointer"
+          className="admin-btn admin-btn-primary w-full sm:w-auto px-6"
         >
-          {saving ? 'Saving...' : isEdit ? 'Update Product' : 'Create Product'}
+          {saving ? 'Saving…' : isEdit ? 'Update product' : 'Create product'}
         </button>
       </form>
     </div>
@@ -292,8 +286,9 @@ export default function AdminProductFormPage() {
 function Field({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) {
   return (
     <div>
-      <label className="block font-label-caps text-label-caps text-secondary mb-2 text-[10px] tracking-wider">
-        {label}{required && ' *'}
+      <label className="admin-label">
+        {label}
+        {required && <span className="text-admin-gold"> *</span>}
       </label>
       {children}
     </div>

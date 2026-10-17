@@ -26,6 +26,7 @@ type CategoryRow = {
   tagline: string
   intro: string
   hero_image: string | null
+  card_image: string | null
   sort_order: number
   visible: boolean
 }
@@ -37,6 +38,7 @@ function mapCategory(row: CategoryRow): Category {
     tagline: row.tagline,
     intro: row.intro,
     heroImage: row.hero_image ?? undefined,
+    cardImage: row.card_image ?? undefined,
     sortOrder: row.sort_order,
     visible: row.visible,
   }
@@ -49,6 +51,7 @@ function categoryRow(input: Partial<Category>) {
     ...(input.tagline !== undefined && { tagline: input.tagline }),
     ...(input.intro !== undefined && { intro: input.intro }),
     ...(input.heroImage !== undefined && { hero_image: input.heroImage || null }),
+    ...(input.cardImage !== undefined && { card_image: input.cardImage || null }),
     ...(input.sortOrder !== undefined && { sort_order: Number(input.sortOrder) }),
     ...(input.visible !== undefined && { visible: input.visible }),
   }
@@ -299,6 +302,10 @@ export const adminApi = {
   },
 
   async uploadImage(file: File, slug?: string, filename = 'main'): Promise<{ url: string; slug: string }> {
+    // Matches the product-images bucket limit (supabase/migrations/20261017120000_product_images_30mb.sql).
+    if (file.size > 30 * 1024 * 1024) {
+      throw new Error(`${file.name} is ${(file.size / 1024 / 1024).toFixed(1)} MB. Images must be 30 MB or smaller.`)
+    }
     const folder = slug?.trim() || `upload-${Date.now()}`
     const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg'
     const path = `${folder}/${filename}.${ext}`

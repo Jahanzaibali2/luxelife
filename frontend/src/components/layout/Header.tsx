@@ -80,7 +80,7 @@ export function Header({ variant, activeNav }: HeaderProps) {
   const location = useLocation()
   const { itemCount, openCart } = useCart()
   const wishlist = useWishlist()
-  const { categories, heroFor } = useCatalog()
+  const { categories, cardFor } = useCatalog()
   const { scrollY } = useScroll()
 
   useScrollLock(menuOpen)
@@ -207,7 +207,7 @@ export function Header({ variant, activeNav }: HeaderProps) {
                   {categories.map((c) => (
                     <Link key={c.slug} to={`/collections/${c.slug}`} className="w-32 shrink-0 snap-start">
                       <div className="aspect-[4/5] overflow-hidden bg-backdrop">
-                        <LazyImage src={heroFor(c)} alt="" className="h-full w-full object-cover" />
+                        <LazyImage src={cardFor(c)} alt="" className="h-full w-full object-cover" />
                       </div>
                       <p className="mt-2 font-serif text-base leading-tight">{c.name}</p>
                     </Link>

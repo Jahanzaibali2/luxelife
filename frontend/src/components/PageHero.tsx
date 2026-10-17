@@ -9,12 +9,10 @@ interface PageHeroProps {
   lines: string[]
   eyebrow?: string
   aside?: ReactNode
-  /** 'full' = 100svh (home), 'tall' = 78svh (collections). */
-  size?: 'full' | 'tall'
 }
 
 /** Full-bleed image hero that sits under the transparent header: slow zoom-in, parallax, masked line reveal. */
-export function PageHero({ image, lines, eyebrow, aside, size = 'full' }: PageHeroProps) {
+export function PageHero({ image, lines, eyebrow, aside }: PageHeroProps) {
   const ref = useRef<HTMLElement>(null)
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] })
   const imageY = useTransform(scrollYProgress, [0, 1], ['0%', '18%'])
@@ -23,7 +21,7 @@ export function PageHero({ image, lines, eyebrow, aside, size = 'full' }: PageHe
   return (
     <section
       ref={ref}
-      className={`relative -mt-16 overflow-hidden bg-ink md:-mt-20 ${size === 'full' ? 'h-[100svh] min-h-[560px]' : 'h-[78svh] min-h-[480px]'}`}
+      className="relative -mt-16 h-[100svh] min-h-[560px] overflow-hidden bg-ink md:-mt-20"
     >
       <motion.div className="absolute inset-0" style={{ y: imageY }}>
         <motion.div

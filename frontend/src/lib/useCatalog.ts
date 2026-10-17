@@ -36,13 +36,16 @@ export function useCatalog() {
   }, [])
 
   const products = catalog?.products ?? []
+  const heroFor = (c: Category) => c.heroImage || products.find((p) => p.category === c.slug)?.image || ''
   return {
     loading: catalog === null,
     products,
     categories: catalog?.categories ?? [],
     countIn: (slug: string) => products.filter((p) => p.category === slug).length,
     /** Category hero, falling back to its first product's image. */
-    heroFor: (c: Category) => c.heroImage || products.find((p) => p.category === c.slug)?.image || '',
+    heroFor,
+    /** Portrait tile image: card image, else hero, else first product. */
+    cardFor: (c: Category) => c.cardImage || heroFor(c),
     nameOf: (slug: string) => catalog?.categories.find((c) => c.slug === slug)?.name ?? slug.replace(/-/g, ' '),
   }
 }

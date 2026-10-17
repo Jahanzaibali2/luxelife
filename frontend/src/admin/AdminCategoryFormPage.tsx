@@ -8,6 +8,7 @@ const emptyForm = {
   tagline: '',
   intro: '',
   heroImage: '',
+  cardImage: '',
   sortOrder: '100',
   visible: true,
 }
@@ -22,11 +23,59 @@ const slugify = (name: string) =>
 function Field({ label, hint, required, children }: { label: string; hint?: string; required?: boolean; children: ReactNode }) {
   return (
     <div>
-      <label className="block font-label-caps text-label-caps text-secondary mb-2 text-[10px] tracking-wider">
-        {label}{required && ' *'}
+      <label className="admin-label">
+        {label}
+        {required && <span className="text-admin-gold"> *</span>}
       </label>
       {children}
-      {hint && <p className="text-xs text-secondary mt-1.5">{hint}</p>}
+      {hint && <p className="admin-hint mt-1.5">{hint}</p>}
+    </div>
+  )
+}
+
+function ImageField({
+  value,
+  ratio,
+  uploading,
+  onFile,
+  onRemove,
+}: {
+  value: string
+  ratio: string
+  uploading: boolean
+  onFile: (file: File) => void
+  onRemove: () => void
+}) {
+  const fileRef = useRef<HTMLInputElement>(null)
+  return (
+    <div className="space-y-3">
+      {value && (
+        <div className={`relative overflow-hidden rounded-[12px] bg-admin-canvas ${ratio}`}>
+          <img src={value} alt="" className="w-full h-full object-cover" />
+          <button
+            type="button"
+            onClick={onRemove}
+            className="admin-icon-btn absolute top-2 right-2 bg-white/90 text-admin-ink shadow-sm"
+            aria-label="Remove image"
+          >
+            <span className="material-symbols-outlined text-[18px]">close</span>
+          </button>
+        </div>
+      )}
+      <input
+        ref={fileRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={(e) => {
+          if (e.target.files?.[0]) onFile(e.target.files[0])
+          e.target.value = ''
+        }}
+      />
+      <button type="button" onClick={() => fileRef.current?.click()} disabled={uploading} className="admin-btn admin-btn-ghost">
+        <span className="material-symbols-outlined text-[18px]">upload</span>
+        {uploading ? 'Uploading…' : value ? 'Replace image' : 'Upload image'}
+      </button>
     </div>
   )
 }
@@ -35,12 +84,11 @@ export default function AdminCategoryFormPage() {
   const { slug: editSlug } = useParams<{ slug: string }>()
   const isEdit = Boolean(editSlug)
   const navigate = useNavigate()
-  const fileRef = useRef<HTMLInputElement>(null)
   const [form, setForm] = useState(emptyForm)
   const [slugTouched, setSlugTouched] = useState(false)
   const [loading, setLoading] = useState(isEdit)
   const [saving, setSaving] = useState(false)
-  const [uploading, setUploading] = useState(false)
+  const [uploading, setUploading] = useState<'heroImage' | 'cardImage' | null>(null)
   const [error, setError] = useState('')
 
   useEffect(() => {
@@ -54,6 +102,7 @@ export default function AdminCategoryFormPage() {
           tagline: c.tagline,
           intro: c.intro,
           heroImage: c.heroImage ?? '',
+          cardImage: c.cardImage ?? '',
           sortOrder: String(c.sortOrder),
           visible: c.visible,
         }),
@@ -68,18 +117,17 @@ export default function AdminCategoryFormPage() {
     setForm((f) => ({ ...f, name, slug: !isEdit && !slugTouched ? slugify(name) : f.slug }))
   }
 
-  const upload = async (file: File) => {
+  const upload = async (file: File, field: 'heroImage' | 'cardImage') => {
     setError('')
-    setUploading(true)
+    setUploading(field)
     try {
       const folder = `categories/${form.slug || slugify(form.name) || 'new'}`
-      const { url } = await adminApi.uploadImage(file, folder, `hero-${Date.now()}`)
-      update('heroImage', url)
+      const { url } = await adminApi.uploadImage(file, folder, `${field === 'heroImage' ? 'hero' : 'card'}-${Date.now()}`)
+      update(field, url)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Image upload failed')
     } finally {
-      setUploading(false)
-      if (fileRef.current) fileRef.current.value = ''
+      setUploading(null)
     }
   }
 
@@ -96,6 +144,7 @@ export default function AdminCategoryFormPage() {
         tagline: form.tagline,
         intro: form.intro,
         heroImage: form.heroImage,
+        cardImage: form.cardImage,
         sortOrder: Number(form.sortOrder) || 0,
         visible: form.visible,
       }
@@ -112,11 +161,11 @@ export default function AdminCategoryFormPage() {
 
   if (loading) {
     return (
-      <div className="max-w-2xl w-full space-y-6">
-        <div className="animate-pulse bg-outline/10 rounded h-8 w-40" />
-        <div className="bg-surface rounded-lg border border-outline/15 p-8 space-y-6">
+      <div className="max-w-2xl w-full space-y-5">
+        <div className="admin-skeleton h-4 w-32" />
+        <div className="admin-card p-6 space-y-5">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="animate-pulse bg-outline/10 rounded h-8 w-full" />
+            <div key={i} className="admin-skeleton h-10 w-full" />
           ))}
         </div>
       </div>
@@ -125,15 +174,12 @@ export default function AdminCategoryFormPage() {
 
   return (
     <div className="max-w-2xl w-full">
-      <div className="mb-4 sm:mb-6">
-        <Link to="/admin/categories" className="text-secondary hover:text-primary font-label-sm text-label-sm flex items-center gap-1 mb-4">
-          <span className="material-symbols-outlined text-[16px]">arrow_back</span>
-          Back to Categories
-        </Link>
-        <h2 className="font-headline-md text-headline-md text-primary">{isEdit ? 'Edit Category' : 'Add Category'}</h2>
-      </div>
+      <Link to="/admin/categories" className="inline-flex items-center gap-1 text-[13px] font-medium text-admin-muted hover:text-admin-ink mb-4">
+        <span className="material-symbols-outlined text-[18px]">arrow_back</span>
+        Back to categories
+      </Link>
 
-      <form onSubmit={submit} className="bg-surface p-4 sm:p-8 rounded-lg border border-outline/15 space-y-5 sm:space-y-6">
+      <form onSubmit={submit} className="admin-card p-4 sm:p-6 space-y-5">
         <Field label="Name" required>
           <input className="admin-input" value={form.name} onChange={(e) => onName(e.target.value)} required placeholder="e.g. Beauty" />
         </Field>
@@ -159,49 +205,42 @@ export default function AdminCategoryFormPage() {
         <Field label="Intro" hint="A sentence or two introducing the collection.">
           <textarea className="admin-input resize-none" rows={3} value={form.intro} onChange={(e) => update('intro', e.target.value)} />
         </Field>
-        <Field label="Hero image" hint="Wide, calm image (at least 2000px wide). Leave empty to use the first product photo.">
-          <div className="space-y-3">
-            {form.heroImage && (
-              <div className="relative aspect-[16/7] overflow-hidden rounded bg-surface-container">
-                <img src={form.heroImage} alt="" className="w-full h-full object-cover" />
-                <button
-                  type="button"
-                  onClick={() => update('heroImage', '')}
-                  className="absolute top-2 right-2 bg-surface/90 text-primary rounded p-1.5"
-                  aria-label="Remove image"
-                >
-                  <span className="material-symbols-outlined text-[18px]">close</span>
-                </button>
-              </div>
-            )}
-            <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && upload(e.target.files[0])} />
-            <button
-              type="button"
-              onClick={() => fileRef.current?.click()}
-              disabled={uploading}
-              className="inline-flex items-center gap-2 border border-outline/30 rounded px-4 py-2.5 text-sm text-primary hover:border-primary disabled:opacity-50"
-            >
-              <span className="material-symbols-outlined text-[18px]">upload</span>
-              {uploading ? 'Uploading…' : form.heroImage ? 'Replace image' : 'Upload image'}
-            </button>
+        <Field label="Hero image" hint="Wide landscape image (at least 2000px wide, max 30 MB) for the full-screen banner on the collection page. Leave empty to use the first product photo.">
+          <ImageField
+            value={form.heroImage}
+            ratio="aspect-[16/7]"
+            uploading={uploading === 'heroImage'}
+            onFile={(f) => upload(f, 'heroImage')}
+            onRemove={() => update('heroImage', '')}
+          />
+        </Field>
+        <Field label="Card image" hint="Portrait image (about 1200×1500px, max 30 MB) for the home page tiles, shop menu and collections grid. Leave empty to use the hero image.">
+          <div className="max-w-[240px]">
+            <ImageField
+              value={form.cardImage}
+              ratio="aspect-[4/5]"
+              uploading={uploading === 'cardImage'}
+              onFile={(f) => upload(f, 'cardImage')}
+              onRemove={() => update('cardImage', '')}
+            />
           </div>
         </Field>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Field label="Sort order" hint="Lower numbers come first.">
             <input className="admin-input" type="number" value={form.sortOrder} onChange={(e) => update('sortOrder', e.target.value)} />
           </Field>
-          <label className="flex items-center gap-3 cursor-pointer sm:pt-6">
-            <input type="checkbox" checked={form.visible} onChange={(e) => update('visible', e.target.checked)} className="form-checkbox text-deep-cocoa rounded-sm" />
-            <span className="text-primary">Visible in the store</span>
+          <label className="flex items-center gap-3 cursor-pointer sm:pt-7">
+            <input type="checkbox" checked={form.visible} onChange={(e) => update('visible', e.target.checked)} className="admin-checkbox" />
+            <span>Visible in the store</span>
           </label>
         </div>
-        {error && <p className="text-error text-sm">{error}</p>}
+        {error && <p className="text-[13px] bg-admin-red-tint text-admin-red-ink px-4 py-3 rounded-[10px]">{error}</p>}
         <button
           type="submit"
-          disabled={saving || uploading}
-          className="w-full sm:w-auto bg-primary text-on-primary font-label-caps text-label-caps px-8 py-3 rounded hover:opacity-90 disabled:opacity-50 cursor-pointer"
+          disabled={saving || uploading !== null}
+          className="admin-btn admin-btn-primary w-full sm:w-auto px-6"
         >
-          {saving ? 'Saving...' : isEdit ? 'Update Category' : 'Create Category'}
+          {saving ? 'Saving…' : isEdit ? 'Update category' : 'Create category'}
         </button>
       </form>
     </div>

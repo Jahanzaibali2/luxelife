@@ -3,6 +3,7 @@ import { Plus } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { Footer } from '../components/layout/Footer'
 import { Header } from '../components/layout/Header'
+import { Reveal } from '../components/motion/Reveal'
 
 // ponytail: every answer must match checkout code + ShippingReturnsPage. Change policy there, change it here.
 const FAQ_DATA: Record<string, { question: string; answer: string }[]> = {
@@ -108,7 +109,8 @@ export default function FAQPage() {
 
           <div className="md:col-span-9 lg:col-span-8 lg:col-start-5 space-y-16">
             {Object.entries(FAQ_DATA).map(([sectionId, items]) => (
-              <section key={sectionId} className="scroll-mt-32" id={sectionId}>
+              <Reveal key={sectionId}>
+              <section className="scroll-mt-32" id={sectionId}>
                 <h2 className="font-headline-md text-headline-md text-primary mb-8 border-b border-outline/15 pb-4 capitalize">{sectionId}</h2>
                 <div className="space-y-4">
                   {items.map((item, i) => {
@@ -132,9 +134,10 @@ export default function FAQPage() {
                   })}
                 </div>
               </section>
+              </Reveal>
             ))}
 
-            <div className="bg-surface-container-low rounded-xl p-8 border border-outline/10 flex flex-col md:flex-row items-center justify-between gap-8 mt-12">
+            <Reveal className="bg-surface-container-low rounded-xl p-8 border border-outline/10 flex flex-col md:flex-row items-center justify-between gap-8 mt-12">
               <div>
                 <h3 className="font-headline-md text-headline-md text-primary mb-2">Still need help?</h3>
                 <p className="font-body-md text-body-md text-secondary">Our dedicated concierge team is available to assist you.</p>
@@ -142,7 +145,7 @@ export default function FAQPage() {
               <Link to="/contact" className="btn-primary whitespace-nowrap">
                 CONTACT US
               </Link>
-            </div>
+            </Reveal>
           </div>
         </div>
       </main>

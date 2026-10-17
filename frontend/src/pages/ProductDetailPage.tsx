@@ -14,6 +14,13 @@ import { useCatalog } from '../lib/useCatalog'
 import { useWishlist } from '../context/WishlistContext'
 import type { Product } from '../types/api'
 
+// Short slide in the direction of travel, crossfaded so it never shows a gap.
+const GALLERY_SLIDE = {
+  enter: (dir: number) => ({ x: `${dir * 6}%`, opacity: 0 }),
+  center: { x: 0, opacity: 1, transition: { duration: 0.7, ease: EASE_EDITORIAL } },
+  exit: (dir: number) => ({ x: `${dir * -6}%`, opacity: 0, transition: { duration: 0.5, ease: EASE_EDITORIAL } }),
+}
+
 export default function ProductDetailPage() {
   const { slug } = useParams<{ slug: string }>()
   const navigate = useNavigate()
@@ -21,6 +28,7 @@ export default function ProductDetailPage() {
   const [product, setProduct] = useState<Product | null>(null)
   const [loading, setLoading] = useState(true)
   const [selectedImage, setSelectedImage] = useState(0)
+  const [direction, setDirection] = useState(1)
   const [quantity, setQuantity] = useState(1)
   const [expanded, setExpanded] = useState(false)
   const catalog = useCatalog()
@@ -44,7 +52,8 @@ export default function ProductDetailPage() {
     return (sameCategory.length ? sameCategory : others).slice(0, 3)
   }, [catalog.products, product])
 
-  const gallery = product?.gallery?.length ? product.gallery : product ? [product.image] : []
+  // Cover image always leads; gallery extras follow without repeating it.
+  const gallery = product ? [...new Set([product.image, ...(product.gallery ?? [])].filter(Boolean))] : []
 
   if (loading) {
     return (
@@ -84,9 +93,16 @@ export default function ProductDetailPage() {
   const category = catalog.nameOf(product.category)
   const saved = wishlist.has(product.slug)
   const description = product.description || 'Premium curated product from the LuxeLife collection.'
-  // ponytail: char count approximates "longer than 5 lines"; measure with a ref if short copy ever shows a stray toggle.
-  const longDescription = description.length > 320
-  const step = (dir: number) => setSelectedImage((i) => (i + dir + gallery.length) % gallery.length)
+  // ponytail: char count approximates "longer than 3 lines"; measure with a ref if short copy ever shows a stray toggle.
+  const longDescription = description.length > 200
+  const step = (dir: number) => {
+    setDirection(dir)
+    setSelectedImage((i) => (i + dir + gallery.length) % gallery.length)
+  }
+  const show = (i: number) => {
+    setDirection(i >= selectedImage ? 1 : -1)
+    setSelectedImage(i)
+  }
 
   return (
     <div className="flex min-h-screen flex-col bg-white font-body-md text-ink">
@@ -106,15 +122,17 @@ export default function ProductDetailPage() {
           <div className="flex flex-col gap-4 md:col-span-6">
             {/* Desktop: fit the viewport below header + breadcrumb instead of a tall 4:5 crop. */}
             <div className="relative aspect-[4/5] overflow-hidden bg-backdrop md:aspect-auto md:h-[calc(100svh-12rem)] md:min-h-[24rem]">
-              <AnimatePresence initial={false}>
+              <AnimatePresence initial={false} custom={direction}>
                 <motion.img
                   key={gallery[selectedImage] ?? product.image}
                   src={gallery[selectedImage] ?? product.image}
                   alt={product.name}
                   className="absolute inset-0 h-full w-full object-cover md:object-contain"
-                  initial={{ opacity: 0, scale: 1.02 }}
-                  animate={{ opacity: 1, scale: 1, transition: { duration: 0.7, ease: EASE_EDITORIAL } }}
-                  exit={{ opacity: 0, transition: { duration: 0.5 } }}
+                  custom={direction}
+                  variants={GALLERY_SLIDE}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
                 />
               </AnimatePresence>
               {gallery.length > 1 && (
@@ -125,7 +143,7 @@ export default function ProductDetailPage() {
                       <button
                         key={img}
                         type="button"
-                        onClick={() => setSelectedImage(i)}
+                        onClick={() => show(i)}
                         aria-label={`View image ${i + 1} of ${gallery.length}`}
                         aria-current={i === selectedImage}
                         className={`h-14 w-12 shrink-0 overflow-hidden bg-backdrop transition-opacity duration-500 ${
@@ -156,7 +174,7 @@ export default function ProductDetailPage() {
                   <button
                     key={img}
                     type="button"
-                    onClick={() => setSelectedImage(i)}
+                    onClick={() => show(i)}
                     aria-label={`View image ${i + 1} of ${gallery.length}`}
                     aria-current={i === selectedImage}
                     className={`h-24 w-20 shrink-0 overflow-hidden bg-backdrop transition-opacity duration-500 ${
@@ -177,7 +195,7 @@ export default function ProductDetailPage() {
                 {product.badge && <span className="text-accent"> · {product.badge === 'Limited' ? 'Limited edition' : product.badge}</span>}
               </p>
               <h1 className="font-serif text-[clamp(1.5rem,1.9vw,2rem)] leading-[1.1] tracking-[-0.01em]">{product.name}</h1>
-              {product.subtitle && <p className="mt-3 font-label-sm text-label-sm text-secondary first-letter:uppercase">{product.subtitle.toLowerCase()}</p>}
+              {product.subtitle && <p className="mt-3 font-label-sm text-label-sm text-secondary">{product.subtitle}</p>}
               <div className="mt-6 flex items-baseline justify-between border-b border-hairline pb-6">
                 <Price amount={product.price} variant="emphasis" />
                 <span className="font-label-caps text-label-caps text-secondary">
@@ -186,7 +204,7 @@ export default function ProductDetailPage() {
               </div>
 
               <div className="mt-6">
-                <p className={`text-body-md leading-relaxed text-secondary ${longDescription && !expanded ? 'line-clamp-5' : ''}`}>
+                <p className={`text-body-md leading-relaxed text-secondary ${longDescription && !expanded ? 'line-clamp-3' : ''}`}>
                   {description}
                 </p>
                 {longDescription && (
@@ -209,25 +227,23 @@ export default function ProductDetailPage() {
                 </div>
               </div>
 
-              <div className="mt-6 flex flex-col gap-3">
-                <button type="button" onClick={handleAddToCart} disabled={!product.inStock} className="btn-primary w-full">
+              <div className="mt-6 flex gap-3">
+                <button type="button" onClick={handleAddToCart} disabled={!product.inStock} className="btn-primary flex-1">
                   Add to cart
                   <ShoppingBag strokeWidth={1.25} className="h-4 w-4" />
                 </button>
-                <div className="flex gap-3">
-                  <button type="button" onClick={handleBuyNow} disabled={!product.inStock} className="btn-ghost flex-1">
-                    Buy now
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => wishlist.toggle(product.slug)}
-                    aria-pressed={saved}
-                    aria-label={saved ? 'Remove from wishlist' : 'Save to wishlist'}
-                    className="btn-ghost w-[3.25rem] shrink-0 px-0"
-                  >
-                    <Heart strokeWidth={1.25} className={`h-5 w-5 transition-transform duration-500 ease-editorial ${saved ? 'scale-110 fill-ink' : ''}`} />
-                  </button>
-                </div>
+                <button type="button" onClick={handleBuyNow} disabled={!product.inStock} className="btn-ghost flex-1">
+                  Buy now
+                </button>
+                <button
+                  type="button"
+                  onClick={() => wishlist.toggle(product.slug)}
+                  aria-pressed={saved}
+                  aria-label={saved ? 'Remove from wishlist' : 'Save to wishlist'}
+                  className="btn-ghost w-[3.25rem] shrink-0 px-0"
+                >
+                  <Heart strokeWidth={1.25} className={`h-5 w-5 transition-transform duration-500 ease-editorial ${saved ? 'scale-110 fill-ink' : ''}`} />
+                </button>
               </div>
             </Reveal>
           </div>

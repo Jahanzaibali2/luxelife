@@ -14,7 +14,7 @@ const LAYOUT = [
 ]
 
 export default function CollectionsPage() {
-  const { loading, categories, countIn, heroFor } = useCatalog()
+  const { loading, categories, countIn, cardFor } = useCatalog()
 
   return (
     <div className="flex min-h-screen flex-col bg-white font-body-md text-ink">
@@ -35,7 +35,7 @@ export default function CollectionsPage() {
         <div className="grid grid-cols-1 gap-y-20 pt-16 md:grid-cols-12 md:gap-x-6">
           {loading
             ? Array.from({ length: 2 }, (_, i) => <div key={i} className={`aspect-[4/5] animate-pulse bg-backdrop ${LAYOUT[i]}`} />)
-            : [...categories.map((c) => ({ c, image: heroFor(c), count: countIn(c.slug), to: undefined as string | undefined })),
+            : [...categories.map((c) => ({ c, image: cardFor(c), count: countIn(c.slug), to: undefined as string | undefined })),
                 { c: { slug: 'gifts', name: GIFTS_EDIT.name, tagline: GIFTS_EDIT.tagline }, image: GIFTS_EDIT.heroImage, count: undefined, to: '/gifts' },
               ].map(({ c, image, count, to }, i) => (
                 <Reveal key={c.slug} delay={(i % 2) * 0.1} className={LAYOUT[i % LAYOUT.length]}>

@@ -4,13 +4,16 @@
 // (this list should stay in sync with what the Site actually uses).
 import { Footer } from '../components/layout/Footer'
 import { Header } from '../components/layout/Header'
+import { Reveal } from '../components/motion/Reveal'
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <section className="mb-12">
-      <h2 className="font-headline-md text-headline-md text-primary mb-4">{title}</h2>
-      <div className="font-body-md text-body-md text-secondary leading-relaxed space-y-4">{children}</div>
-    </section>
+    <Reveal className="mb-12">
+      <section>
+        <h2 className="font-headline-md text-headline-md text-primary mb-4">{title}</h2>
+        <div className="font-body-md text-body-md text-secondary leading-relaxed space-y-4">{children}</div>
+      </section>
+    </Reveal>
   )
 }
 

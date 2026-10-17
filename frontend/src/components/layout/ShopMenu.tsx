@@ -7,7 +7,7 @@ import { useCatalog } from '../../lib/useCatalog'
 
 /** Full-width panel under the header: quick links + one card per category. */
 export function ShopMenu({ id, onNavigate }: { id: string; onNavigate: () => void }) {
-  const { categories, countIn, heroFor, products } = useCatalog()
+  const { categories, countIn, cardFor, products } = useCatalog()
 
   return (
     <motion.div
@@ -39,7 +39,7 @@ export function ShopMenu({ id, onNavigate }: { id: string; onNavigate: () => voi
               initial={{ opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0, transition: { delay: 0.06 + i * 0.06, duration: 0.55, ease: EASE_EDITORIAL } }}
             >
-              <CategoryCard category={c} image={heroFor(c)} count={countIn(c.slug)} size="sm" ratio="aspect-[4/5]" onNavigate={onNavigate} />
+              <CategoryCard category={c} image={cardFor(c)} count={countIn(c.slug)} size="sm" ratio="aspect-[4/5]" onNavigate={onNavigate} />
             </motion.div>
           ))}
         </div>

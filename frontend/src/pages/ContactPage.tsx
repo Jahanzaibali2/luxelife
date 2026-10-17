@@ -5,6 +5,7 @@ import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Footer } from '../components/layout/Footer'
 import { Header } from '../components/layout/Header'
+import { Reveal } from '../components/motion/Reveal'
 
 const contactSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -32,12 +33,12 @@ export default function ContactPage() {
       <meta name="description" content="Get in touch with LuxeLife about an order, a product or a partnership." />
       <Header variant="contact" />
       <main className="flex-grow w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-section-gap">
-        <section className="text-center mb-section-gap">
+        <Reveal className="text-center mb-section-gap">
           <h1 className="font-display-lg text-display-lg text-primary mb-6">Let&apos;s Talk.</h1>
           <p className="font-body-lg text-body-lg text-secondary max-w-2xl mx-auto">
             We are here to assist you with inquiries, bespoke requests, and curation guidance. Our dedicated team aims to respond within 24 hours.
           </p>
-        </section>
+        </Reveal>
 
         {submitted ? (
           <div className="bg-surface p-8 rounded border border-outline/15 text-center max-w-lg mx-auto">
@@ -47,7 +48,7 @@ export default function ContactPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
-            <div className="lg:col-span-7 bg-surface p-8 md:p-12 rounded border border-outline/15 relative overflow-hidden">
+            <Reveal className="lg:col-span-7 bg-surface p-8 md:p-12 rounded border border-outline/15 relative overflow-hidden">
               <div className="absolute top-0 right-0 w-32 h-32 accent-bg rounded-bl-full opacity-20 -z-10" />
               <h2 className="font-headline-md text-headline-md text-primary mb-8">Send a Message</h2>
               <form className="space-y-8" onSubmit={handleSubmit(onSubmit)}>
@@ -82,9 +83,9 @@ export default function ContactPage() {
                   Send Inquiry
                 </button>
               </form>
-            </div>
+            </Reveal>
 
-            <div className="lg:col-span-5 flex flex-col justify-between">
+            <Reveal delay={0.1} className="lg:col-span-5 flex flex-col justify-between">
               <div className="space-y-8 mb-12">
                 <div className="border-t border-ink pt-8">
                   <div className="flex items-center space-x-4 mb-4 text-primary">
@@ -107,7 +108,7 @@ export default function ContactPage() {
                 <img className="w-full h-full object-cover grayscale opacity-90 mix-blend-multiply hover:grayscale-0 transition-all duration-700" alt="Editorial workspace" loading="lazy" decoding="async" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCSL_9MqcjWTymZlXlB-WsASzuPRKVI_7DZ9UcPvhgrHMuuvoxMmUSIP7qZLTX6AbnDD_nyqLExFzCQPSK3RUYorXL3-uaCf3w3geelJAXKSw4NQ6s6Hv7_CuZvfXX2LZzTDmF1X9iDGTgSNs6ecz52XHh6JJ-Y9GGV9byHbGyoH8CTDXP2kwQOaXndVlJO85VxU7iUEs5CJyjLrOW-Fzgudk-HCTz2wec9_NaCf_Gzfun-_kYUGRlaFw" />
                 <div className="absolute inset-0 bg-primary/10" />
               </div>
-            </div>
+            </Reveal>
           </div>
         )}
       </main>

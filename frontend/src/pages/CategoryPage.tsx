@@ -15,7 +15,7 @@ type Sort = 'featured' | 'price-low' | 'price-high'
 /** Landing page for one category (/collections/:slug), or the curated Gifts edit (/gifts). */
 export default function CategoryPage({ edit }: { edit?: 'gifts' }) {
   const { slug = '' } = useParams<{ slug: string }>()
-  const { loading, products, categories, countIn, heroFor } = useCatalog()
+  const { loading, products, categories, countIn, heroFor, cardFor } = useCatalog()
   const [sort, setSort] = useState<Sort>('featured')
 
   const category = edit ? null : categories.find((c) => c.slug === slug)
@@ -64,7 +64,6 @@ export default function CategoryPage({ edit }: { edit?: 'gifts' }) {
       <main>
         {page ? (
           <PageHero
-            size="tall"
             image={page.hero}
             eyebrow={page.eyebrow}
             lines={[page.name]}
@@ -135,7 +134,7 @@ export default function CategoryPage({ edit }: { edit?: 'gifts' }) {
               <div className="grid grid-cols-2 gap-x-6 gap-y-12 lg:grid-cols-4">
                 {others.map((c, i) => (
                   <Reveal key={c.slug} delay={i * 0.08}>
-                    <CategoryCard category={c} image={heroFor(c)} count={countIn(c.slug)} size="sm" />
+                    <CategoryCard category={c} image={cardFor(c)} count={countIn(c.slug)} size="sm" />
                   </Reveal>
                 ))}
               </div>

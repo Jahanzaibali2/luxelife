@@ -5,19 +5,14 @@ import { ArrowRight } from 'lucide-react'
 import { AnnouncementBar } from '../components/layout/AnnouncementBar'
 import { Footer } from '../components/layout/Footer'
 import { Header } from '../components/layout/Header'
-import { CategoryCard } from '../components/CategoryCard'
 import { LazyImage } from '../components/LazyImage'
 import { PageHero } from '../components/PageHero'
 import { ProductCard, ProductCardSkeleton } from '../components/ProductCard'
 import { Reveal } from '../components/motion/Reveal'
 import { useCatalog } from '../lib/useCatalog'
-import { FALLBACK_CATEGORIES, GIFTS_EDIT } from '../data/categories'
+import { GIFTS_EDIT } from '../data/categories'
 
 const HERO_IMAGE = '/images/hero.jpg'
-const imageOf = (slug: string) => FALLBACK_CATEGORIES.find((c) => c.slug === slug)?.heroImage ?? ''
-// Portrait crop only: the source image has UI chrome on its left edge, so it can't be a full-bleed hero.
-const FASHION_EDITORIAL =
-  'https://lh3.googleusercontent.com/aida-public/AB6AXuDuLcu-YoGMpPa-kPAlcK3vcKFCJZTKVfg1EqvcR2B_6Lo_hUiXftBZIjCR7iYvZimqtx_JqSu98y9JtN2ajHUPVz1rmG0M2LMtyJK_Bz2p3OzOijL77qOMfwOp0D8QAZBgLA-CRQcqpapqCj4ZlJsMwjV3-iaAOz9uL54z_eRxV7tjf8-1ZNTIonBcVo_VV33G6IzvG_cSDJnfc5pjt6hCcO0_cLWWEyhwk0AdLAcaeFADBmYlV6QdHQ'
 
 function EditorialImage({ src, alt, to, ratio }: { src: string; alt: string; to: string; ratio: string }) {
   const ref = useRef<HTMLAnchorElement>(null)
@@ -27,48 +22,55 @@ function EditorialImage({ src, alt, to, ratio }: { src: string; alt: string; to:
   return (
     <Link ref={ref} to={to} data-cursor="view" className={`group relative block overflow-hidden bg-backdrop ${ratio}`}>
       <motion.div className="absolute -inset-y-[8%] inset-x-0" style={{ y }}>
-        <LazyImage src={src} alt={alt} className="img-hover h-full w-full object-cover" />
+        {src && <LazyImage src={src} alt={alt} className="img-hover h-full w-full object-cover" />}
       </motion.div>
     </Link>
   )
 }
 
+// Alternating tiles: left column, then right column dropped down for a staggered editorial rhythm.
+const TILE_POSITION = ['md:col-span-5', 'md:col-span-5 md:col-start-8 md:mt-40']
+
 function Editorial() {
+  const { loading, categories, countIn, cardFor } = useCatalog()
+
   return (
     <section className="mx-auto max-w-container-max px-margin-mobile py-section-gap md:px-margin-desktop">
-      <div className="grid grid-cols-1 gap-y-16 md:grid-cols-12 md:gap-x-6">
-        <Reveal className="md:col-span-7">
-          <EditorialImage src={imageOf('home-living')} alt="Home and living objects" to="/collections/home-living" ratio="aspect-[4/5]" />
-          <div className="mt-5 flex items-baseline justify-between gap-6">
-            <p className="font-serif text-headline-md">Home &amp; Living</p>
-            <Link to="/collections/home-living" className="link-underline font-label-caps text-label-caps">
-              Explore
+      <div className="grid grid-cols-1 gap-y-8 md:grid-cols-12 md:gap-x-6">
+        <Reveal className="md:col-span-6">
+          <p className="mb-6 font-label-caps text-label-caps text-secondary">The edit</p>
+          <h2 className="font-headline-lg text-headline-lg">Fewer, better things.</h2>
+        </Reveal>
+        <Reveal delay={0.1} className="md:col-span-4 md:col-start-8 md:self-end">
+          <p className="text-body-md text-secondary">
+            Every piece is chosen for its material, its craft and the quiet way it fits into a day. Nothing loud, nothing
+            disposable.
+          </p>
+          <div className="mt-8 flex gap-8">
+            <Link to="/collections" className="link-underline is-drawn text-button">
+              All collections
+            </Link>
+            <Link to="/about" className="link-underline text-button">
+              Our approach
             </Link>
           </div>
         </Reveal>
+      </div>
 
-        <div className="flex flex-col justify-between gap-16 md:col-span-4 md:col-start-9 md:pt-48">
-          <Reveal delay={0.1}>
-            <p className="mb-6 font-label-caps text-label-caps text-secondary">The edit</p>
-            <h2 className="font-headline-lg text-headline-lg">Fewer, better things.</h2>
-            <p className="mt-6 text-body-md text-secondary">
-              Every piece is chosen for its material, its craft and the quiet way it fits into a day. Nothing loud, nothing
-              disposable.
-            </p>
-            <Link to="/about" className="link-underline is-drawn mt-8 inline-block text-button">
-              Our approach
-            </Link>
-          </Reveal>
-          <Reveal delay={0.15}>
-            <EditorialImage src={FASHION_EDITORIAL} alt="Fashion" to="/collections/fashion" ratio="aspect-[3/4]" />
-            <div className="mt-5 flex items-baseline justify-between gap-6">
-              <p className="font-serif text-headline-md">Fashion</p>
-              <Link to="/collections/fashion" className="link-underline font-label-caps text-label-caps">
-                Explore
-              </Link>
-            </div>
-          </Reveal>
-        </div>
+      <div className="mt-16 grid grid-cols-1 gap-y-16 md:mt-24 md:grid-cols-12 md:gap-x-6 md:gap-y-0">
+        {loading
+          ? TILE_POSITION.map((pos) => <div key={pos} className={`aspect-[4/5] animate-pulse bg-backdrop ${pos}`} aria-hidden />)
+          : categories.map((c, i) => (
+              <Reveal key={c.slug} delay={(i % 2) * 0.1} className={TILE_POSITION[i % 2]}>
+                <EditorialImage src={cardFor(c)} alt={c.name} to={`/collections/${c.slug}`} ratio="aspect-[4/5]" />
+                <div className="mt-5 flex items-baseline justify-between gap-6">
+                  <p className="font-serif text-headline-md">{c.name}</p>
+                  <span className="shrink-0 font-label-caps text-label-caps tabular-nums text-secondary">
+                    {countIn(c.slug)} {countIn(c.slug) === 1 ? 'piece' : 'pieces'}
+                  </span>
+                </div>
+              </Reveal>
+            ))}
       </div>
     </section>
   )
@@ -93,29 +95,6 @@ function SelectedPieces() {
                 <ProductCard product={product} />
               </Reveal>
             ))}
-      </div>
-    </section>
-  )
-}
-
-function ShopByCategory() {
-  const { categories, countIn, heroFor } = useCatalog()
-  if (!categories.length) return null
-
-  return (
-    <section className="mx-auto max-w-container-max px-margin-mobile pb-section-gap md:px-margin-desktop">
-      <Reveal className="mb-12 flex items-end justify-between gap-6 border-b border-hairline pb-6">
-        <h2 className="font-headline-lg text-headline-lg">Shop by category</h2>
-        <Link to="/collections" className="link-underline shrink-0 font-label-caps text-label-caps">
-          All collections
-        </Link>
-      </Reveal>
-      <div className="grid grid-cols-2 gap-x-6 gap-y-12 lg:grid-cols-4">
-        {categories.map((c, i) => (
-          <Reveal key={c.slug} delay={i * 0.08} className={i % 2 === 1 ? 'lg:mt-16' : ''}>
-            <CategoryCard category={c} image={heroFor(c)} count={countIn(c.slug)} size="sm" />
-          </Reveal>
-        ))}
       </div>
     </section>
   )
@@ -184,7 +163,6 @@ export default function HomePage() {
         />
         <Editorial />
         <SelectedPieces />
-        <ShopByCategory />
         <GiftsBanner />
         <Promise />
       </main>

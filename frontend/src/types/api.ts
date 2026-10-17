@@ -9,6 +9,8 @@ export interface Category {
   tagline: string
   intro: string
   heroImage?: string
+  /** Portrait image for tiles; falls back to heroImage. */
+  cardImage?: string
   sortOrder: number
   visible: boolean
 }
