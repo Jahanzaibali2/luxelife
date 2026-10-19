@@ -227,8 +227,8 @@ export default function ProductDetailPage() {
                 </div>
               </div>
 
-              <div className="mt-6 flex gap-3">
-                <button type="button" onClick={handleAddToCart} disabled={!product.inStock} className="btn-primary flex-1">
+              <div className="mt-6 flex flex-wrap gap-3">
+                <button type="button" onClick={handleAddToCart} disabled={!product.inStock} className="btn-primary min-w-full flex-1 sm:min-w-0">
                   Add to cart
                   <ShoppingBag strokeWidth={1.25} className="h-4 w-4" />
                 </button>
